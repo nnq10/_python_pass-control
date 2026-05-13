@@ -5,7 +5,9 @@ from tkinter import messagebox, ttk
 from app.core.config import C, FONT as F
 from app.core.logging import get_logger
 from app.services.audit import safe_record_action
-from app.services.pass_db import CI
+from app.services.auth import PERMISSION_TEMPORARY, has_permission
+from app.services.pass_db import CI, PASS_TYPE_TEMPORARY
+from app.services.reference_data import list_reference_values
 from app.services.temporary_passes import (
     TEMP_POOL_SIZE,
     TEMP_STATUS_EXPIRED,
@@ -23,7 +25,8 @@ from app.services.temporary_passes import (
     temporary_status_title,
 )
 from app.services.validation import ValidationError, format_validation_errors
-from app.ui.widgets import Btn, _field
+from app.pages.print_page import open_print_dialog
+from app.ui.widgets import Btn, FilterChip, _field, _suggest_field, accent_bar
 
 
 logger = get_logger(__name__)
@@ -49,6 +52,20 @@ def _selected_qr(app, tree):
     return tree.item(sel[0])["values"][0]
 
 
+def _selected_qrs(app, tree):
+    selection = tree.selection()
+    if not selection:
+        app._toast("Выберите один или несколько временных пропусков")
+        return []
+    return [tree.item(item)["values"][0] for item in selection]
+
+
+def _print_selected(app, tree):
+    qrs = _selected_qrs(app, tree)
+    if qrs:
+        open_print_dialog(app, qrs, template_profile=PASS_TYPE_TEMPORARY)
+
+
 def _status_tag(status):
     return {
         TEMP_STATUS_FREE: "free",
@@ -69,9 +86,9 @@ def _issue_modal(app, qr_code=None, on_saved=None):
     win = app._modal(f"Выдать временный пропуск — {qr_code}", 560, 920)
     tk.Label(win, text=f"QR: {qr_code}", bg=C["panel"], fg=C["accent"], font=(F, 14, "bold")).pack(anchor="w", padx=28, pady=(18, 4))
 
-    di_e = _field(win, "Округ *")
-    un_e = _field(win, "В/ч *")
-    rk_e = _field(win, "Звание")
+    di_e = _suggest_field(win, "Округ *", list_reference_values(app.db, "district"))
+    un_e = _suggest_field(win, "В/ч *", list_reference_values(app.db, "unit"))
+    rk_e = _suggest_field(win, "Звание", list_reference_values(app.db, "rank"))
     ln_e = _field(win, "Фамилия *")
     fn_e = _field(win, "Имя")
     mn_e = _field(win, "Отчество")
@@ -135,6 +152,9 @@ def _issue_modal(app, qr_code=None, on_saved=None):
 
 
 def show_temporary(app):
+    if not has_permission(app.user, PERMISSION_TEMPORARY):
+        app._toast("Недостаточно прав")
+        return
     app._clr(app.content)
     app._pgtitle.configure(text="Одноразовые")
     wrap = tk.Frame(app.content, bg=C["bg"])
@@ -167,12 +187,26 @@ def show_temporary(app):
         label.pack(anchor="w")
         stat_labels[key] = label
 
-    filters = tk.Frame(wrap, bg=C["bg"])
-    filters.pack(fill="x", pady=(0, 12))
+    filter_panel = tk.Frame(wrap, bg=C["panel"], highlightthickness=1, highlightbackground=C["border"])
+    filter_panel.pack(fill="x", pady=(0, 12))
+    accent_bar(filter_panel).pack(fill="x")
+    filters = tk.Frame(filter_panel, bg=C["panel"])
+    filters.pack(fill="x", padx=14, pady=12)
     status_var = tk.StringVar(value="Все")
-    tk.Label(filters, text="Статус", bg=C["bg"], fg=C["muted"], font=(F, 9)).pack(side="left", padx=(0, 8))
-    status_box = ttk.Combobox(filters, textvariable=status_var, values=list(STATUS_FILTERS), state="readonly", width=14)
-    status_box.pack(side="left", ipady=3, padx=(0, 10))
+    status_group = tk.Frame(filters, bg=C["panel"])
+    status_group.pack(side="left")
+    tk.Label(status_group, text="Статус", bg=C["panel"], fg=C["muted"], font=(F, 9)).pack(anchor="w", pady=(0, 4))
+    status_row = tk.Frame(status_group, bg=C["panel"])
+    status_row.pack(anchor="w")
+    for label in STATUS_FILTERS:
+        FilterChip(
+            status_row,
+            text=label,
+            variable=status_var,
+            value=label,
+            command=lambda: load(),
+            bg=C["panel"],
+        ).pack(side="left", padx=(0, 6))
 
     tf = tk.Frame(wrap, bg=C["panel"])
     tf.pack(fill="both", expand=True)
@@ -250,7 +284,6 @@ def show_temporary(app):
         load()
 
     search_entry.bind("<Return>", lambda _e: load())
-    status_box.bind("<<ComboboxSelected>>", lambda _e: load())
     Btn(sf, text="Поиск", cmd=load, variant="primary", w=80, h=34, fs=10, bg=C["input"]).pack(side="left", padx=3)
 
     bf = tk.Frame(wrap, bg=C["bg"])
@@ -258,6 +291,7 @@ def show_temporary(app):
     Btn(bf, text="Выдать следующий", cmd=lambda: _issue_modal(app, None, load), variant="success", w=170, h=38, bg=C["bg"]).pack(side="left", padx=5)
     Btn(bf, text="Выдать выбранный", cmd=issue_selected, variant="primary", w=170, h=38, bg=C["bg"]).pack(side="left", padx=5)
     Btn(bf, text="Вернули", cmd=return_selected, variant="ghost", w=130, h=38, bg=C["bg"]).pack(side="left", padx=5)
+    Btn(bf, text="Печать", cmd=lambda: _print_selected(app, tree), variant="primary", w=130, h=38, bg=C["bg"]).pack(side="left", padx=5)
     if app.user and app.user.get("role") == "admin":
         Btn(bf, text="Создать QR-пул", cmd=generate_pool, variant="ghost", w=160, h=38, bg=C["bg"]).pack(side="left", padx=5)
 

@@ -4,6 +4,7 @@ from tkinter import messagebox, ttk
 
 from app.core.config import C, FONT as F
 from app.core.logging import get_logger
+from app.services.auth import PERMISSION_TRASH, has_permission
 from app.services.audit import safe_record_action
 from app.services.pass_db import (CI, clear_trash, delete_pass_forever, get_photo_path,
                      list_trash_file_refs, restore_pass, search_passes,
@@ -14,6 +15,9 @@ from app.ui.widgets import Btn
 logger = get_logger(__name__)
 
 def show_trash(app):
+    if not has_permission(app.user, PERMISSION_TRASH):
+        app._toast("Недостаточно прав")
+        return
     app._clr(app.content)
     app._pgtitle.configure(text="Корзина")
     wrap=tk.Frame(app.content,bg=C["bg"])

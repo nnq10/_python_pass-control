@@ -5,8 +5,10 @@ from PIL import Image, ImageTk
 
 from app.core.config import C, CFG, FONT as F
 from app.core.logging import get_logger
+from app.services.auth import PERMISSION_SCANNER, has_permission
 from app.services.default_photo import pass_photo_source
-from app.services.pass_db import CI, PASS_TYPE_SEMIANNUAL, fetch_pass_by_qr, log_scan, pass_status
+from app.services.pass_db import (CI, PASS_TYPE_SEMIANNUAL, fetch_pass_by_qr, log_scan,
+                                  pass_status)
 from app.services.sounds import play_scan_sound
 from app.services.validation import ValidationError, normalize_qr
 from app.core.paths import app_path
@@ -15,6 +17,9 @@ from app.ui.widgets import _sep, typewrite
 logger = get_logger(__name__)
 
 def show_scanner(app):
+    if not has_permission(app.user, PERMISSION_SCANNER):
+        app._toast("Недостаточно прав")
+        return
     app._clr(app.content)
     app._pgtitle.configure(text="Сканер")
     app._imgs.clear()
@@ -145,7 +150,6 @@ def _scan(app,ev=None):
             expire_txt=f"   ·   осталось {days_left} дн." if days_left>=0 else "   ·   ПРОСРОЧЕН"
         tk.Label(df,text=f"Выдан: {issued_fmt}  ({days_lbl}){expire_txt}",
                  bg=bg,fg=acc,font=(F,11,"bold"),anchor="w").pack(anchor="w",pady=(8,0))
-
     tk.Label(body,text=datetime.now().strftime("%d.%m.%Y  %H:%M:%S"),
              bg=bg,fg=C["muted"],font=(F,10)).pack(anchor="e",pady=(8,0))
 

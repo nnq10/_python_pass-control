@@ -1,6 +1,7 @@
 import math
 import random
 import tkinter as tk
+from tkinter import ttk
 
 from app.core.config import C, CFG, FONT
 from app.core.logging import get_logger
@@ -166,6 +167,90 @@ def _sep(parent, color=None):
     return tk.Frame(parent, bg=color or C["border"], height=1)
 
 
+def accent_bar(parent, height=3):
+    bar = tk.Frame(parent, bg=C["panel"], height=height)
+    bar.pack_propagate(False)
+    for shade in ["#2255cc", "#3366ee", "#4477ff", "#3366ee", "#2255cc"]:
+        tk.Frame(bar, bg=shade, height=height).pack(side="left", fill="both", expand=True)
+    return bar
+
+
+class FilterChip(tk.Frame):
+    def __init__(self, parent, text, variable, value, command=None, width=None, bg=None, **kw):
+        super().__init__(
+            parent,
+            bg=bg or C["panel"],
+            highlightthickness=1,
+            highlightbackground=C["border"],
+            cursor="hand2",
+            **kw,
+        )
+        self._text = text
+        self._variable = variable
+        self._value = value
+        self._command = command
+        self._hover = False
+        self._label = tk.Label(
+            self,
+            text=text,
+            bg=C["input"],
+            fg=C["mid"],
+            font=(FONT, 10, "bold"),
+            padx=12,
+            pady=8,
+            cursor="hand2",
+        )
+        self._label.pack(fill="both", expand=True)
+        if width:
+            self.configure(width=width)
+            self.pack_propagate(False)
+        self._trace = variable.trace_add("write", lambda *_: self.refresh())
+        for widget in (self, self._label):
+            widget.bind("<Enter>", self._enter)
+            widget.bind("<Leave>", self._leave)
+            widget.bind("<ButtonRelease-1>", self._pick)
+        self.bind("<Destroy>", self._cleanup, add="+")
+        self.refresh()
+
+    def refresh(self):
+        active = self._variable.get() == self._value
+        if active:
+            fill = C["accent"]
+            border = C["accent"]
+            fg = "#ffffff"
+        elif self._hover:
+            fill = C["panel"]
+            border = C["accent"]
+            fg = C["text"]
+        else:
+            fill = C["input"]
+            border = C["border"]
+            fg = C["mid"]
+        self.configure(bg=fill, highlightbackground=border)
+        self._label.configure(bg=fill, fg=fg)
+
+    def _enter(self, _event=None):
+        self._hover = True
+        self.refresh()
+
+    def _leave(self, _event=None):
+        self._hover = False
+        self.refresh()
+
+    def _pick(self, _event=None):
+        if self._variable.get() != self._value:
+            self._variable.set(self._value)
+        if self._command:
+            self._command()
+
+    def _cleanup(self, event):
+        if event.widget is self:
+            try:
+                self._variable.trace_remove("write", self._trace)
+            except (tk.TclError, ValueError):
+                pass
+
+
 def _mk_entry(parent, show=None, placeholder=""):
     frm = tk.Frame(
         parent,
@@ -237,3 +322,42 @@ def _field(parent, title, default="", show=None, bg=None, placeholder=""):
             entry._placeholder_on = False
         entry.insert(0, default)
     return entry
+
+
+def _suggest_field(parent, title, values=None, default="", bg=None):
+    frame_bg = bg or C["panel"]
+    all_values = list(values or [])
+    tk.Label(parent, text=title, bg=frame_bg, fg=C["muted"], font=(FONT, 9)).pack(
+        anchor="w",
+        padx=28,
+        pady=(10, 2),
+    )
+    frame = tk.Frame(
+        parent,
+        bg=C["input"],
+        highlightthickness=1,
+        highlightbackground=C["border"],
+        highlightcolor=C["accent"],
+    )
+    frame.pack(fill="x", padx=28)
+    box = ttk.Combobox(frame, values=all_values, state="normal", font=(FONT, 12))
+    box.pack(fill="x", padx=8, pady=5, ipady=3)
+    if default:
+        box.set(default)
+
+    def refresh(_event=None):
+        typed = box.get().strip().casefold()
+        matches = [item for item in all_values if typed in item.casefold()] if typed else all_values
+        box.configure(values=matches or all_values)
+
+    def focus_in(_event=None):
+        frame.configure(highlightbackground=C["accent"])
+
+    def focus_out(_event=None):
+        frame.configure(highlightbackground=C["border"])
+
+    box.bind("<KeyRelease>", refresh)
+    box.bind("<FocusIn>", focus_in)
+    box.bind("<FocusOut>", focus_out)
+    box._all_suggestions = all_values
+    return box

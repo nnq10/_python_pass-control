@@ -2,6 +2,11 @@ import tkinter as tk
 
 from app.core.config import C, FONT as F
 from app.core.logging import get_logger
+from app.services.auth import (PERMISSION_AUDIT, PERMISSION_IMPORT, PERMISSION_PRINT,
+                               PERMISSION_REGULAR, PERMISSION_SCANNER,
+                               PERMISSION_SEMIANNUAL, PERMISSION_SETTINGS,
+                               PERMISSION_STATS, PERMISSION_TEMPORARY, PERMISSION_TRASH,
+                               PERMISSION_USERS, has_permission, role_title)
 from app.ui.widgets import Btn, Pulse, _sep
 
 logger = get_logger(__name__)
@@ -33,17 +38,19 @@ def show_main(app):
 
     _sep(sb).pack(fill="x",padx=14)
 
-    nav=[("🏠  Сканер",    app.show_scanner),
-         ("⏱  Одноразовые",app.show_temporary),
-         ("📋  Временные",  app.show_list),
-         ("🪪  Полугодовые",app.show_semiannual),
-         ("📥  Импорт",    app.show_import),
-         ("🖨  Печать",    app.show_print),
-         ("📊  Статистика",app.show_stats)]
-    if app.user["role"]=="admin":
-        nav.append(("👤  Пользователи",app.show_users))
-        nav.append(("🧾  Аудит",app.show_audit))
-        nav.append(("🗑  Корзина",app.show_trash))
+    nav_options=[
+        (PERMISSION_SCANNER, "🏠  Сканер", app.show_scanner),
+        (PERMISSION_TEMPORARY, "⏱  Одноразовые", app.show_temporary),
+        (PERMISSION_REGULAR, "📋  Временные", app.show_list),
+        (PERMISSION_SEMIANNUAL, "🪪  Полугодовые", app.show_semiannual),
+        (PERMISSION_IMPORT, "📥  Импорт", app.show_import),
+        (PERMISSION_PRINT, "🖨  Печать", app.show_print),
+        (PERMISSION_STATS, "📊  Статистика", app.show_stats),
+        (PERMISSION_USERS, "👤  Пользователи", app.show_users),
+        (PERMISSION_AUDIT, "🧾  Аудит", app.show_audit),
+        (PERMISSION_TRASH, "🗑  Корзина", app.show_trash),
+    ]
+    nav=[(text,cmd) for permission,text,cmd in nav_options if has_permission(app.user, permission)]
 
     app._nav_items = []
     for txt,cmd in nav:
@@ -53,7 +60,8 @@ def show_main(app):
     _sep(sb).pack(fill="x",padx=14)
 
     # Шестерёнка
-    app._gear_row(sb)
+    if has_permission(app.user, PERMISSION_SETTINGS):
+        app._gear_row(sb)
 
     _sep(sb).pack(fill="x",padx=14)
     uf=tk.Frame(sb,bg=C["panel"])
@@ -62,7 +70,7 @@ def show_main(app):
     user_text=tk.Frame(uf,bg=C["panel"])
     user_text.pack(side="left",fill="x",expand=True)
     tk.Label(user_text,text=app.user["name"],bg=C["panel"],fg=C["text"],font=(F,11,"bold"),anchor="w").pack(anchor="w")
-    tk.Label(user_text,text=("администратор" if app.user["role"]=="admin" else "охрана"),
+    tk.Label(user_text,text=role_title(app.user.get("role", "guard")).lower(),
              bg=C["panel"],fg=C["muted"],font=(F,8),anchor="w").pack(anchor="w")
 
     Btn(sb,text="Выйти",cmd=app.show_login,variant="ghost",
@@ -91,7 +99,22 @@ def show_main(app):
     _sep(right).pack(fill="x")
     app.content=tk.Frame(right,bg=C["bg"])
     app.content.pack(fill="both",expand=True)
-    app.show_scanner()
+    initial_actions = [
+        (PERMISSION_SCANNER, app.show_scanner),
+        (PERMISSION_TEMPORARY, app.show_temporary),
+        (PERMISSION_REGULAR, app.show_list),
+        (PERMISSION_SEMIANNUAL, app.show_semiannual),
+        (PERMISSION_IMPORT, app.show_import),
+        (PERMISSION_PRINT, app.show_print),
+        (PERMISSION_STATS, app.show_stats),
+        (PERMISSION_USERS, app.show_users),
+        (PERMISSION_AUDIT, app.show_audit),
+        (PERMISSION_TRASH, app.show_trash),
+    ]
+    for permission, callback in initial_actions:
+        if has_permission(app.user, permission):
+            callback()
+            break
 
 
 def _nav_row(app,parent,text,cmd):

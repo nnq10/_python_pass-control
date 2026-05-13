@@ -43,6 +43,31 @@ class App(ctk.CTk):
                     relief="flat",font=(F,11,"bold"))
         s.map("T.Treeview",background=[("selected",C["border"])],
               foreground=[("selected",C["accent"])])
+        s.configure(
+            "TCombobox",
+            background=C["input"],
+            fieldbackground=C["input"],
+            foreground=C["text"],
+            arrowcolor=C["accent"],
+            bordercolor=C["border"],
+            lightcolor=C["border"],
+            darkcolor=C["border"],
+            insertcolor=C["text"],
+            padding=(8, 5),
+        )
+        s.map(
+            "TCombobox",
+            fieldbackground=[("readonly", C["input"]), ("focus", C["input"])],
+            background=[("readonly", C["input"]), ("active", C["panel"])],
+            foreground=[("readonly", C["text"])],
+            bordercolor=[("focus", C["accent"]), ("readonly", C["border"])],
+            lightcolor=[("focus", C["accent"]), ("readonly", C["border"])],
+            darkcolor=[("focus", C["accent"]), ("readonly", C["border"])],
+        )
+        self.option_add("*TCombobox*Listbox.background", C["input"])
+        self.option_add("*TCombobox*Listbox.foreground", C["text"])
+        self.option_add("*TCombobox*Listbox.selectBackground", C["accent"])
+        self.option_add("*TCombobox*Listbox.selectForeground", "#ffffff")
 
     def _auto_backup(self):
         try:

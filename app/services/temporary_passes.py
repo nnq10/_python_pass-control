@@ -2,6 +2,7 @@ from datetime import datetime
 
 from app.services.pass_db import CI, PASS_TYPE_TEMPORARY, fetch_pass_by_qr, pass_status
 from app.services.qr_codes import save_qr_code
+from app.services.reference_data import remember_reference_values
 from app.services.validation import ValidationError, validate_pass_data
 
 
@@ -165,6 +166,7 @@ def issue_temporary_pass(db, qr_code, data):
         ),
     )
     db.commit()
+    remember_reference_values(db, cleaned)
     return fetch_pass_by_qr(db, qr_code, include_deleted=True)
 
 

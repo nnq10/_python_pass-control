@@ -6,6 +6,7 @@ from tkinter import filedialog, messagebox
 from app.core.config import C, FONT as F
 from app.core.logging import get_logger
 from app.services.audit import safe_record_action
+from app.services.auth import PERMISSION_IMPORT, has_permission
 from app.services.pass_db import delete_pass_forever, insert_pass_ignore
 from app.services.qr_codes import save_qr_code
 from app.services.validation import ValidationError, validate_pass_data
@@ -21,6 +22,9 @@ except ImportError:
     HAS_XL = False
 
 def show_import(app):
+    if not has_permission(app.user, PERMISSION_IMPORT):
+        app._toast("Недостаточно прав")
+        return
     if not HAS_XL:
         messagebox.showerror("Ошибка","Установите openpyxl:\npip install openpyxl"); return
 

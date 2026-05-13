@@ -2,10 +2,10 @@ import sqlite3
 import unittest
 from datetime import datetime, timedelta
 
-from app.services.pass_db import (CI, PASS_TYPE_SEMIANNUAL, clear_trash, create_pass, fetch_pass_by_qr, init_db,
-                     list_trash_file_refs, log_scan, logs_for_day, pass_status,
-                     restore_pass, search_passes, soft_delete_pass,
-                     stats_summary, trash_counts, update_pass)
+from app.services.pass_db import (CI, PASS_TYPE_SEMIANNUAL, clear_trash, create_pass,
+                     fetch_pass_by_qr, init_db, list_trash_file_refs, log_scan,
+                     logs_for_day, pass_status, restore_pass, search_passes,
+                     soft_delete_pass, stats_summary, trash_counts, update_pass)
 
 
 def _row(db, qr):

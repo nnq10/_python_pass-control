@@ -9,12 +9,32 @@ from PIL import Image, ImageDraw, ImageFont, ImageOps
 
 from app.core.paths import PRINTS_DIR, TEMPLATES_DIR, ensure_data_dirs
 from app.services.default_photo import pass_photo_source
-from app.services.pass_db import CI, PASS_TYPE_SEMIANNUAL, fetch_pass_by_qr
+from app.services.pass_db import (CI, PASS_TYPE_REGULAR, PASS_TYPE_SEMIANNUAL,
+                                  PASS_TYPE_TEMPORARY, fetch_pass_by_qr)
 from app.services.qr_codes import create_qr_image
 
 
 SUPPORTED_TEMPLATE_EXTENSIONS = {".png", ".jpg", ".jpeg"}
 DEFAULT_DPI = 300
+CM_PER_INCH = 2.54
+A4_SIZE_CM = (21.0, 29.7)
+PRINT_PASS_SIZE_CM = (10.0, 6.0)
+A4_BATCH_COLUMNS = 2
+A4_BATCH_ROWS = 4
+A4_BATCH_CAPACITY = A4_BATCH_COLUMNS * A4_BATCH_ROWS
+
+
+def _cm_to_px(value, dpi=DEFAULT_DPI):
+    return int(round(float(value) / CM_PER_INCH * dpi))
+
+
+A4_PAGE_SIZE_PX = tuple(_cm_to_px(value) for value in A4_SIZE_CM)
+PRINT_PASS_SIZE_PX = tuple(_cm_to_px(value) for value in PRINT_PASS_SIZE_CM)
+TEMPLATE_PROFILE_KEYWORDS = {
+    PASS_TYPE_TEMPORARY: ("tmp", "temp", "temporary", "one", "once", "1-10", "однораз", "разов"),
+    PASS_TYPE_REGULAR: ("regular", "month", "monthly", "30", "времен", "месяц"),
+    PASS_TYPE_SEMIANNUAL: ("semi", "half", "halfyear", "180", "6", "полугод"),
+}
 RETURN_PASS_TEMPLATE_CONFIG = {
     "base_size": [994, 598],
     "qr": {
@@ -63,6 +83,58 @@ def list_print_templates():
         [path for path in TEMPLATES_DIR.iterdir() if path.is_file() and path.suffix.lower() in SUPPORTED_TEMPLATE_EXTENSIONS],
         key=lambda path: path.name.lower(),
     )
+
+
+def template_choices_path():
+    return TEMPLATES_DIR / "_template_choices.json"
+
+
+def _template_choice_key(profile):
+    return str(profile or "default")
+
+
+def _template_choices():
+    ensure_data_dirs()
+    choices_path = template_choices_path()
+    if not choices_path.exists():
+        return {}
+    try:
+        with open(choices_path, encoding="utf-8") as file:
+            data = json.load(file)
+    except (OSError, ValueError):
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
+def save_template_choice(profile, template_path):
+    ensure_data_dirs()
+    choices = _template_choices()
+    choices[_template_choice_key(profile)] = Path(template_path).name
+    choices_path = template_choices_path()
+    choices_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(choices_path, "w", encoding="utf-8") as file:
+        json.dump(choices, file, ensure_ascii=False, indent=2)
+    return choices_path
+
+
+def selected_template_for_profile(profile):
+    templates = list_print_templates()
+    if not templates:
+        return None
+
+    saved_name = _template_choices().get(_template_choice_key(profile))
+    if saved_name:
+        for template in templates:
+            if template.name == saved_name:
+                return template
+
+    keywords = TEMPLATE_PROFILE_KEYWORDS.get(profile, ())
+    for template in templates:
+        name = template.stem.lower()
+        if any(keyword in name for keyword in keywords):
+            return template
+
+    return templates[0]
 
 
 def template_config_path(template_path):
@@ -325,15 +397,57 @@ def save_print_pdf(image, qr_code):
 
 def _pdf_page(image):
     background = Image.new("RGB", image.size, "white")
-    background.paste(image, mask=image.getchannel("A"))
+    if image.mode == "RGBA":
+        background.paste(image, mask=image.getchannel("A"))
+    else:
+        background.paste(image.convert("RGB"))
     return background
+
+
+def a4_batch_positions():
+    page_width, page_height = A4_PAGE_SIZE_PX
+    pass_width, pass_height = PRINT_PASS_SIZE_PX
+    margin_x = max(0, (page_width - A4_BATCH_COLUMNS * pass_width) // 2)
+    margin_y = max(0, (page_height - A4_BATCH_ROWS * pass_height) // (A4_BATCH_ROWS + 1))
+    positions = []
+    for row in range(A4_BATCH_ROWS):
+        y = margin_y + row * (pass_height + margin_y)
+        for col in range(A4_BATCH_COLUMNS):
+            x = margin_x + col * pass_width
+            positions.append((x, y))
+    return positions
+
+
+def _print_sized_pass(image):
+    source = _pdf_page(image)
+    source = ImageOps.contain(source, PRINT_PASS_SIZE_PX, Image.Resampling.LANCZOS)
+    tile = Image.new("RGB", PRINT_PASS_SIZE_PX, "white")
+    x = (PRINT_PASS_SIZE_PX[0] - source.size[0]) // 2
+    y = (PRINT_PASS_SIZE_PX[1] - source.size[1]) // 2
+    tile.paste(source, (x, y))
+    return tile
+
+
+def compose_a4_print_pages(images):
+    images = list(images)
+    if not images:
+        raise ValueError("no passes selected")
+    positions = a4_batch_positions()
+    pages = []
+    for start in range(0, len(images), A4_BATCH_CAPACITY):
+        page = Image.new("RGB", A4_PAGE_SIZE_PX, "white")
+        for image, position in zip(images[start:start + A4_BATCH_CAPACITY], positions):
+            page.paste(_print_sized_pass(image), position)
+        pages.append(page)
+    return pages
 
 
 def save_batch_print_pdf(db, qr_codes, template_path):
     qr_codes = list(qr_codes)
     if not qr_codes:
         raise ValueError("no passes selected")
-    pages = [_pdf_page(render_print_pass(db, qr_code, template_path)) for qr_code in qr_codes]
+    images = [render_print_pass(db, qr_code, template_path) for qr_code in qr_codes]
+    pages = compose_a4_print_pages(images)
     path = _batch_output_path(len(qr_codes))
     first, rest = pages[0], pages[1:]
     first.save(path, "PDF", resolution=DEFAULT_DPI, save_all=bool(rest), append_images=rest)

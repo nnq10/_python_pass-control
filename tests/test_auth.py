@@ -4,8 +4,9 @@ from pathlib import Path
 import unittest
 from unittest.mock import patch
 
-from app.services.auth import (HASH_ALGORITHM, authenticate, delete_user, list_users,
-                  load_users, upsert_user, verify_password)
+from app.services.auth import (HASH_ALGORITHM, PERMISSION_AUDIT, PERMISSION_PRINT,
+                  PERMISSION_SCANNER, PERMISSION_USERS, authenticate, delete_user,
+                  has_permission, list_users, load_users, upsert_user, verify_password)
 
 
 def _record_for(password):
@@ -41,6 +42,8 @@ class AuthTests(unittest.TestCase):
             user = authenticate("admin", "secret")
         self.assertEqual(user["username"], "admin")
         self.assertEqual(user["role"], "admin")
+        self.assertTrue(has_permission(user, PERMISSION_USERS))
+        self.assertTrue(has_permission(user, PERMISSION_AUDIT))
 
     def test_authenticate_rejects_unknown_user(self):
         with patch("app.services.auth.load_users", return_value={}):
@@ -61,6 +64,7 @@ class AuthTests(unittest.TestCase):
                 operator = next(user for user in listed if user["username"] == "operator")
                 self.assertEqual(operator["name"], "Senior Operator")
                 self.assertEqual(operator["role"], "admin")
+                self.assertTrue(has_permission(operator, PERMISSION_USERS))
 
                 self.assertTrue(delete_user("operator"))
                 users = load_users()
@@ -92,6 +96,24 @@ class AuthTests(unittest.TestCase):
                 upsert_user("guard", "Guard", "guard", "secret1")
                 with self.assertRaises(ValueError):
                     upsert_user("admin", "Admin", "guard", None)
+
+    def test_custom_permissions_are_saved_and_returned_on_authenticate(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            users_file = Path(tmp) / "users.json"
+            with patch("app.services.auth.USERS_FILE", users_file):
+                upsert_user(
+                    "printer",
+                    "Print Operator",
+                    "guard",
+                    "secret1",
+                    permissions=[PERMISSION_SCANNER, PERMISSION_PRINT],
+                )
+                users = load_users()
+                self.assertEqual(users["printer"]["permissions"], [PERMISSION_SCANNER, PERMISSION_PRINT])
+                user = authenticate("printer", "secret1")
+                self.assertTrue(has_permission(user, PERMISSION_SCANNER))
+                self.assertTrue(has_permission(user, PERMISSION_PRINT))
+                self.assertFalse(has_permission(user, PERMISSION_AUDIT))
 
 
 if __name__ == "__main__":

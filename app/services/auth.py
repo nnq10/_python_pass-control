@@ -12,6 +12,82 @@ logger = get_logger(__name__)
 HASH_ALGORITHM = "pbkdf2_sha256"
 ITERATIONS = 200_000
 
+PERMISSION_SCANNER = "scanner"
+PERMISSION_TEMPORARY = "temporary"
+PERMISSION_REGULAR = "regular"
+PERMISSION_SEMIANNUAL = "semiannual"
+PERMISSION_IMPORT = "import"
+PERMISSION_PRINT = "print"
+PERMISSION_STATS = "stats"
+PERMISSION_USERS = "users"
+PERMISSION_AUDIT = "audit"
+PERMISSION_TRASH = "trash"
+PERMISSION_SETTINGS = "settings"
+
+PERMISSION_TITLES = {
+    PERMISSION_SCANNER: "Сканер",
+    PERMISSION_TEMPORARY: "Одноразовые",
+    PERMISSION_REGULAR: "Временные",
+    PERMISSION_SEMIANNUAL: "Полугодовые",
+    PERMISSION_IMPORT: "Импорт",
+    PERMISSION_PRINT: "Печать",
+    PERMISSION_STATS: "Статистика",
+    PERMISSION_USERS: "Пользователи",
+    PERMISSION_AUDIT: "Аудит",
+    PERMISSION_TRASH: "Корзина",
+    PERMISSION_SETTINGS: "Настройки",
+}
+BASE_GUARD_PERMISSIONS = (
+    PERMISSION_SCANNER,
+    PERMISSION_TEMPORARY,
+    PERMISSION_REGULAR,
+    PERMISSION_SEMIANNUAL,
+    PERMISSION_IMPORT,
+    PERMISSION_PRINT,
+    PERMISSION_STATS,
+    PERMISSION_SETTINGS,
+)
+ADMIN_ONLY_PERMISSIONS = (
+    PERMISSION_USERS,
+    PERMISSION_AUDIT,
+    PERMISSION_TRASH,
+)
+DEFAULT_PERMISSIONS = {
+    "guard": list(BASE_GUARD_PERMISSIONS),
+    "admin": list(BASE_GUARD_PERMISSIONS + ADMIN_ONLY_PERMISSIONS),
+}
+
+
+def permissions_for_role(role):
+    return list(DEFAULT_PERMISSIONS["admin" if role == "admin" else "guard"])
+
+
+def role_title(role):
+    return "Администратор" if role == "admin" else "Профиль доступа"
+
+
+def normalize_permissions(permissions, role="guard"):
+    if permissions is None:
+        values = permissions_for_role(role)
+    else:
+        values = []
+        for permission in permissions:
+            permission = str(permission or "").strip()
+            if permission in PERMISSION_TITLES and permission not in values:
+                values.append(permission)
+    if role == "admin":
+        for permission in ADMIN_ONLY_PERMISSIONS + (PERMISSION_SETTINGS,):
+            if permission not in values:
+                values.append(permission)
+    return values
+
+
+def has_permission(user, permission):
+    if not user:
+        return False
+    permissions = normalize_permissions(user.get("permissions"), user.get("role", "guard"))
+    return permission in permissions
+
 
 def load_users(path=None):
     path = path or USERS_FILE
@@ -58,6 +134,7 @@ def list_users():
             "username": username,
             "name": record.get("name", username),
             "role": record.get("role", "guard"),
+            "permissions": normalize_permissions(record.get("permissions"), record.get("role", "guard")),
         }
         for username, record in sorted(users.items())
     ]
@@ -67,7 +144,7 @@ def _admin_count(users):
     return sum(1 for record in users.values() if record.get("role") == "admin")
 
 
-def upsert_user(username, name, role, password=None):
+def upsert_user(username, name, role, password=None, permissions=None):
     username = username.strip()
     if not username:
         raise ValueError("username is required")
@@ -80,6 +157,7 @@ def upsert_user(username, name, role, password=None):
         raise ValueError("cannot demote the last admin")
     record["name"] = name.strip() or username
     record["role"] = role
+    record["permissions"] = normalize_permissions(permissions, role)
     if password:
         record.update(hash_password(password))
     elif username not in users:
@@ -133,4 +211,5 @@ def authenticate(username, password):
         "username": username,
         "name": record.get("name", username),
         "role": record.get("role", "guard"),
+        "permissions": normalize_permissions(record.get("permissions"), record.get("role", "guard")),
     }

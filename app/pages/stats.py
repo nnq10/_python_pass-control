@@ -5,6 +5,7 @@ from tkinter import filedialog, messagebox, ttk
 
 from app.core.config import C, FONT as F
 from app.core.logging import get_logger
+from app.services.auth import PERMISSION_STATS, has_permission
 from app.services.pass_db import logs_for_day, stats_summary
 from app.ui.widgets import Btn
 
@@ -18,33 +19,35 @@ except ImportError:
     HAS_XL = False
 
 def show_stats(app):
+    if not has_permission(app.user, PERMISSION_STATS):
+        app._toast("Недостаточно прав")
+        return
     app._clr(app.content)
     app._pgtitle.configure(text="Статистика")
     wrap=tk.Frame(app.content,bg=C["bg"]); wrap.pack(fill="both",expand=True,padx=36,pady=20)
 
     today=datetime.now().strftime("%Y-%m-%d")
-    summary = stats_summary(app.db, today)
-    total = summary["total"]; act = summary["active"]; inact = summary["inactive"]
-    gd = summary["granted_today"]; dd = summary["denied_today"]; ga = summary["granted_total"]
 
     hdr=tk.Frame(wrap,bg=C["bg"]); hdr.pack(fill="x",pady=(0,16))
     tk.Label(hdr,text="Статистика",bg=C["bg"],fg=C["text"],font=(F,16,"bold")).pack(side="left")
     Btn(hdr,text="Экспорт дня в Excel",cmd=app._export,variant="success",
         w=210,h=38,fs=11,bg=C["bg"]).pack(side="right")
 
+    summary=stats_summary(app.db, today)
+
     cf=tk.Frame(wrap,bg=C["bg"]); cf.pack(fill="x")
-    for i,(title,val,color) in enumerate([
-        ("Всего пропусков",  total, C["accent"]),
-        ("Активных",         act,   C["green"]),
-        ("Просрочено",       inact, C["red"]),
-        ("Проходов сегодня", gd,    C["green"]),
-        ("Отказов сегодня",  dd,    C["red"]),
-        ("Проходов всего",   ga,    C["accent"]),
+    for i,(title,value,color) in enumerate([
+        ("Всего пропусков", summary["total"], C["accent"]),
+        ("Активных", summary["active"], C["green"]),
+        ("Неактивных", summary["inactive"], C["red"]),
+        ("Разрешённых сегодня", summary["granted_today"], C["green"]),
+        ("Отказов сегодня", summary["denied_today"], C["red"]),
+        ("Разрешённых всего", summary["granted_total"], C["accent"]),
     ]):
         card=tk.Frame(cf,bg=C["panel"],highlightthickness=1,highlightbackground=C["border"])
         card.grid(row=i//3,column=i%3,padx=8,pady=8,sticky="nsew")
         cf.columnconfigure(i%3,weight=1)
-        tk.Label(card,text=str(val),bg=C["panel"],fg=color,font=(F,36,"bold")).pack(pady=(20,4))
+        tk.Label(card,text=str(value),bg=C["panel"],fg=color,font=(F,30,"bold")).pack(pady=(18,4))
         tk.Label(card,text=title,bg=C["panel"],fg=C["muted"],font=(F,11)).pack(pady=(0,20))
 
     tk.Label(wrap,text=f"События за {today}",bg=C["bg"],fg=C["muted"],font=(F,11)).pack(anchor="w",pady=(20,6))

@@ -2,12 +2,13 @@ import tkinter as tk
 from tkinter import ttk
 
 from app.core.config import C, FONT as F
+from app.services.auth import PERMISSION_AUDIT, has_permission
 from app.services.audit import action_title, list_actions
 from app.ui.widgets import Btn
 
 
 def show_audit(app):
-    if app.user["role"] != "admin":
+    if not has_permission(app.user, PERMISSION_AUDIT):
         app._toast("Недостаточно прав")
         return
 

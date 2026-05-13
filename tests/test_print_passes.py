@@ -7,11 +7,16 @@ from unittest.mock import patch
 
 from PIL import Image
 
-from app.services.pass_db import PASS_TYPE_SEMIANNUAL, create_pass, init_db
-from app.services.print_passes import (editable_template_config, list_print_templates,
-                                       render_print_pass, save_batch_print_pdf,
-                                       save_print_pdf, save_print_png,
-                                       save_template_config, template_config_path)
+from app.services.pass_db import (PASS_TYPE_REGULAR, PASS_TYPE_SEMIANNUAL,
+                                  PASS_TYPE_TEMPORARY, create_pass, init_db)
+from app.services.print_passes import (A4_BATCH_CAPACITY, A4_PAGE_SIZE_PX,
+                                       PRINT_PASS_SIZE_PX, a4_batch_positions,
+                                       compose_a4_print_pages, editable_template_config,
+                                       list_print_templates, render_print_pass,
+                                       save_batch_print_pdf, save_print_pdf,
+                                       save_print_png, save_template_choice,
+                                       save_template_config, selected_template_for_profile,
+                                       template_config_path)
 
 
 class PrintPassTests(unittest.TestCase):
@@ -54,6 +59,21 @@ class PrintPassTests(unittest.TestCase):
                 names = [path.name for path in list_print_templates()]
 
             self.assertEqual(names, ["a.png", "b.jpg"])
+
+    def test_selected_template_for_profile_uses_keywords_and_saved_choice(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            templates = Path(tmp)
+            (templates / "month_card.png").write_bytes(b"png")
+            (templates / "semiannual_card.png").write_bytes(b"png")
+            (templates / "tmp_card.png").write_bytes(b"png")
+
+            with patch("app.services.print_passes.TEMPLATES_DIR", templates):
+                self.assertEqual(selected_template_for_profile(PASS_TYPE_REGULAR).name, "month_card.png")
+                self.assertEqual(selected_template_for_profile(PASS_TYPE_TEMPORARY).name, "tmp_card.png")
+
+                save_template_choice(PASS_TYPE_REGULAR, templates / "semiannual_card.png")
+
+                self.assertEqual(selected_template_for_profile(PASS_TYPE_REGULAR).name, "semiannual_card.png")
 
     def test_editable_template_config_and_save_template_config(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -189,6 +209,24 @@ class PrintPassTests(unittest.TestCase):
             self.assertEqual(png.suffix, ".png")
             self.assertTrue(pdf.exists())
             self.assertEqual(pdf.suffix, ".pdf")
+
+    def test_compose_a4_print_pages_uses_10x6_layout(self):
+        images = [
+            Image.new("RGBA", (300, 180), (index, 20, 30, 255))
+            for index in range(1, A4_BATCH_CAPACITY + 2)
+        ]
+
+        pages = compose_a4_print_pages(images)
+        positions = a4_batch_positions()
+
+        self.assertEqual(len(pages), 2)
+        self.assertEqual(len(positions), A4_BATCH_CAPACITY)
+        self.assertEqual(pages[0].size, A4_PAGE_SIZE_PX)
+        self.assertEqual(pages[1].size, A4_PAGE_SIZE_PX)
+        self.assertEqual(PRINT_PASS_SIZE_PX, (1181, 709))
+        self.assertEqual(pages[0].getpixel(positions[0]), (1, 20, 30))
+        self.assertEqual(pages[0].getpixel(positions[-1]), (8, 20, 30))
+        self.assertEqual(pages[1].getpixel(positions[0]), (9, 20, 30))
 
     def test_save_batch_print_pdf_renders_selected_passes(self):
         create_pass(

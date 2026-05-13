@@ -3,11 +3,15 @@ from tkinter import messagebox, ttk
 
 from app.core.config import C, CFG, FONT as F, apply_theme, save_config
 from app.core.logging import get_logger
+from app.services.auth import PERMISSION_SETTINGS, has_permission
 from app.services.audit import safe_record_action
 from app.services.backups import create_backup, list_backups, prune_backups, restore_backup
 from app.services.file_cleanup import cleanup_orphan_files, cleanup_totals, find_orphan_files
 from app.services.integrity import check_database_integrity
 from app.services.pass_db import connect_db, init_db
+from app.services.reference_data import (REFERENCE_TITLES, add_reference_value,
+                                         delete_reference_value, list_reference_values,
+                                         sync_reference_values_from_passes)
 from app.ui.widgets import Btn, _sep
 
 logger = get_logger(__name__)
@@ -204,8 +208,91 @@ def _show_backups(app):
     Btn(bf,text="Обновить",cmd=load,variant="primary",w=140,h=40,bg=C["panel"]).pack(side="right")
 
 
+def _show_reference_catalogs(app):
+    win=app._modal("Справочники",760,560)
+    reverse_titles={title: kind for kind,title in REFERENCE_TITLES.items()}
+    kind_var=tk.StringVar(value=REFERENCE_TITLES["district"])
+
+    top=tk.Frame(win,bg=C["panel"])
+    top.pack(fill="x",padx=24,pady=(16,10))
+    tk.Label(top,text="Справочник",bg=C["panel"],fg=C["muted"],font=(F,9)).pack(anchor="w")
+    kind_box=ttk.Combobox(top,textvariable=kind_var,values=list(reverse_titles),state="readonly",width=28)
+    kind_box.pack(anchor="w",ipady=3,pady=(4,0))
+
+    editor=tk.Frame(win,bg=C["panel"])
+    editor.pack(fill="x",padx=24,pady=(0,10))
+    value_var=tk.StringVar()
+    value_entry=tk.Entry(editor,bg=C["input"],fg=C["text"],insertbackground=C["accent"],
+                         textvariable=value_var,relief="flat",font=(F,12),
+                         highlightthickness=1,highlightbackground=C["border"])
+    value_entry.pack(side="left",fill="x",expand=True,ipady=8,padx=(0,8))
+
+    tf=tk.Frame(win,bg=C["panel"])
+    tf.pack(fill="both",expand=True,padx=24,pady=(0,12))
+    vsb=ttk.Scrollbar(tf,orient="vertical")
+    vsb.pack(side="right",fill="y")
+    tree=ttk.Treeview(tf,style="T.Treeview",columns=("value",),show="headings",yscrollcommand=vsb.set,height=12)
+    vsb.configure(command=tree.yview)
+    tree.heading("value",text="Значение")
+    tree.column("value",width=640,minwidth=240)
+    tree.pack(fill="both",expand=True)
+
+    def current_kind():
+        return reverse_titles.get(kind_var.get(), "district")
+
+    def load():
+        for item in tree.get_children():
+            tree.delete(item)
+        for value in list_reference_values(app.db, current_kind()):
+            tree.insert("", "end", values=(value,))
+
+    def add_value():
+        value=value_var.get()
+        if not value.strip():
+            app._toast("Введите значение")
+            return
+        inserted=add_reference_value(app.db, current_kind(), value)
+        safe_record_action(app.db, app.user, "references.add", "reference", current_kind(), {"value": value.strip()})
+        value_var.set("")
+        load()
+        app._toast("Добавлено в справочник" if inserted else "Такое значение уже есть", C["green"] if inserted else C["yellow"])
+
+    def delete_selected():
+        sel=tree.selection()
+        if not sel:
+            app._toast("Выберите значение")
+            return
+        value=tree.item(sel[0])["values"][0]
+        if not messagebox.askyesno("Удалить из справочника", f"Убрать «{value}» из подсказок?"):
+            return
+        delete_reference_value(app.db, current_kind(), value)
+        safe_record_action(app.db, app.user, "references.delete", "reference", current_kind(), {"value": value})
+        load()
+        app._toast("Удалено из справочника", C["green"])
+
+    def sync_values():
+        sync_reference_values_from_passes(app.db)
+        safe_record_action(app.db, app.user, "references.sync", "reference", "passes")
+        load()
+        app._toast("Справочники обновлены из базы", C["green"])
+
+    Btn(editor,text="Добавить",cmd=add_value,variant="primary",w=120,h=40,bg=C["panel"]).pack(side="left")
+    kind_box.bind("<<ComboboxSelected>>",lambda _e:load())
+    value_entry.bind("<Return>",lambda _e:add_value())
+
+    bf=tk.Frame(win,bg=C["panel"])
+    bf.pack(fill="x",padx=24,pady=(0,18))
+    Btn(bf,text="Удалить выбранное",cmd=delete_selected,variant="danger",w=180,h=40,bg=C["panel"]).pack(side="left",padx=(0,8))
+    Btn(bf,text="Собрать из базы",cmd=sync_values,variant="ghost",w=170,h=40,bg=C["panel"]).pack(side="left",padx=8)
+    Btn(bf,text="Закрыть",cmd=win.destroy,variant="primary",w=130,h=40,bg=C["panel"]).pack(side="right")
+    load()
+
+
 def show_settings(app):
-    win=app._modal("⚙  Настройки",480,700 if app.user and app.user.get("role")=="admin" else 360)
+    if not has_permission(app.user, PERMISSION_SETTINGS):
+        app._toast("Недостаточно прав")
+        return
+    win=app._modal("⚙  Настройки",480,760 if app.user and app.user.get("role")=="admin" else 360)
 
     tk.Label(win,text="Тема оформления",bg=C["panel"],fg=C["muted"],font=(F,9)).pack(anchor="w",padx=28,pady=(20,8))
     tf=tk.Frame(win,bg=C["panel"]); tf.pack(anchor="w",padx=28)
@@ -271,6 +358,8 @@ def show_settings(app):
         Btn(win,text="Проверить целостность базы",cmd=lambda:(win.destroy(), _show_integrity_check(app)),variant="primary",
             w=424,h=40,fs=12,bg=C["panel"]).pack(padx=28,pady=(0,12))
         Btn(win,text="Найти лишние файлы",cmd=lambda:(win.destroy(), _show_file_cleanup(app)),variant="ghost",
+            w=424,h=40,fs=12,bg=C["panel"]).pack(padx=28,pady=(0,12))
+        Btn(win,text="Справочники автоподстановки",cmd=lambda:(win.destroy(), _show_reference_catalogs(app)),variant="primary",
             w=424,h=40,fs=12,bg=C["panel"]).pack(padx=28,pady=(0,12))
         _sep(win).pack(fill="x",padx=28,pady=12)
 

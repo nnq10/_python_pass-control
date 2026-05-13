@@ -3,6 +3,9 @@ from datetime import datetime, timedelta
 
 from app.core.logging import get_logger
 from app.core.paths import DB_FILE, ensure_data_dirs
+from app.services.reference_data import (ensure_reference_table,
+                                         remember_reference_values,
+                                         sync_reference_values_from_passes)
 
 
 logger = get_logger(__name__)
@@ -92,6 +95,8 @@ def init_db(db):
         )"""
     )
     db.commit()
+    ensure_reference_table(db)
+    sync_reference_values_from_passes(db)
 
 
 def fetch_pass_by_qr(db, qr_code, include_deleted=False):
@@ -209,6 +214,7 @@ def create_pass(db, data):
         ),
     )
     db.commit()
+    remember_reference_values(db, data)
 
 
 def insert_pass_ignore(db, data):
@@ -236,7 +242,10 @@ def insert_pass_ignore(db, data):
         ),
     )
     db.commit()
-    return cursor.rowcount > 0
+    inserted = cursor.rowcount > 0
+    if inserted:
+        remember_reference_values(db, data)
+    return inserted
 
 
 def update_pass(db, qr_code, data):
@@ -260,6 +269,7 @@ def update_pass(db, qr_code, data):
         ),
     )
     db.commit()
+    remember_reference_values(db, data)
 
 
 def stats_summary(db, day):
