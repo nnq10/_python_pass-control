@@ -1,0 +1,48 @@
+# Python bytecode/cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Test/coverage/cache output
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# Build/package output
+build/
+dist/
+*.egg-info/
+*.spec
+
+# App runtime data: database, users, photos, QR codes, backups, logs
+data/*
+!data/.gitkeep
+instance/
+*.db
+*.sqlite
+*.sqlite3
+*.log
+
+# Local settings/secrets
+.env
+.env.*
+*.local
+
+# IDE/editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
