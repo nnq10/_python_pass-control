@@ -136,7 +136,3 @@ def show_import(app):
 
     Btn(win,text="Начать импорт",cmd=do_import,variant="primary",
         w=612,h=44,fs=13,bg=C["panel"]).pack(padx=28,pady=10)
-
-# ─────────────────────────────────────────
-#  СТАТИСТИКА
-# ─────────────────────────────────────────

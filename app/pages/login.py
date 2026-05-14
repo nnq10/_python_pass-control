@@ -9,7 +9,7 @@ def show_login(app):
     card=tk.Frame(app,bg=C["panel"],highlightthickness=1,highlightbackground=C["border"])
     card.place(relx=0.5,rely=0.75,anchor="center",width=420,height=460)
 
-    # slide-in
+    # Анимка
     def _slide(r=0.75,t=0.5):
         n=r+(t-r)*0.18
         card.place(relx=0.5,rely=n,anchor="center",width=420,height=460)
@@ -17,7 +17,7 @@ def show_login(app):
         else: card.place(relx=0.5,rely=t,anchor="center",width=420,height=460)
     card.after(40,_slide)
 
-    # Верхняя полоска с градиентом через несколько Frame
+    # Градик
     bar_f=tk.Frame(card,bg=C["panel"]); bar_f.pack(fill="x")
     for i,shade in enumerate(["#2255cc","#3366ee","#4477ff","#3366ee","#2255cc"]):
         tk.Frame(bar_f,bg=shade,height=3).pack(side="left",fill="x",expand=True)
@@ -52,11 +52,8 @@ def show_login(app):
 
     Btn(card,text="Войти",cmd=login,variant="primary",
         w=364,h=44,fs=13,bg=C["panel"]).pack(padx=28,pady=12)
-    # нижняя полоска
+    # Нижний таскбар
     bar_b=tk.Frame(card,bg=C["panel"]); bar_b.pack(fill="x",side="bottom")
     for shade in ["#2255cc","#3366ee","#4477ff","#3366ee","#2255cc"]:
         tk.Frame(bar_b,bg=shade,height=3).pack(side="left",fill="x",expand=True)
 
-# ─────────────────────────────────────────
-#  ГЛАВНОЕ ОКНО
-# ─────────────────────────────────────────

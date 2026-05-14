@@ -20,7 +20,7 @@ def show_main(app):
             logger.exception("Failed to stop background canvas")
         app._bgcv=None
 
-    # ── Сайдбар ──────────────────────────
+    
     sb=tk.Frame(app,bg=C["panel"],width=230)
     sb.pack(side="left",fill="y"); sb.pack_propagate(False)
 
@@ -59,7 +59,7 @@ def show_main(app):
     tk.Frame(sb,bg=C["panel"]).pack(fill="y",expand=True)
     _sep(sb).pack(fill="x",padx=14)
 
-    # Шестерёнка
+  
     if has_permission(app.user, PERMISSION_SETTINGS):
         app._gear_row(sb)
 
@@ -76,13 +76,13 @@ def show_main(app):
     Btn(sb,text="Выйти",cmd=app.show_login,variant="ghost",
         w=196,h=36,fs=11,bg=C["panel"]).pack(padx=16,pady=(0,16))
 
-    # нижняя полоска сайдбара
+ 
     gb2=tk.Frame(sb,bg=C["panel"])
     gb2.pack(fill="x",side="bottom")
     for shade in ["#1a44bb","#2255cc","#3366ee","#2255cc","#1a44bb"]:
         tk.Frame(gb2,bg=shade,height=3).pack(side="left",fill="x",expand=True)
 
-    # ── Правая часть ─────────────────────
+    
     right=tk.Frame(app,bg=C["bg"])
     right.pack(side="left",fill="both",expand=True)
 
