@@ -486,6 +486,8 @@ def _image_binding_margin_left_px(image):
 
 
 def _a4_page_size_for_pass(pass_size_px, binding_margin_left_px=0):
+    if binding_margin_left_px:
+        return A4_PAGE_SIZE_PX
     portrait_width, portrait_height = A4_PAGE_SIZE_PX
     landscape_width, landscape_height = A4_LANDSCAPE_PAGE_SIZE_PX
     required_width = pass_size_px[0] + binding_margin_left_px
@@ -503,6 +505,14 @@ def _fit_count(total, item):
     if 0 < overflow <= max(2, next_count):
         return next_count
     return count
+
+
+def _fit_pass_size_to_page(pass_size_px, page_size_px, binding_margin_left_px=0):
+    pass_width, pass_height = pass_size_px
+    page_width, page_height = page_size_px
+    available_width = max(1, page_width - binding_margin_left_px)
+    scale = min(1.0, available_width / pass_width, page_height / pass_height)
+    return max(1, round(pass_width * scale)), max(1, round(pass_height * scale))
 
 
 def _scaled_int(value, scale, default):
@@ -682,9 +692,10 @@ def save_print_pdf(image, qr_code):
     binding_margin_left_px = _image_binding_margin_left_px(image)
     if binding_margin_left_px:
         paper_size = _a4_page_size_for_pass(page_size, binding_margin_left_px)
-        positions = a4_batch_positions_for_size(page_size, paper_size, binding_margin_left_px)
+        layout_size = _fit_pass_size_to_page(page_size, paper_size, binding_margin_left_px)
+        positions = a4_batch_positions_for_size(layout_size, paper_size, binding_margin_left_px)
         background = Image.new("RGB", paper_size, "white")
-        background.paste(_print_sized_pass(image, page_size), positions[0])
+        background.paste(_print_sized_pass(image, layout_size), positions[0])
     else:
         background = _print_sized_pass(image, page_size) if page_size != image.size else _pdf_page(image)
     background.save(path, "PDF", resolution=DEFAULT_DPI)
@@ -751,13 +762,14 @@ def compose_a4_print_pages(images):
     pass_size_px = _image_batch_size_px(images[0])
     binding_margin_left_px = _image_binding_margin_left_px(images[0])
     page_size_px = _a4_page_size_for_pass(pass_size_px, binding_margin_left_px)
-    positions = a4_batch_positions_for_size(pass_size_px, page_size_px, binding_margin_left_px)
+    layout_size_px = _fit_pass_size_to_page(pass_size_px, page_size_px, binding_margin_left_px)
+    positions = a4_batch_positions_for_size(layout_size_px, page_size_px, binding_margin_left_px)
     capacity = len(positions)
     pages = []
     for start in range(0, len(images), capacity):
         page = Image.new("RGB", page_size_px, "white")
         for image, position in zip(images[start:start + capacity], positions):
-            _paste_clipped(page, _print_sized_pass(image, pass_size_px), position)
+            _paste_clipped(page, _print_sized_pass(image, layout_size_px), position)
         pages.append(page)
     return pages
 

@@ -9,8 +9,7 @@ from PIL import Image
 
 from app.services.pass_db import (PASS_TYPE_REGULAR, PASS_TYPE_SEMIANNUAL,
                                   PASS_TYPE_TEMPORARY, create_pass, init_db)
-from app.services.print_passes import (A4_BATCH_CAPACITY, A4_LANDSCAPE_PAGE_SIZE_PX,
-                                       A4_PAGE_SIZE_PX,
+from app.services.print_passes import (A4_BATCH_CAPACITY, A4_PAGE_SIZE_PX,
                                        PRINT_PASS_SIZE_PX, a4_batch_positions,
                                        compose_a4_print_pages, editable_template_config,
                                        ensure_temporary_stub_template, list_print_templates,
@@ -372,17 +371,18 @@ class PrintPassTests(unittest.TestCase):
 
         pages = compose_a4_print_pages(images)
 
-        pass_width, pass_height = 2362, 827
+        pass_width, pass_height = 2303, 806
         margin_x = 177
-        margin_y = 0
+        margin_y = 56
         third_row_y = margin_y + 2 * (pass_height + margin_y)
 
         self.assertEqual(len(pages), 2)
-        self.assertEqual(pages[0].size, A4_LANDSCAPE_PAGE_SIZE_PX)
+        self.assertEqual(pages[0].size, A4_PAGE_SIZE_PX)
         self.assertEqual(pages[0].getpixel((margin_x, margin_y)), (1, 20, 30))
         self.assertEqual(pages[0].getpixel((margin_x, third_row_y)), (3, 20, 30))
-        self.assertEqual(pages[1].getpixel((margin_x, margin_y)), (4, 20, 30))
-        self.assertEqual(margin_x + pass_width, 2539)
+        self.assertEqual(pages[0].getpixel((margin_x, margin_y + 3 * (pass_height + margin_y))), (4, 20, 30))
+        self.assertEqual(pages[1].getpixel((margin_x, margin_y)), (5, 20, 30))
+        self.assertEqual(margin_x + pass_width, A4_PAGE_SIZE_PX[0])
 
     def test_save_batch_print_pdf_renders_selected_passes(self):
         create_pass(
