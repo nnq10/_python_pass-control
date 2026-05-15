@@ -143,7 +143,7 @@ def _capture_photo(app, on_selected):
             capture.release()
         except Exception:
             logger.exception("Failed to release camera")
-        win.destroy()
+        app._close_modal(win)
 
     def use_photo():
         if state["captured"] is None:
@@ -611,11 +611,11 @@ def _card(app, tree):
     _history_preview(right, list_entity_actions(app.db, "pass", qr, limit=5))
 
     def open_edit():
-        win.destroy()
+        app._close_modal(win)
         app._edit(tree)
 
     def open_history():
-        win.destroy()
+        app._close_modal(win)
         _show_history_for_qr(app, qr)
 
     def delete_current():
@@ -623,7 +623,7 @@ def _card(app, tree):
             return
         soft_delete_pass(app.db, qr)
         safe_record_action(app.db, app.user, "pass.delete", "pass", qr, {"name": name})
-        win.destroy()
+        app._close_modal(win)
         (app.show_semiannual if row[CI["type"]] == PASS_TYPE_SEMIANNUAL else app.show_list)()
 
     buttons=tk.Frame(win,bg=C["panel"])
@@ -679,7 +679,7 @@ def _edit(app,tree):
     pass_type = row[CI["type"]] or PASS_TYPE_REGULAR
     config = PASS_PAGE_CONFIGS.get(pass_type, PASS_PAGE_CONFIGS[PASS_TYPE_REGULAR])
 
-    win=app._modal(f"{config['edit_title']} — {qr}",560,700 if config["photo"] else 620)
+    win=app._modal(f"{config['edit_title']} — {qr}",560,700 if config["photo"] else 620, scroll=True)
     di_e=_suggest_field(win,"Округ *",list_reference_values(app.db, "district"),row[CI["district"]] or "")
     un_e=_suggest_field(win,"В/ч *",list_reference_values(app.db, "unit"),row[CI["unit"]] or "")
     rk_e=_suggest_field(win,"Звание",list_reference_values(app.db, "rank"),row[CI["rank"]] or "")
@@ -761,7 +761,7 @@ def _edit(app,tree):
             logger.exception("Failed to update pass: %s", qr)
             messagebox.showerror("\u041e\u0448\u0438\u0431\u043a\u0430", f"\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u0441\u043e\u0445\u0440\u0430\u043d\u0438\u0442\u044c \u043f\u0440\u043e\u043f\u0443\u0441\u043a:\n{ex}")
             return
-        win.destroy()
+        app._close_modal(win)
         app._toast("\u041f\u0440\u043e\u043f\u0443\u0441\u043a \u043e\u0431\u043d\u043e\u0432\u043b\u0451\u043d",C["green"])
         (app.show_semiannual if pass_type == PASS_TYPE_SEMIANNUAL else app.show_list)()
     Btn(win,text="Сохранить",cmd=save,variant="success",w=504,h=44,fs=13,
@@ -785,7 +785,7 @@ def _del(app,tree):
 
 def show_add(app, pass_type=PASS_TYPE_REGULAR):
     config = PASS_PAGE_CONFIGS.get(pass_type, PASS_PAGE_CONFIGS[PASS_TYPE_REGULAR])
-    win=app._modal(config["add_title"],560,780 if config["photo"] else 680)
+    win=app._modal(config["add_title"],560,780 if config["photo"] else 680, scroll=True)
     di_e=_suggest_field(win,"Округ *",list_reference_values(app.db, "district"))
     un_e=_suggest_field(win,"В/ч *",list_reference_values(app.db, "unit"))
     rk_e=_suggest_field(win,"Звание",list_reference_values(app.db, "rank"))
@@ -870,7 +870,7 @@ def show_add(app, pass_type=PASS_TYPE_REGULAR):
                 logger.exception("Failed to rollback pass after create error: %s", qid)
             messagebox.showerror("\u041e\u0448\u0438\u0431\u043a\u0430", f"\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u0441\u043e\u0437\u0434\u0430\u0442\u044c \u043f\u0440\u043e\u043f\u0443\u0441\u043a:\n{ex}")
             return
-        win.destroy()
+        app._close_modal(win)
         app._toast(f"\u0421\u043e\u0437\u0434\u0430\u043d: {qid}",C["green"])
         (app.show_semiannual if pass_type == PASS_TYPE_SEMIANNUAL else app.show_list)()
     Btn(win,text=config["create_button"],cmd=save,variant="success",w=504,h=44,fs=13,

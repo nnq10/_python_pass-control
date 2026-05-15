@@ -292,7 +292,7 @@ def show_settings(app):
     if not has_permission(app.user, PERMISSION_SETTINGS):
         app._toast("Недостаточно прав")
         return
-    win=app._modal("⚙  Настройки",480,760 if app.user and app.user.get("role")=="admin" else 360)
+    win=app._modal("⚙  Настройки",480,760 if app.user and app.user.get("role")=="admin" else 360, scroll=bool(app.user and app.user.get("role")=="admin"))
 
     tk.Label(win,text="Тема оформления",bg=C["panel"],fg=C["muted"],font=(F,9)).pack(anchor="w",padx=28,pady=(20,8))
     tf=tk.Frame(win,bg=C["panel"]); tf.pack(anchor="w",padx=28)
@@ -315,7 +315,7 @@ def show_settings(app):
                 "old": old_theme,
                 "new": v,
             })
-            win.destroy(); app.show_main()
+            app._close_modal(win); app.show_main()
         fb.bind("<Button-1>",click); fl.bind("<Button-1>",click)
 
     _sep(win).pack(fill="x",padx=28,pady=20)
@@ -351,15 +351,15 @@ def show_settings(app):
 
         Btn(win,text="Создать бэкап",cmd=backup_now,variant="primary",
             w=424,h=40,fs=12,bg=C["panel"]).pack(padx=28,pady=(0,12))
-        Btn(win,text="Восстановить из бэкапа",cmd=lambda:(win.destroy(), _show_backups(app)),variant="ghost",
+        Btn(win,text="Восстановить из бэкапа",cmd=lambda:(app._close_modal(win), _show_backups(app)),variant="ghost",
             w=424,h=40,fs=12,bg=C["panel"]).pack(padx=28,pady=(0,12))
         _sep(win).pack(fill="x",padx=28,pady=12)
         tk.Label(win,text="Данные",bg=C["panel"],fg=C["muted"],font=(F,9)).pack(anchor="w",padx=28,pady=(0,6))
-        Btn(win,text="Проверить целостность базы",cmd=lambda:(win.destroy(), _show_integrity_check(app)),variant="primary",
+        Btn(win,text="Проверить целостность базы",cmd=lambda:(app._close_modal(win), _show_integrity_check(app)),variant="primary",
             w=424,h=40,fs=12,bg=C["panel"]).pack(padx=28,pady=(0,12))
-        Btn(win,text="Найти лишние файлы",cmd=lambda:(win.destroy(), _show_file_cleanup(app)),variant="ghost",
+        Btn(win,text="Найти лишние файлы",cmd=lambda:(app._close_modal(win), _show_file_cleanup(app)),variant="ghost",
             w=424,h=40,fs=12,bg=C["panel"]).pack(padx=28,pady=(0,12))
-        Btn(win,text="Справочники автоподстановки",cmd=lambda:(win.destroy(), _show_reference_catalogs(app)),variant="primary",
+        Btn(win,text="Справочники автоподстановки",cmd=lambda:(app._close_modal(win), _show_reference_catalogs(app)),variant="primary",
             w=424,h=40,fs=12,bg=C["panel"]).pack(padx=28,pady=(0,12))
         _sep(win).pack(fill="x",padx=28,pady=12)
 
@@ -370,11 +370,7 @@ def show_settings(app):
             "old": old_timeout,
             "new": tv.get(),
         })
-        win.destroy(); app._toast("Настройки сохранены",C["green"])
+        app._close_modal(win); app._toast("Настройки сохранены",C["green"])
 
     Btn(win,text="Сохранить",cmd=save,variant="success",
         w=424,h=44,fs=13,bg=C["panel"]).pack(padx=28,pady=8)
-
-# ─────────────────────────────────────────
-#  СКАНЕР
-# ─────────────────────────────────────────

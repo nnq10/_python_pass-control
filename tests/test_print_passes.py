@@ -9,11 +9,12 @@ from PIL import Image
 
 from app.services.pass_db import (PASS_TYPE_REGULAR, PASS_TYPE_SEMIANNUAL,
                                   PASS_TYPE_TEMPORARY, create_pass, init_db)
-from app.services.print_passes import (A4_BATCH_CAPACITY, A4_PAGE_SIZE_PX,
+from app.services.print_passes import (A4_BATCH_CAPACITY, A4_LANDSCAPE_PAGE_SIZE_PX,
+                                       A4_PAGE_SIZE_PX,
                                        PRINT_PASS_SIZE_PX, a4_batch_positions,
                                        compose_a4_print_pages, editable_template_config,
-                                       list_print_templates, render_print_pass,
-                                       save_batch_print_pdf, save_print_pdf,
+                                       ensure_temporary_stub_template, list_print_templates,
+                                       render_print_pass, save_batch_print_pdf, save_print_pdf,
                                        save_print_png, save_template_choice,
                                        save_template_config, selected_template_for_profile,
                                        template_config_path)
@@ -69,7 +70,9 @@ class PrintPassTests(unittest.TestCase):
 
             with patch("app.services.print_passes.TEMPLATES_DIR", templates):
                 self.assertEqual(selected_template_for_profile(PASS_TYPE_REGULAR).name, "month_card.png")
-                self.assertEqual(selected_template_for_profile(PASS_TYPE_TEMPORARY).name, "tmp_card.png")
+                temporary_template = selected_template_for_profile(PASS_TYPE_TEMPORARY)
+                self.assertEqual(temporary_template.name, "temporary_razovy_kpoop.png")
+                self.assertTrue(temporary_template.exists())
 
                 save_template_choice(PASS_TYPE_REGULAR, templates / "semiannual_card.png")
 
@@ -91,6 +94,31 @@ class PrintPassTests(unittest.TestCase):
             self.assertEqual(saved["qr"]["x"], 260)
             self.assertEqual(saved["fields"]["last_name"]["x"], 140)
 
+    def test_editable_template_config_keeps_custom_fields_clean(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            template = Path(tmp) / "custom.png"
+            Image.new("RGBA", (400, 240), (255, 255, 255, 255)).save(template)
+            template.with_suffix(".json").write_text(
+                json.dumps(
+                    {
+                        "base_size": [400, 240],
+                        "qr": {"enabled": True, "x": 300, "y": 20, "size": 70},
+                        "fields": {
+                            "stub_name": {"source": "full_name", "x": 20, "y": 40, "size": 20}
+                        },
+                    },
+                    ensure_ascii=False,
+                ),
+                encoding="utf-8",
+            )
+
+            config = editable_template_config(template)
+
+            self.assertIn("stub_name", config["fields"])
+            self.assertNotIn("last_name", config["fields"])
+            self.assertNotIn("first_name", config["fields"])
+            self.assertNotIn("middle_name", config["fields"])
+
     def test_render_print_pass_places_qr_over_template(self):
         with tempfile.TemporaryDirectory() as tmp:
             template = self._template(Path(tmp))
@@ -109,6 +137,111 @@ class PrintPassTests(unittest.TestCase):
                 if has_black_pixel:
                     break
             self.assertTrue(has_black_pixel)
+
+    def test_render_print_pass_can_repeat_source_fields_and_disable_qr(self):
+        create_pass(
+            self.db,
+            {
+                "qr_code": "TMP-DATA",
+                "district": "Штаб",
+                "unit": "Штаб",
+                "rank": "Заявка начальника",
+                "last_name": "Петров Петр Петрович",
+                "issued_date": "2026-05-14",
+                "days_count": 3,
+                "pass_type": PASS_TYPE_TEMPORARY,
+            },
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            template = Path(tmp) / "temporary_razovy.png"
+            Image.new("RGBA", (500, 220), (255, 255, 255, 255)).save(template)
+            template.with_suffix(".json").write_text(
+                json.dumps(
+                    {
+                        "base_size": [500, 220],
+                        "qr": {"enabled": False},
+                        "fields": {
+                            "stub_name": {"source": "full_name", "x": 20, "y": 20, "size": 22},
+                            "pass_name": {"source": "full_name", "x": 20, "y": 70, "size": 22},
+                            "destination": {"source": "destination", "x": 20, "y": 120, "size": 22},
+                            "basis": {"source": "basis", "x": 20, "y": 170, "size": 22},
+                        },
+                    },
+                    ensure_ascii=False,
+                ),
+                encoding="utf-8",
+            )
+
+            image = render_print_pass(self.db, "TMP-DATA", template)
+
+            has_text_pixel = any(
+                image.getpixel((x, y)) == (0, 0, 0, 255)
+                for y in range(image.height)
+                for x in range(image.width)
+            )
+            qr_corner = image.crop((360, 20, 490, 150))
+            has_qr_pixel = any(
+                qr_corner.getpixel((x, y)) == (0, 0, 0, 255)
+                for y in range(qr_corner.height)
+                for x in range(qr_corner.width)
+            )
+            self.assertTrue(has_text_pixel)
+            self.assertFalse(has_qr_pixel)
+
+    def test_builtin_temporary_stub_template_is_created_on_demand(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            templates = Path(tmp)
+
+            with patch("app.services.print_passes.TEMPLATES_DIR", templates):
+                template = ensure_temporary_stub_template()
+                selected = selected_template_for_profile(PASS_TYPE_TEMPORARY)
+
+            config = json.loads(template.with_suffix(".json").read_text(encoding="utf-8"))
+            self.assertTrue(template.exists())
+            self.assertEqual(selected.name, template.name)
+            self.assertTrue(template.with_suffix(".json").exists())
+            self.assertEqual(config["template_version"], 4)
+            self.assertEqual(config["print_size_cm"], [20.0, 7.0])
+            self.assertEqual(config["binding_margin_left_cm"], 1.5)
+            self.assertEqual(config["fields"], {})
+            self.assertFalse(config["qr"]["enabled"])
+            self.assertEqual(len(config["qr_codes"]), 2)
+            self.assertTrue(all(qr["background"] for qr in config["qr_codes"]))
+
+    def test_builtin_temporary_stub_template_places_qr(self):
+        create_pass(
+            self.db,
+            {
+                "qr_code": "TMP-BUILTIN-QR",
+                "district": "Штаб",
+                "unit": "Штаб",
+                "rank": "Заявка",
+                "last_name": "Сидоров Сергей",
+                "issued_date": "2026-05-14",
+                "days_count": 2,
+                "pass_type": PASS_TYPE_TEMPORARY,
+            },
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            templates = Path(tmp)
+
+            with patch("app.services.print_passes.TEMPLATES_DIR", templates):
+                template = ensure_temporary_stub_template()
+                config = json.loads(template.with_suffix(".json").read_text(encoding="utf-8"))
+                image = render_print_pass(self.db, "TMP-BUILTIN-QR", template)
+
+            for qr in config["qr_codes"]:
+                x, y, size = qr["x"], qr["y"], qr["size"]
+                qr_area = image.crop((x, y, x + size, y + size))
+                black_pixels = sum(
+                    1
+                    for py in range(qr_area.height)
+                    for px in range(qr_area.width)
+                    if qr_area.getpixel((px, py)) == (0, 0, 0, 255)
+                )
+                self.assertGreater(black_pixels, 1000)
+            self.assertEqual(image.info["print_size_cm"], (20.0, 7.0))
+            self.assertEqual(image.info["binding_margin_left_cm"], 1.5)
 
     def test_render_print_pass_places_photo_when_enabled(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -227,6 +360,29 @@ class PrintPassTests(unittest.TestCase):
         self.assertEqual(pages[0].getpixel(positions[0]), (1, 20, 30))
         self.assertEqual(pages[0].getpixel(positions[-1]), (8, 20, 30))
         self.assertEqual(pages[1].getpixel(positions[0]), (9, 20, 30))
+
+    def test_compose_a4_print_pages_uses_wider_temporary_layout(self):
+        images = [
+            Image.new("RGBA", (2000, 700), (index, 20, 30, 255))
+            for index in range(1, 6)
+        ]
+        for image in images:
+            image.info["print_size_cm"] = (20.0, 7.0)
+            image.info["binding_margin_left_cm"] = 1.5
+
+        pages = compose_a4_print_pages(images)
+
+        pass_width, pass_height = 2362, 827
+        margin_x = 177
+        margin_y = 0
+        third_row_y = margin_y + 2 * (pass_height + margin_y)
+
+        self.assertEqual(len(pages), 2)
+        self.assertEqual(pages[0].size, A4_LANDSCAPE_PAGE_SIZE_PX)
+        self.assertEqual(pages[0].getpixel((margin_x, margin_y)), (1, 20, 30))
+        self.assertEqual(pages[0].getpixel((margin_x, third_row_y)), (3, 20, 30))
+        self.assertEqual(pages[1].getpixel((margin_x, margin_y)), (4, 20, 30))
+        self.assertEqual(margin_x + pass_width, 2539)
 
     def test_save_batch_print_pdf_renders_selected_passes(self):
         create_pass(

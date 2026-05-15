@@ -67,7 +67,8 @@ def open_print_dialog(app, qr_codes, template_profile=None, title=None):
     tree = ttk.Treeview(tf, style="T.Treeview", columns=("qr", "name", "unit"), show="headings",
                         yscrollcommand=vsb.set, selectmode="extended", height=12)
     vsb.configure(command=tree.yview)
-    for col, text, width in [("qr", "QR", 120), ("name", "ФИО", 170), ("unit", "В/ч", 80)]:
+    unit_title = "Куда" if template_profile == PASS_TYPE_TEMPORARY else "В/ч"
+    for col, text, width in [("qr", "QR", 120), ("name", "ФИО", 170), ("unit", unit_title, 80)]:
         tree.heading(col, text=text)
         tree.column(col, width=width, minwidth=60)
     tree.pack(fill="both", expand=True)
@@ -96,6 +97,7 @@ def open_print_dialog(app, qr_codes, template_profile=None, title=None):
 
     def refresh_templates():
         nonlocal template_paths
+        selected = selected_template_for_profile(template_profile)
         template_paths = list_print_templates()
         names = [path.name for path in template_paths]
         template_box.configure(values=names)
@@ -103,11 +105,16 @@ def open_print_dialog(app, qr_codes, template_profile=None, title=None):
             template_var.set("")
             preview.configure(text=f"Нет шаблонов в {TEMPLATES_DIR}", image="")
             return
+        if template_profile == PASS_TYPE_TEMPORARY:
+            template_var.set(selected.name if selected else names[0])
+            template_box.configure(state="disabled")
+            return
         if template_var.get() not in names:
-            selected = selected_template_for_profile(template_profile)
             template_var.set(selected.name if selected else names[0])
 
     def selected_template():
+        if template_profile == PASS_TYPE_TEMPORARY:
+            return selected_template_for_profile(template_profile)
         name = template_var.get()
         for path in template_paths:
             if path.name == name:

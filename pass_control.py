@@ -33,7 +33,7 @@ class App(ctk.CTk):
         self._imgs    = []   # защита от GC
         self.show_login()
 
-    # ── стиль таблиц ─────────────────────────
+    # СТИЛИ
     def _apply_tree_style(self):
         s=ttk.Style(); s.theme_use("clam")
         s.configure("T.Treeview",background=C["panel"],foreground=C["text"],
@@ -107,15 +107,94 @@ class App(ctk.CTk):
                     logger.exception("Failed to destroy toast widget")
         t.after(2200,rm)
 
-    def _modal(self, title, w=540, h=640):
-        win=ctk.CTkToplevel(self); win.title(title)
-        win.geometry(f"{w}x{h}"); win.configure(fg_color=C["panel"])
-        win.transient(self); win.grab_set()
+    def _modal(self, title, w=540, h=640, scroll=False):
+        win=tk.Toplevel(self); win.title(title)
+        screen_w=max(800,self.winfo_screenwidth())
+        screen_h=max(600,self.winfo_screenheight())
+        width=min(w,screen_w-80)
+        height=min(h,screen_h-80)
+        x=max(20,(screen_w-width)//2)
+        y=max(20,(screen_h-height)//2)
+        win.geometry(f"{width}x{height}+{x}+{y}"); win.configure(bg=C["panel"])
+        win.minsize(min(width,420),min(height,320))
+        win.resizable(True,True)
+        win.transient(self)
+        win.lift()
+        win.focus_force()
+
+        def close_modal():
+            if not win.winfo_exists():
+                return
+            win.destroy()
+
+        win.protocol("WM_DELETE_WINDOW", close_modal)
+        win.bind("<Escape>",lambda _e:close_modal())
+        win._modal_close=close_modal
         hdr=tk.Frame(win,bg=C["input"])
         hdr.pack(fill="x")
         tk.Label(hdr,text=title,bg=C["input"],fg=C["text"],font=(F,13,"bold")).pack(side="left",padx=20,pady=14)
+        close_btn=tk.Label(hdr,text="×",bg=C["input"],fg=C["muted"],font=(F,18,"bold"),cursor="hand2")
+        close_btn.pack(side="right",padx=16,pady=8)
+        close_btn.bind("<Enter>",lambda _e:close_btn.configure(fg=C["red"]))
+        close_btn.bind("<Leave>",lambda _e:close_btn.configure(fg=C["muted"]))
+        close_btn.bind("<ButtonRelease-1>",lambda _e:close_modal())
         _sep(win).pack(fill="x")
-        return win
+        if not scroll:
+            return win
+
+        shell=tk.Frame(win,bg=C["panel"])
+        shell.pack(fill="both",expand=True)
+        canvas=tk.Canvas(shell,bg=C["panel"],highlightthickness=0,bd=0)
+        vsb=ttk.Scrollbar(shell,orient="vertical",command=canvas.yview)
+        body=tk.Frame(canvas,bg=C["panel"])
+        canvas_id=canvas.create_window((0,0),window=body,anchor="nw")
+        canvas.configure(yscrollcommand=vsb.set)
+        canvas.pack(side="left",fill="both",expand=True)
+        vsb.pack(side="right",fill="y")
+
+        def refresh_scroll(_event=None):
+            canvas.configure(scrollregion=canvas.bbox("all"))
+
+        def resize_body(event):
+            canvas.itemconfigure(canvas_id,width=event.width)
+
+        def wheel(event):
+            canvas.yview_scroll(int(-1*(event.delta/120)),"units")
+
+        def bind_wheel(_event=None):
+            win.bind_all("<MouseWheel>",wheel)
+
+        def unbind_wheel(_event=None):
+            try:
+                win.unbind_all("<MouseWheel>")
+            except tk.TclError:
+                pass
+
+        def cleanup(event):
+            if event.widget is win:
+                unbind_wheel()
+
+        body.bind("<Configure>",refresh_scroll)
+        canvas.bind("<Configure>",resize_body)
+        canvas.bind("<Enter>",bind_wheel)
+        canvas.bind("<Leave>",unbind_wheel)
+        body.bind("<Enter>",bind_wheel)
+        body.bind("<Leave>",unbind_wheel)
+        win.bind("<Destroy>",cleanup,add="+")
+
+        body._modal_window=win
+        body._modal_close=close_modal
+        return body
+
+    def _close_modal(self, modal):
+        close=getattr(modal,"_modal_close",None)
+        if close:
+            close()
+            return
+        try:
+            modal.destroy()
+        except tk.TclError:
+            pass
 
     def _go(self, cb):
         ov=tk.Frame(self,bg=C["bg"]); ov.place(x=0,y=0,relwidth=1,relheight=1); ov.lift()
@@ -124,9 +203,9 @@ class App(ctk.CTk):
             else: ov.destroy(); cb()
         ov.after(70,done)
 
-    # ─────────────────────────────────────────
+
     #  ЛОГИН
-    # ─────────────────────────────────────────
+  
     def _tick(self):
         try:
             self._clklbl.configure(text=datetime.now().strftime("%d.%m.%Y  %H:%M:%S"))
@@ -134,9 +213,9 @@ class App(ctk.CTk):
         except Exception:
             logger.exception("Clock tick failed")
 
-    # ─────────────────────────────────────────
+  
     #  НАСТРОЙКИ
-    # ─────────────────────────────────────────
+    
 
     def show_login(self):
         return login.show_login(self)
@@ -227,7 +306,7 @@ class App(ctk.CTk):
 
     def _clear_trash(self, tree):
         return trash._clear_trash(self, tree)
-
+    
 
 if __name__ == "__main__":
     app = App()

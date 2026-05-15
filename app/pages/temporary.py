@@ -62,8 +62,27 @@ def _selected_qrs(app, tree):
 
 def _print_selected(app, tree):
     qrs = _selected_qrs(app, tree)
-    if qrs:
-        open_print_dialog(app, qrs, template_profile=PASS_TYPE_TEMPORARY)
+    if not qrs:
+        return
+    open_print_dialog(app, qrs, template_profile=PASS_TYPE_TEMPORARY)
+
+
+def _print_qr_book(app, on_saved=None):
+    created = create_temporary_pool(app.db, TEMP_POOL_SIZE)
+    if created:
+        safe_record_action(app.db, app.user, "temp.pool_create", "temporary_pool", "TMP", {"created": len(created), "reason": "print_book"})
+        if on_saved:
+            on_saved()
+    qrs = [row[CI["qr"]] for row in list_temporary_passes(app.db, "", "all")]
+    if not qrs:
+        app._toast("Нет временных QR для печати")
+        return
+    open_print_dialog(
+        app,
+        qrs,
+        template_profile=PASS_TYPE_TEMPORARY,
+        title=f"Печать QR-книги — {len(qrs)} разовых пропусков",
+    )
 
 
 def _status_tag(status):
@@ -75,24 +94,31 @@ def _status_tag(status):
     }.get(status, "")
 
 
-def _issue_modal(app, qr_code=None, on_saved=None):
+def _next_free_row(app):
+    row = next_free_temporary_pass(app.db)
+    if row:
+        return row
+    created = create_temporary_pool(app.db, TEMP_POOL_SIZE)
+    if created:
+        safe_record_action(app.db, app.user, "temp.pool_create", "temporary_pool", "TMP", {"created": len(created), "reason": "auto"})
+        return next_free_temporary_pass(app.db)
+    return None
+
+
+def _issue_modal(app, qr_code=None, on_saved=None, after_issue=None):
     if not qr_code:
-        row = next_free_temporary_pass(app.db)
+        row = _next_free_row(app)
         if not row:
             app._toast("Свободных временных QR нет")
             return
         qr_code = row[CI["qr"]]
 
-    win = app._modal(f"Выдать временный пропуск — {qr_code}", 560, 920)
+    win = app._modal(f"Выдать временный пропуск — {qr_code}", 560, 760, scroll=True)
     tk.Label(win, text=f"QR: {qr_code}", bg=C["panel"], fg=C["accent"], font=(F, 14, "bold")).pack(anchor="w", padx=28, pady=(18, 4))
 
-    di_e = _suggest_field(win, "Округ *", list_reference_values(app.db, "district"))
-    un_e = _suggest_field(win, "В/ч *", list_reference_values(app.db, "unit"))
-    rk_e = _suggest_field(win, "Звание", list_reference_values(app.db, "rank"))
-    ln_e = _field(win, "Фамилия *")
-    fn_e = _field(win, "Имя")
-    mn_e = _field(win, "Отчество")
-    ph_e = _field(win, "Телефон")
+    fio_e = _field(win, "ФИО *")
+    destination_e = _suggest_field(win, "Куда войти *", list_reference_values(app.db, "unit"))
+    basis_e = _field(win, "Основание *")
     is_e = _field(win, "Дата выдачи (ГГГГ-ММ-ДД)", datetime.now().strftime("%Y-%m-%d"))
 
     tk.Label(win, text="Срок временного пропуска", bg=C["panel"], fg=C["muted"], font=(F, 9)).pack(anchor="w", padx=28, pady=(12, 4))
@@ -113,14 +139,26 @@ def _issue_modal(app, qr_code=None, on_saved=None):
         ).pack(side="left", padx=3)
 
     def save():
+        fio = fio_e.get().strip()
+        destination = destination_e.get().strip()
+        basis = basis_e.get().strip()
+        if not fio:
+            app._toast("Укажите ФИО")
+            return
+        if not destination:
+            app._toast("Укажите куда войти")
+            return
+        if not basis:
+            app._toast("Укажите основание")
+            return
         data = {
-            "district": di_e.get(),
-            "unit": un_e.get(),
-            "rank": rk_e.get(),
-            "last_name": ln_e.get(),
-            "first_name": fn_e.get(),
-            "middle_name": mn_e.get(),
-            "phone": ph_e.get(),
+            "district": destination,
+            "unit": destination,
+            "rank": basis,
+            "last_name": fio,
+            "first_name": "",
+            "middle_name": "",
+            "phone": "",
             "issued_date": is_e.get(),
             "days_count": days_var.get(),
         }
@@ -129,8 +167,8 @@ def _issue_modal(app, qr_code=None, on_saved=None):
             name = _name(row)
             safe_record_action(app.db, app.user, "temp.issue", "pass", qr_code, {
                 "name": name,
-                "district": row[CI["district"]],
-                "unit": row[CI["unit"]],
+                "destination": row[CI["unit"]],
+                "basis": row[CI["rank"]],
                 "days": row[CI["days"]],
             })
         except ValidationError as ex:
@@ -143,12 +181,29 @@ def _issue_modal(app, qr_code=None, on_saved=None):
             logger.exception("Failed to issue temporary pass: %s", qr_code)
             messagebox.showerror("Ошибка", f"Не удалось выдать временный пропуск:\n{ex}")
             return
-        win.destroy()
+        app._close_modal(win)
         app._toast(f"Выдан временный QR: {qr_code}", C["green"])
         if on_saved:
             on_saved()
+        if after_issue:
+            after_issue(qr_code)
 
-    Btn(win, text="Выдать", cmd=save, variant="success", w=504, h=44, fs=13, bg=C["panel"]).pack(padx=28, pady=18)
+    button_text = "Оформить и печатать" if after_issue else "Выдать"
+    Btn(win, text=button_text, cmd=save, variant="success", w=504, h=44, fs=13, bg=C["panel"]).pack(padx=28, pady=18)
+
+
+def _issue_and_print(app, on_saved=None):
+    _issue_modal(
+        app,
+        None,
+        on_saved,
+        after_issue=lambda qr: open_print_dialog(
+            app,
+            [qr],
+            template_profile=PASS_TYPE_TEMPORARY,
+            title="Печать разового пропуска с корешком",
+        ),
+    )
 
 
 def show_temporary(app):
@@ -219,7 +274,7 @@ def show_temporary(app):
         ("qr", "QR", 120),
         ("status", "Статус", 100),
         ("name", "ФИО", 220),
-        ("unit", "В/ч", 100),
+        ("unit", "Куда", 140),
         ("issued", "Выдан", 100),
         ("days", "Срок", 70),
         ("phone", "Телефон", 130),
@@ -288,10 +343,12 @@ def show_temporary(app):
 
     bf = tk.Frame(wrap, bg=C["bg"])
     bf.pack(pady=10)
-    Btn(bf, text="Выдать следующий", cmd=lambda: _issue_modal(app, None, load), variant="success", w=170, h=38, bg=C["bg"]).pack(side="left", padx=5)
-    Btn(bf, text="Выдать выбранный", cmd=issue_selected, variant="primary", w=170, h=38, bg=C["bg"]).pack(side="left", padx=5)
+    Btn(bf, text="Оформить и печать", cmd=lambda: _issue_and_print(app, load), variant="success", w=190, h=38, bg=C["bg"]).pack(side="left", padx=5)
+    Btn(bf, text="Выдать следующий", cmd=lambda: _issue_modal(app, None, load), variant="primary", w=170, h=38, bg=C["bg"]).pack(side="left", padx=5)
+    Btn(bf, text="Выдать выбранный", cmd=issue_selected, variant="ghost", w=170, h=38, bg=C["bg"]).pack(side="left", padx=5)
     Btn(bf, text="Вернули", cmd=return_selected, variant="ghost", w=130, h=38, bg=C["bg"]).pack(side="left", padx=5)
     Btn(bf, text="Печать", cmd=lambda: _print_selected(app, tree), variant="primary", w=130, h=38, bg=C["bg"]).pack(side="left", padx=5)
+    Btn(bf, text="QR-книга", cmd=lambda: _print_qr_book(app, load), variant="success", w=130, h=38, bg=C["bg"]).pack(side="left", padx=5)
     if app.user and app.user.get("role") == "admin":
         Btn(bf, text="Создать QR-пул", cmd=generate_pool, variant="ghost", w=160, h=38, bg=C["bg"]).pack(side="left", padx=5)
 

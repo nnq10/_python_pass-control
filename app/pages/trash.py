@@ -116,7 +116,7 @@ def _delete_forever(app,tree):
 
 
 def _clear_trash(app,tree):
-    # Считаем сколько записей будет удалено
+    
     n_del,n_exp=trash_counts(app.db)
     total=n_del+n_exp
     if total==0:
@@ -126,7 +126,7 @@ def _clear_trash(app,tree):
             f"({n_del} удалённых + {n_exp} просроченных).\n\n"
             "Это действие необратимо. Продолжить?"):
         return
-    # Собираем все qr для удаления файлов
+    
     for qr,ph in list_trash_file_refs(app.db):
         try:
             ph_path = app_path(ph) if ph else None

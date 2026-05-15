@@ -85,7 +85,7 @@ def show_users(app):
 def _user_modal(app, username=None, on_saved=None):
     users={u["username"]:u for u in list_users()}
     current=users.get(username or "", {})
-    win=app._modal("Пользователь",620,780)
+    win=app._modal("Пользователь",620,780, scroll=True)
 
     login_e=_field(win,"Логин",username or "",bg=C["panel"])
     if username:
@@ -156,7 +156,7 @@ def _user_modal(app, username=None, on_saved=None):
                 app.user["name"] = name_e.get().strip() or login
                 app.user["role"] = role.get()
                 app.user["permissions"] = normalize_permissions(permissions, role.get())
-            win.destroy()
+            app._close_modal(win)
             app._toast("Пользователь сохранён",C["green"])
             if on_saved: on_saved()
             else: app.show_users()
@@ -167,6 +167,4 @@ def _user_modal(app, username=None, on_saved=None):
     Btn(win,text="Сохранить",cmd=save,variant="success",w=564,h=44,fs=13,
         bg=C["panel"]).pack(padx=28,pady=16)
 
-# ─────────────────────────────────────────
-#  КОРЗИНА
-# ─────────────────────────────────────────
+

@@ -13,11 +13,42 @@ FIELD_TITLES = {
     "last_name": "Фамилия",
     "first_name": "Имя",
     "middle_name": "Отчество",
+    "full_name": "ФИО",
+    "destination": "Куда войти",
+    "basis": "Основание",
+    "issued_day": "День",
+    "issued_month": "Месяц",
+    "issued_year": "Год",
+    "issued_year_short": "Год",
 }
 
 
-def _qr_position(config, image_size):
-    qr = config["qr"]
+def _qr_entries(config):
+    qr_codes = config.get("qr_codes")
+    if isinstance(qr_codes, list) and qr_codes:
+        return [(f"qr:{index}", qr.get("title") or f"QR {index + 1}", qr) for index, qr in enumerate(qr_codes)]
+    return [("qr", "QR", config.setdefault("qr", {}))]
+
+
+def _qr_config(config, key):
+    if key == "qr":
+        return config.setdefault("qr", {})
+    if key.startswith("qr:"):
+        try:
+            index = int(key.split(":", 1)[1])
+        except ValueError:
+            return None
+        qr_codes = config.get("qr_codes") or []
+        if 0 <= index < len(qr_codes):
+            return qr_codes[index]
+    return None
+
+
+def _is_qr_key(key):
+    return key == "qr" or str(key).startswith("qr:")
+
+
+def _qr_position(qr, image_size):
     size = int(qr.get("size", 120))
     margin = int(qr.get("margin", 30))
     raw_x = qr.get("x", "right")
@@ -41,6 +72,14 @@ def _clamp(value, low, high):
     return max(low, min(high, value))
 
 
+def _field_items(config):
+    return list((config.get("fields") or {}).items())
+
+
+def _field_title(field, options):
+    return options.get("title") or FIELD_TITLES.get(field) or FIELD_TITLES.get(options.get("source")) or field
+
+
 def open_template_editor(app, template_path, on_saved=None):
     win=app._modal("Редактор шаблона",1120,960)
     root=tk.Frame(win,bg=C["panel"])
@@ -55,6 +94,7 @@ def open_template_editor(app, template_path, on_saved=None):
         "canvas_image": None,
         "suppress_table_event": False,
     }
+    step_var=tk.IntVar(value=10)
 
     left=tk.Frame(root,bg=C["panel"])
     left.pack(side="left",fill="both",expand=True,padx=(0,14))
@@ -89,19 +129,21 @@ def open_template_editor(app, template_path, on_saved=None):
         return ox+x*scale,oy+y*scale
 
     def init_table():
-        table.insert("", "end", iid="qr", values=("QR", 0, 0, 0))
+        for key,title,_qr in _qr_entries(state["config"]):
+            table.insert("", "end", iid=key, values=(title, 0, 0, 0))
         table.insert("", "end", iid="photo", values=("Фото", 0, 0, 0))
-        for field,title in FIELD_TITLES.items():
-            table.insert("", "end", iid=field, values=(title, 0, 0, 0))
+        for field,options in _field_items(state["config"]):
+            table.insert("", "end", iid=field, values=(_field_title(field, options), 0, 0, 0))
 
     def update_table_values():
-        qx,qy,qs=_qr_position(state["config"],image.size)
-        table.item("qr", values=("QR", qx, qy, qs))
+        for key,title,qr in _qr_entries(state["config"]):
+            qx,qy,qs=_qr_position(qr,image.size)
+            table.item(key, values=(title, qx, qy, qs))
         px,py,pw,ph,enabled=_photo_position(state["config"])
         table.item("photo", values=("Фото" if enabled else "Фото выкл.", px, py, f"{pw}x{ph}"))
-        for field,title in FIELD_TITLES.items():
+        for field,options in _field_items(state["config"]):
             options=state["config"]["fields"][field]
-            table.item(field, values=(title, int(options["x"]), int(options["y"]), int(options.get("size", 28))))
+            table.item(field, values=(_field_title(field, options), int(options["x"]), int(options["y"]), int(options.get("size", 28))))
 
     def sync_table_selection(key):
         if not key or not table.exists(key) or table.selection() == (key,):
@@ -113,6 +155,7 @@ def open_template_editor(app, template_path, on_saved=None):
 
     def set_selected(key, sync_table=True):
         state["selected"]=key
+        canvas.focus_set()
         if sync_table:
             sync_table_selection(key)
         draw()
@@ -126,12 +169,13 @@ def open_template_editor(app, template_path, on_saved=None):
         state["canvas_image"]=ImageTk.PhotoImage(shown)
         canvas.create_image(ox,oy,anchor="nw",image=state["canvas_image"])
 
-        qx,qy,qs=_qr_position(state["config"],image.size)
-        x1,y1=to_canvas(qx,qy,scale,ox,oy)
-        x2,y2=to_canvas(qx+qs,qy+qs,scale,ox,oy)
-        qr_color=C["green"] if state.get("selected")=="qr" else C["accent"]
-        canvas.create_rectangle(x1,y1,x2,y2,outline=qr_color,width=3,tags=("draggable","item:qr"))
-        canvas.create_text(x1+6,y1+6,anchor="nw",text="QR",fill=qr_color,font=(F,12,"bold"),tags=("draggable","item:qr"))
+        for key,title,qr in _qr_entries(state["config"]):
+            qx,qy,qs=_qr_position(qr,image.size)
+            x1,y1=to_canvas(qx,qy,scale,ox,oy)
+            x2,y2=to_canvas(qx+qs,qy+qs,scale,ox,oy)
+            qr_color=C["green"] if state.get("selected")==key else C["accent"]
+            canvas.create_rectangle(x1,y1,x2,y2,outline=qr_color,width=3,tags=("draggable",f"item:{key}"))
+            canvas.create_text(x1+6,y1+6,anchor="nw",text=title,fill=qr_color,font=(F,12,"bold"),tags=("draggable",f"item:{key}"))
 
         px,py,pw,ph,photo_enabled=_photo_position(state["config"])
         px1,py1=to_canvas(px,py,scale,ox,oy)
@@ -141,10 +185,11 @@ def open_template_editor(app, template_path, on_saved=None):
         canvas.create_text(px1+6,py1+6,anchor="nw",text="Фото" if photo_enabled else "Фото выкл.",
                            fill=photo_color,font=(F,12,"bold"),tags=("draggable","item:photo"))
 
-        for field,title in FIELD_TITLES.items():
+        for field,options in _field_items(state["config"]):
             options=state["config"]["fields"][field]
             x,y=to_canvas(int(options["x"]),int(options["y"]),scale,ox,oy)
             color=C["green"] if state.get("selected")==field else C["accent"]
+            title=_field_title(field, options)
             text_id=canvas.create_text(x,y,anchor="nw",text=title,fill=color,font=(F,13,"bold"),tags=("draggable",f"item:{field}"))
             bbox=canvas.bbox(text_id)
             if bbox:
@@ -174,12 +219,15 @@ def open_template_editor(app, template_path, on_saved=None):
         scale=state["scale"]
         dx=(event.x-last_x)/scale
         dy=(event.y-last_y)/scale
-        if key=="qr":
-            x,y,size=_qr_position(state["config"],image.size)
+        if _is_qr_key(key):
+            qr=_qr_config(state["config"],key)
+            if not qr:
+                return
+            x,y,size=_qr_position(qr,image.size)
             x=_clamp(round(x+dx),0,image.width-size)
             y=_clamp(round(y+dy),0,image.height-size)
-            state["config"]["qr"]["x"]=x
-            state["config"]["qr"]["y"]=y
+            qr["x"]=x
+            qr["y"]=y
         elif key=="photo":
             photo=state["config"].setdefault("photo", {})
             x,y,width,height,_enabled=_photo_position(state["config"])
@@ -196,12 +244,25 @@ def open_template_editor(app, template_path, on_saved=None):
         state["drag"]=None
 
     def resize_qr(delta):
-        x,y,size=_qr_position(state["config"],image.size)
+        key=state.get("selected")
+        if not _is_qr_key(key):
+            entries=_qr_entries(state["config"])
+            key=entries[0][0] if entries else "qr"
+        qr=_qr_config(state["config"],key)
+        if not qr:
+            return
+        x,y,size=_qr_position(qr,image.size)
         size=_clamp(size+delta,40,min(image.size))
-        state["config"]["qr"]["size"]=size
-        state["config"]["qr"]["x"]=_clamp(x,0,image.width-size)
-        state["config"]["qr"]["y"]=_clamp(y,0,image.height-size)
-        set_selected("qr")
+        qr["size"]=size
+        qr["x"]=_clamp(x,0,image.width-size)
+        qr["y"]=_clamp(y,0,image.height-size)
+        set_selected(key)
+
+    def selected_step():
+        try:
+            return max(1, int(step_var.get()))
+        except (TypeError, ValueError):
+            return 10
 
     def resize_photo(delta):
         photo=state["config"].setdefault("photo", {})
@@ -219,14 +280,20 @@ def open_template_editor(app, template_path, on_saved=None):
         photo["enabled"]=not bool(photo.get("enabled", False))
         set_selected("photo")
 
-    def nudge(dx,dy):
+    def nudge(dx,dy, amount=None):
         key=state.get("selected")
         if not key:
             return
-        if key=="qr":
-            x,y,size=_qr_position(state["config"],image.size)
-            state["config"]["qr"]["x"]=_clamp(x+dx,0,image.width-size)
-            state["config"]["qr"]["y"]=_clamp(y+dy,0,image.height-size)
+        amount=selected_step() if amount is None else max(1, int(amount))
+        dx*=amount
+        dy*=amount
+        if _is_qr_key(key):
+            qr=_qr_config(state["config"],key)
+            if not qr:
+                return
+            x,y,size=_qr_position(qr,image.size)
+            qr["x"]=_clamp(x+dx,0,image.width-size)
+            qr["y"]=_clamp(y+dy,0,image.height-size)
         elif key=="photo":
             photo=state["config"].setdefault("photo", {})
             x,y,width,height,_enabled=_photo_position(state["config"])
@@ -237,6 +304,26 @@ def open_template_editor(app, template_path, on_saved=None):
             options["x"]=_clamp(int(options["x"])+dx,0,image.width)
             options["y"]=_clamp(int(options["y"])+dy,0,image.height)
         draw()
+
+    def keyboard_nudge(event):
+        if not state.get("selected"):
+            return None
+        keys={
+            "Left": (-1,0),
+            "Right": (1,0),
+            "Up": (0,-1),
+            "Down": (0,1),
+        }
+        if event.keysym not in keys:
+            return None
+        amount=selected_step()
+        if event.state & 0x0001:
+            amount*=5
+        if event.state & 0x0004:
+            amount=1
+        dx,dy=keys[event.keysym]
+        nudge(dx,dy,amount)
+        return "break"
 
     def save():
         state["config"]["base_size"]=[image.width,image.height]
@@ -262,7 +349,27 @@ def open_template_editor(app, template_path, on_saved=None):
     canvas.tag_bind("draggable","<B1-Motion>",drag_move)
     canvas.tag_bind("draggable","<ButtonRelease-1>",drag_end)
     table.bind("<<TreeviewSelect>>",select_from_table)
+    for key in ("<Left>","<Right>","<Up>","<Down>"):
+        win.bind(key, keyboard_nudge)
     init_table()
+
+    step_box=tk.Frame(right,bg=C["panel"])
+    step_box.pack(fill="x",pady=(0,10))
+    tk.Label(step_box,text="Шаг",bg=C["panel"],fg=C["muted"],font=(F,9)).pack(anchor="w",pady=(0,5))
+    step_row=tk.Frame(step_box,bg=C["panel"])
+    step_row.pack(anchor="w")
+    for value in (1,5,10,25):
+        tk.Radiobutton(
+            step_row,
+            text=str(value),
+            value=value,
+            variable=step_var,
+            bg=C["panel"],
+            fg=C["text"],
+            selectcolor=C["input"],
+            activebackground=C["panel"],
+            font=(F,10),
+        ).pack(side="left",padx=(0,8))
 
     arrows=tk.Frame(right,bg=C["panel"])
     arrows.pack(anchor="center",pady=(0,10))
@@ -273,14 +380,14 @@ def open_template_editor(app, template_path, on_saved=None):
 
     qr_buttons=tk.Frame(right,bg=C["panel"])
     qr_buttons.pack(fill="x",pady=(0,12))
-    Btn(qr_buttons,text="QR -",cmd=lambda:resize_qr(-4),variant="ghost",w=92,h=36,fs=10,bg=C["panel"]).pack(side="left",padx=(0,8))
-    Btn(qr_buttons,text="QR +",cmd=lambda:resize_qr(4),variant="ghost",w=92,h=36,fs=10,bg=C["panel"]).pack(side="left")
+    Btn(qr_buttons,text="QR -",cmd=lambda:resize_qr(-selected_step()),variant="ghost",w=92,h=36,fs=10,bg=C["panel"]).pack(side="left",padx=(0,8))
+    Btn(qr_buttons,text="QR +",cmd=lambda:resize_qr(selected_step()),variant="ghost",w=92,h=36,fs=10,bg=C["panel"]).pack(side="left")
 
     photo_buttons=tk.Frame(right,bg=C["panel"])
     photo_buttons.pack(fill="x",pady=(0,12))
     Btn(photo_buttons,text="Фото",cmd=toggle_photo,variant="primary",w=78,h=36,fs=10,bg=C["panel"]).pack(side="left",padx=(0,8))
-    Btn(photo_buttons,text="Фото -",cmd=lambda:resize_photo(-4),variant="ghost",w=78,h=36,fs=10,bg=C["panel"]).pack(side="left",padx=(0,8))
-    Btn(photo_buttons,text="Фото +",cmd=lambda:resize_photo(4),variant="ghost",w=78,h=36,fs=10,bg=C["panel"]).pack(side="left")
+    Btn(photo_buttons,text="Фото -",cmd=lambda:resize_photo(-selected_step()),variant="ghost",w=78,h=36,fs=10,bg=C["panel"]).pack(side="left",padx=(0,8))
+    Btn(photo_buttons,text="Фото +",cmd=lambda:resize_photo(selected_step()),variant="ghost",w=78,h=36,fs=10,bg=C["panel"]).pack(side="left")
 
     tk.Frame(right,bg=C["panel"]).pack(fill="y",expand=True)
     Btn(right,text="Сохранить координаты",cmd=save,variant="success",w=260,h=42,fs=12,bg=C["panel"]).pack(fill="x",pady=(0,10))
