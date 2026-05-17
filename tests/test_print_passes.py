@@ -5,7 +5,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from PIL import Image
+from PIL import Image, PdfParser
 
 from app.services.pass_db import (PASS_TYPE_REGULAR, PASS_TYPE_SEMIANNUAL,
                                   PASS_TYPE_TEMPORARY, create_pass, init_db)
@@ -16,7 +16,7 @@ from app.services.print_passes import (A4_BATCH_CAPACITY, A4_PAGE_SIZE_PX,
                                        render_print_pass, save_batch_print_pdf, save_print_pdf,
                                        save_print_png, save_template_choice,
                                        save_template_config, selected_template_for_profile,
-                                       template_config_path)
+                                       template_config_path, _save_pdf_pages)
 
 
 class PrintPassTests(unittest.TestCase):
@@ -406,6 +406,46 @@ class PrintPassTests(unittest.TestCase):
 
             self.assertTrue(pdf.exists())
             self.assertTrue(pdf.name.startswith("batch_2_"))
+
+    def test_save_batch_print_pdf_streams_pages(self):
+        calls = []
+
+        def fake_render(_db, qr_code, _template):
+            calls.append(qr_code)
+            return Image.new("RGBA", (300, 180), (len(calls), 20, 30, 255))
+
+        def fake_save(_path, pages):
+            first_page = next(iter(pages))
+            self.assertEqual(first_page.size, A4_PAGE_SIZE_PX)
+
+        qr_codes = [f"TMP-{index:04d}" for index in range(A4_BATCH_CAPACITY + 5)]
+        with tempfile.TemporaryDirectory() as tmp, \
+             patch("app.services.print_passes.render_print_pass", side_effect=fake_render), \
+             patch("app.services.print_passes._save_pdf_pages", side_effect=fake_save), \
+             patch("app.services.print_passes._batch_output_path", return_value=Path(tmp) / "batch.pdf"):
+            save_batch_print_pdf(self.db, qr_codes, Path("template.png"))
+
+        self.assertEqual(calls, qr_codes[:A4_BATCH_CAPACITY])
+
+    def test_save_pdf_pages_writes_single_trailer_document(self):
+        pages = [
+            Image.new("RGB", (80, 40), "white"),
+            Image.new("RGB", (80, 40), "red"),
+            Image.new("RGB", (80, 40), "blue"),
+        ]
+
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "batch.pdf"
+            _save_pdf_pages(path, pages)
+            data = path.read_bytes()
+            parser = PdfParser.PdfParser(filename=str(path), mode="rb")
+            try:
+                self.assertEqual(len(parser.pages), 3)
+            finally:
+                parser.close()
+
+        self.assertEqual(data.count(b"\ntrailer\n"), 1)
+        self.assertNotIn(b"/Prev", data)
 
 
 if __name__ == "__main__":

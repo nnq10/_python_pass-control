@@ -1,8 +1,10 @@
 import json
 import os
 import re
+import zlib
 from copy import deepcopy
 from datetime import datetime, timedelta
+from itertools import chain
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont, ImageOps
@@ -755,34 +757,155 @@ def _paste_clipped(page, tile, position):
     page.paste(tile, (x, y))
 
 
+def _batch_layout(first_image):
+    pass_size_px = _image_batch_size_px(first_image)
+    binding_margin_left_px = _image_binding_margin_left_px(first_image)
+    page_size_px = _a4_page_size_for_pass(pass_size_px, binding_margin_left_px)
+    layout_size_px = _fit_pass_size_to_page(pass_size_px, page_size_px, binding_margin_left_px)
+    positions = a4_batch_positions_for_size(layout_size_px, page_size_px, binding_margin_left_px)
+    return page_size_px, layout_size_px, positions
+
+
+def _compose_a4_page(images, page_size_px, layout_size_px, positions):
+    page = Image.new("RGB", page_size_px, "white")
+    for image, position in zip(images, positions):
+        _paste_clipped(page, _print_sized_pass(image, layout_size_px), position)
+    return page
+
+
+def _chunked_with_first(first_item, rest_items, chunk_size):
+    chunk = [first_item]
+    for item in rest_items:
+        chunk.append(item)
+        if len(chunk) >= chunk_size:
+            yield chunk
+            chunk = []
+    if chunk:
+        yield chunk
+
+
 def compose_a4_print_pages(images):
     images = list(images)
     if not images:
         raise ValueError("no passes selected")
-    pass_size_px = _image_batch_size_px(images[0])
-    binding_margin_left_px = _image_binding_margin_left_px(images[0])
-    page_size_px = _a4_page_size_for_pass(pass_size_px, binding_margin_left_px)
-    layout_size_px = _fit_pass_size_to_page(pass_size_px, page_size_px, binding_margin_left_px)
-    positions = a4_batch_positions_for_size(layout_size_px, page_size_px, binding_margin_left_px)
+    page_size_px, layout_size_px, positions = _batch_layout(images[0])
     capacity = len(positions)
-    pages = []
-    for start in range(0, len(images), capacity):
-        page = Image.new("RGB", page_size_px, "white")
-        for image, position in zip(images[start:start + capacity], positions):
-            _paste_clipped(page, _print_sized_pass(image, layout_size_px), position)
-        pages.append(page)
-    return pages
+    return [
+        _compose_a4_page(chunk, page_size_px, layout_size_px, positions)
+        for chunk in _chunked_with_first(images[0], iter(images[1:]), capacity)
+    ]
+
+
+def _batch_print_pages(db, qr_codes, template_path):
+    qr_iter = iter(qr_codes)
+    try:
+        first_qr = next(qr_iter)
+    except StopIteration:
+        raise ValueError("no passes selected")
+    first_image = render_print_pass(db, first_qr, template_path)
+    page_size_px, layout_size_px, positions = _batch_layout(first_image)
+    capacity = len(positions)
+
+    def rendered_rest():
+        for qr_code in qr_iter:
+            yield render_print_pass(db, qr_code, template_path)
+
+    for chunk in _chunked_with_first(first_image, rendered_rest(), capacity):
+        yield _compose_a4_page(chunk, page_size_px, layout_size_px, positions)
+
+
+def _pdf_number(value):
+    return f"{value:.4f}".rstrip("0").rstrip(".")
+
+
+def _write_pdf_object(handle, offsets, object_id, body):
+    offsets[object_id] = handle.tell()
+    handle.write(f"{object_id} 0 obj\n".encode("ascii"))
+    handle.write(body)
+    handle.write(b"\nendobj\n")
+
+
+def _pdf_image_stream(page):
+    image = page.convert("RGB")
+    return zlib.compress(image.tobytes(), level=6), image.size
+
+
+def _save_pdf_pages(path, pages):
+    page_iter = iter(pages)
+    try:
+        first_page = next(page_iter)
+    except StopIteration:
+        raise ValueError("no pages to save")
+
+    page_ids = []
+    offsets = [0, 0, 0]
+    next_object_id = 3
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp_path = path.with_name(f"{path.name}.tmp")
+    try:
+        with tmp_path.open("wb") as handle:
+            handle.write(b"%PDF-1.4\n%\xe2\xe3\xcf\xd3\n")
+            for index, page in enumerate(chain((first_page,), page_iter), start=1):
+                image_data, (width_px, height_px) = _pdf_image_stream(page)
+                width_pt = _pdf_number(width_px * 72.0 / DEFAULT_DPI)
+                height_pt = _pdf_number(height_px * 72.0 / DEFAULT_DPI)
+                name = f"Im{index}"
+
+                page_id = next_object_id
+                content_id = next_object_id + 1
+                image_id = next_object_id + 2
+                next_object_id += 3
+                offsets.extend([0, 0, 0])
+                page_ids.append(page_id)
+
+                image_header = (
+                    f"<< /Type /XObject /Subtype /Image /Width {width_px} /Height {height_px} "
+                    f"/ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /FlateDecode "
+                    f"/Length {len(image_data)} >>\nstream\n"
+                ).encode("ascii")
+                _write_pdf_object(handle, offsets, image_id, image_header + image_data + b"\nendstream")
+
+                content = f"q {width_pt} 0 0 {height_pt} 0 0 cm /{name} Do Q\n".encode("ascii")
+                content_body = f"<< /Length {len(content)} >>\nstream\n".encode("ascii") + content + b"endstream"
+                _write_pdf_object(handle, offsets, content_id, content_body)
+
+                page_body = (
+                    f"<< /Type /Page /Parent 1 0 R /Resources << /ProcSet [/PDF /ImageC] "
+                    f"/XObject << /{name} {image_id} 0 R >> >> "
+                    f"/MediaBox [0 0 {width_pt} {height_pt}] /Contents {content_id} 0 R >>"
+                ).encode("ascii")
+                _write_pdf_object(handle, offsets, page_id, page_body)
+
+            kids = " ".join(f"{page_id} 0 R" for page_id in page_ids)
+            pages_body = f"<< /Type /Pages /Count {len(page_ids)} /Kids [{kids}] >>".encode("ascii")
+            _write_pdf_object(handle, offsets, 1, pages_body)
+            _write_pdf_object(handle, offsets, 2, b"<< /Type /Catalog /Pages 1 0 R >>")
+
+            xref_offset = handle.tell()
+            handle.write(f"xref\n0 {len(offsets)}\n".encode("ascii"))
+            handle.write(b"0000000000 65535 f \n")
+            for offset in offsets[1:]:
+                handle.write(f"{offset:010d} 00000 n \n".encode("ascii"))
+            handle.write(
+                f"trailer\n<< /Size {len(offsets)} /Root 2 0 R >>\n"
+                f"startxref\n{xref_offset}\n%%EOF\n".encode("ascii")
+            )
+        tmp_path.replace(path)
+    except Exception:
+        try:
+            tmp_path.unlink()
+        except FileNotFoundError:
+            pass
+        raise
 
 
 def save_batch_print_pdf(db, qr_codes, template_path):
     qr_codes = list(qr_codes)
     if not qr_codes:
         raise ValueError("no passes selected")
-    images = [render_print_pass(db, qr_code, template_path) for qr_code in qr_codes]
-    pages = compose_a4_print_pages(images)
     path = _batch_output_path(len(qr_codes))
-    first, rest = pages[0], pages[1:]
-    first.save(path, "PDF", resolution=DEFAULT_DPI, save_all=bool(rest), append_images=rest)
+    _save_pdf_pages(path, _batch_print_pages(db, qr_codes, template_path))
     return path
 
 
