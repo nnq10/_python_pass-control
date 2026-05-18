@@ -31,6 +31,8 @@ CI = dict(
     deleted=13,
     type=14,
     temp_status=15,
+    temp_book=16,
+    temp_number=17,
 )
 
 
@@ -74,7 +76,31 @@ def init_db(db):
     )
     _ensure_column(db, "passes", "pass_type", "TEXT DEFAULT 'regular'")
     _ensure_column(db, "passes", "temp_status", "TEXT DEFAULT ''")
+    _ensure_column(db, "passes", "temp_book", "INTEGER DEFAULT 0")
+    _ensure_column(db, "passes", "temp_number", "INTEGER DEFAULT 0")
     cursor.execute("UPDATE passes SET pass_type='regular' WHERE pass_type IS NULL OR pass_type=''")
+    cursor.execute(
+        """CREATE TABLE IF NOT EXISTS temporary_books (
+            book_no      INTEGER PRIMARY KEY,
+            created_at   TEXT NOT NULL,
+            completed_at TEXT,
+            size         INTEGER DEFAULT 500
+        )"""
+    )
+    legacy_count = cursor.execute(
+        "SELECT COUNT(*) FROM passes WHERE pass_type=?",
+        (PASS_TYPE_TEMPORARY,),
+    ).fetchone()[0]
+    if legacy_count:
+        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        cursor.execute(
+            "INSERT OR IGNORE INTO temporary_books (book_no,created_at,size) VALUES (?,?,?)",
+            (1, now, max(500, legacy_count)),
+        )
+        cursor.execute(
+            "UPDATE passes SET temp_book=1 WHERE pass_type=? AND (temp_book IS NULL OR temp_book=0)",
+            (PASS_TYPE_TEMPORARY,),
+        )
     cursor.execute(
         """CREATE TABLE IF NOT EXISTS logs (
             id INTEGER PRIMARY KEY,

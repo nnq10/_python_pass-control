@@ -16,10 +16,53 @@ from app.ui.widgets import _sep, typewrite
 
 logger = get_logger(__name__)
 
+
+def _cancel_idle_timer(app):
+    timer_id = getattr(app, "_scanner_idle_timer", None)
+    if not timer_id:
+        return
+    try:
+        app.after_cancel(timer_id)
+    except Exception:
+        logger.debug("Scanner idle timer was already gone", exc_info=True)
+    app._scanner_idle_timer = None
+
+
+def _next_result_token(app):
+    _cancel_idle_timer(app)
+    token = getattr(app, "_scanner_result_token", 0) + 1
+    app._scanner_result_token = token
+    return token
+
+
+def _result_area_exists(app):
+    result_area = getattr(app, "_res", None)
+    if result_area is None:
+        return False
+    try:
+        return bool(result_area.winfo_exists())
+    except Exception:
+        return False
+
+
+def _schedule_idle(app, token, delay_ms):
+    def clear_if_current():
+        if getattr(app, "_scanner_result_token", None) != token:
+            return
+        app._scanner_idle_timer = None
+        if not _result_area_exists(app):
+            return
+        app._idle()
+
+    _cancel_idle_timer(app)
+    app._scanner_idle_timer = app.after(delay_ms, clear_if_current)
+
+
 def show_scanner(app):
     if not has_permission(app.user, PERMISSION_SCANNER):
         app._toast("Недостаточно прав")
         return
+    _next_result_token(app)
     app._clr(app.content)
     app._pgtitle.configure(text="Сканер")
     app._imgs.clear()
@@ -47,6 +90,9 @@ def show_scanner(app):
 
 
 def _idle(app):
+    _next_result_token(app)
+    if not _result_area_exists(app):
+        return
     app._clr(app._res)
     f=tk.Frame(app._res,bg=C["panel"],highlightthickness=1,highlightbackground=C["border"])
     f.pack(fill="both",expand=True)
@@ -57,6 +103,7 @@ def _idle(app):
 def _scan(app,ev=None):
     raw_qr=app._qre.get().strip()
     if not raw_qr: return
+    token = _next_result_token(app)
     try:
         qr=normalize_qr(raw_qr)
     except ValidationError as ex:
@@ -154,7 +201,7 @@ def _scan(app,ev=None):
              bg=bg,fg=C["muted"],font=(F,10)).pack(anchor="e",pady=(8,0))
 
     ms=CFG.get("scan_timeout",8)*1000
-    app.after(ms,app._idle)
+    _schedule_idle(app, token, ms)
 
 
 def _log(app,qr,name,ok):

@@ -26,8 +26,14 @@ class TemporaryPassError(ValueError):
     pass
 
 
-def temporary_qr(index, prefix=TEMP_POOL_PREFIX):
-    return f"{prefix}-{index:04d}"
+def _now():
+    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+
+def temporary_qr(index, prefix=TEMP_POOL_PREFIX, book_no=None):
+    if book_no is None:
+        return f"{prefix}-{index:04d}"
+    return f"{prefix}-B{int(book_no):03d}-{index:04d}"
 
 
 def is_temporary_pass(row):
@@ -40,6 +46,16 @@ def temporary_status(row):
     return row[CI["temp_status"]] or TEMP_STATUS_FREE
 
 
+def temporary_book_no(row):
+    if not is_temporary_pass(row) or len(row) <= CI["temp_book"]:
+        return 0
+    return int(row[CI["temp_book"]] or 0)
+
+
+def temporary_book_title(book_no):
+    return f"Книга №{book_no}" if book_no else "Без книги"
+
+
 def temporary_status_title(status):
     return TEMP_STATUS_TITLES.get(status, status or "")
 
@@ -48,16 +64,109 @@ def _name(row):
     return " ".join(filter(None, [row[CI["ln"]], row[CI["fn"]], row[CI["mn"]]]))
 
 
-def create_temporary_pool(db, count=TEMP_POOL_SIZE, prefix=TEMP_POOL_PREFIX, create_qr_files=True):
+def _book_size(book):
+    return int(book[3] or TEMP_POOL_SIZE) if book else TEMP_POOL_SIZE
+
+
+def _next_book_no(db):
+    cursor = db.cursor()
+    row = cursor.execute("SELECT COALESCE(MAX(book_no), 0) + 1 FROM temporary_books").fetchone()
+    return int(row[0] or 1)
+
+
+def _ensure_book_record(db, book_no, size):
+    db.execute(
+        "INSERT OR IGNORE INTO temporary_books (book_no,created_at,size) VALUES (?,?,?)",
+        (book_no, _now(), int(size or TEMP_POOL_SIZE)),
+    )
+    db.execute(
+        "UPDATE temporary_books SET size=MAX(COALESCE(size, 0), ?) WHERE book_no=?",
+        (int(size or TEMP_POOL_SIZE), book_no),
+    )
+
+
+def active_temporary_book(db):
+    cursor = db.cursor()
+    return cursor.execute(
+        """SELECT book_no, created_at, completed_at, size
+           FROM temporary_books
+           WHERE completed_at IS NULL
+           ORDER BY book_no DESC
+           LIMIT 1"""
+    ).fetchone()
+
+
+def _book_total_count(db, book_no):
+    return db.execute(
+        "SELECT COUNT(*) FROM passes WHERE pass_type=? AND temp_book=?",
+        (TEMPORARY_TYPE, book_no),
+    ).fetchone()[0]
+
+
+def _book_free_count(db, book_no):
+    return db.execute(
+        "SELECT COUNT(*) FROM passes WHERE pass_type=? AND temp_book=? AND deleted=0 AND temp_status=?",
+        (TEMPORARY_TYPE, book_no, TEMP_STATUS_FREE),
+    ).fetchone()[0]
+
+
+def _book_uses_legacy_qr_format(db, book_no):
+    return db.execute(
+        """SELECT COUNT(*) FROM passes
+           WHERE pass_type=? AND temp_book=? AND qr_code LIKE ? AND qr_code NOT LIKE ?""",
+        (TEMPORARY_TYPE, book_no, f"{TEMP_POOL_PREFIX}-%", f"{TEMP_POOL_PREFIX}-B%-%"),
+    ).fetchone()[0] > 0
+
+
+def _qr_for_book(db, index, prefix, book_no):
+    if _book_uses_legacy_qr_format(db, book_no):
+        return temporary_qr(index, prefix)
+    return temporary_qr(index, prefix, book_no)
+
+
+def complete_temporary_book_if_used(db, book_no=None):
+    book = active_temporary_book(db) if book_no is None else db.execute(
+        "SELECT book_no, created_at, completed_at, size FROM temporary_books WHERE book_no=?",
+        (book_no,),
+    ).fetchone()
+    if not book or book[2]:
+        return None
+
+    current_book_no = int(book[0])
+    size = _book_size(book)
+    if _book_total_count(db, current_book_no) >= size and _book_free_count(db, current_book_no) == 0:
+        db.execute(
+            "UPDATE temporary_books SET completed_at=? WHERE book_no=? AND completed_at IS NULL",
+            (_now(), current_book_no),
+        )
+        db.commit()
+        return {"book_no": current_book_no, "size": size}
+    return None
+
+
+def create_temporary_pool(db, count=TEMP_POOL_SIZE, prefix=TEMP_POOL_PREFIX, create_qr_files=True, book_no=None):
+    complete_temporary_book_if_used(db)
+    book = None
+    if book_no is None:
+        book = active_temporary_book(db)
+        if book:
+            book_no = int(book[0])
+            count = _book_size(book)
+        else:
+            book_no = _next_book_no(db)
+    else:
+        book_no = int(book_no)
+
+    _ensure_book_record(db, book_no, count)
     created = []
-    for index in range(1, count + 1):
-        qr_code = temporary_qr(index, prefix)
+    for index in range(1, int(count) + 1):
+        qr_code = _qr_for_book(db, index, prefix, book_no)
         cursor = db.execute(
             """INSERT OR IGNORE INTO passes
                (qr_code,district,unit,rank,last_name,first_name,middle_name,phone,
-                issued_date,days_count,photo_path,active,deleted,pass_type,temp_status)
-               VALUES (?, '', '', '', '', '', '', '', '', 1, NULL, 0, 0, ?, ?)""",
-            (qr_code, TEMPORARY_TYPE, TEMP_STATUS_FREE),
+                issued_date,days_count,photo_path,active,deleted,pass_type,temp_status,temp_book,temp_number)
+               VALUES (?, '', '', '', '', '', '', '', '', 1, NULL, 0, 0, ?, ?, ?, ?)""",
+            (qr_code, TEMPORARY_TYPE, TEMP_STATUS_FREE, book_no, index),
         )
         if cursor.rowcount:
             created.append(qr_code)
@@ -84,24 +193,37 @@ def refresh_temporary_statuses(db):
             [(TEMP_STATUS_EXPIRED, qr_code) for qr_code in expired],
         )
         db.commit()
+    complete_temporary_book_if_used(db)
     return expired
 
 
-def temporary_counts(db):
+def temporary_counts(db, book_no=None):
     refresh_temporary_statuses(db)
     cursor = db.cursor()
     counts = {status: 0 for status in TEMP_STATUS_TITLES}
-    cursor.execute("SELECT temp_status, COUNT(*) FROM passes WHERE pass_type=? GROUP BY temp_status", (TEMPORARY_TYPE,))
+    params = [TEMPORARY_TYPE]
+    where = "pass_type=?"
+    if book_no is not None:
+        where += " AND temp_book=?"
+        params.append(int(book_no))
+    cursor.execute(f"SELECT temp_status, COUNT(*) FROM passes WHERE {where} GROUP BY temp_status", params)
     for status, count in cursor.fetchall():
         counts[status or TEMP_STATUS_FREE] = count
     counts["total"] = sum(counts.values())
+    book = active_temporary_book(db)
+    counts["active_book"] = int(book[0]) if book else None
+    counts["active_book_size"] = _book_size(book) if book else TEMP_POOL_SIZE
+    counts["active_book_free"] = _book_free_count(db, int(book[0])) if book else 0
     return counts
 
 
-def list_temporary_passes(db, search="", status="all"):
+def list_temporary_passes(db, search="", status="all", book_no=None):
     refresh_temporary_statuses(db)
     clauses = ["pass_type=?", "deleted=0"]
     params = [TEMPORARY_TYPE]
+    if book_no is not None:
+        clauses.append("temp_book=?")
+        params.append(int(book_no))
     if status and status != "all":
         clauses.append("temp_status=?")
         params.append(status)
@@ -112,16 +234,44 @@ def list_temporary_passes(db, search="", status="all"):
             clauses.append("(" + " OR ".join(f"{column} LIKE ?" for column in searchable) + ")")
             params.extend([like] * len(searchable))
     cursor = db.cursor()
-    cursor.execute(f"SELECT * FROM passes WHERE {' AND '.join(clauses)} ORDER BY qr_code", params)
+    cursor.execute(
+        f"""SELECT * FROM passes
+            WHERE {' AND '.join(clauses)}
+            ORDER BY temp_book DESC, temp_number ASC, qr_code ASC""",
+        params,
+    )
     return cursor.fetchall()
 
 
-def next_free_temporary_pass(db):
+def next_free_temporary_pass(db, create_qr_files=True):
     refresh_temporary_statuses(db)
+    create_temporary_pool(db, create_qr_files=create_qr_files)
+    book = active_temporary_book(db)
+    if not book:
+        return None
     cursor = db.cursor()
     cursor.execute(
-        "SELECT * FROM passes WHERE pass_type=? AND temp_status=? AND deleted=0 ORDER BY qr_code LIMIT 1",
-        (TEMPORARY_TYPE, TEMP_STATUS_FREE),
+        """SELECT * FROM passes
+           WHERE pass_type=? AND temp_status=? AND deleted=0 AND temp_book=?
+           ORDER BY temp_number ASC, qr_code ASC
+           LIMIT 1""",
+        (TEMPORARY_TYPE, TEMP_STATUS_FREE, int(book[0])),
+    )
+    row = cursor.fetchone()
+    if row:
+        return row
+
+    complete_temporary_book_if_used(db, int(book[0]))
+    create_temporary_pool(db, create_qr_files=create_qr_files)
+    book = active_temporary_book(db)
+    if not book:
+        return None
+    cursor.execute(
+        """SELECT * FROM passes
+           WHERE pass_type=? AND temp_status=? AND deleted=0 AND temp_book=?
+           ORDER BY temp_number ASC, qr_code ASC
+           LIMIT 1""",
+        (TEMPORARY_TYPE, TEMP_STATUS_FREE, int(book[0])),
     )
     return cursor.fetchone()
 
@@ -133,10 +283,10 @@ def _require_temporary(db, qr_code):
     return row
 
 
-def issue_temporary_pass(db, qr_code, data):
+def issue_temporary_pass(db, qr_code, data, create_next_book=True, create_qr_files=True):
     row = _require_temporary(db, qr_code)
     if temporary_status(row) != TEMP_STATUS_FREE:
-        raise TemporaryPassError("Этот временный QR сейчас не свободен")
+        raise TemporaryPassError("Этот одноразовый QR уже использован и не может быть выдан повторно")
 
     payload = dict(data)
     payload["qr_code"] = qr_code
@@ -167,26 +317,27 @@ def issue_temporary_pass(db, qr_code, data):
     )
     db.commit()
     remember_reference_values(db, cleaned)
-    return fetch_pass_by_qr(db, qr_code, include_deleted=True)
+    updated = fetch_pass_by_qr(db, qr_code, include_deleted=True)
+    completed = complete_temporary_book_if_used(db, temporary_book_no(updated))
+    if completed and create_next_book:
+        create_temporary_pool(db, count=completed["size"], create_qr_files=create_qr_files)
+    return updated
 
 
 def return_temporary_pass(db, qr_code):
     _require_temporary(db, qr_code)
-    db.execute(
-        """UPDATE passes SET district='',unit='',rank='',last_name='',first_name='',middle_name='',
-           phone='',issued_date='',days_count=1,photo_path=NULL,active=0,deleted=0,
-           pass_type=?,temp_status=? WHERE qr_code=?""",
-        (TEMPORARY_TYPE, TEMP_STATUS_FREE, qr_code),
-    )
-    db.commit()
-    return fetch_pass_by_qr(db, qr_code, include_deleted=True)
+    raise TemporaryPassError("Одноразовый QR нельзя вернуть в свободные: книга сохраняет историю выдачи")
 
 
-def mark_temporary_lost(db, qr_code):
+def mark_temporary_lost(db, qr_code, create_next_book=True, create_qr_files=True):
     row = _require_temporary(db, qr_code)
     db.execute(
         "UPDATE passes SET active=0,deleted=0,pass_type=?,temp_status=? WHERE qr_code=?",
         (TEMPORARY_TYPE, TEMP_STATUS_LOST, qr_code),
     )
     db.commit()
-    return {"qr_code": qr_code, "name": _name(row), "status": temporary_status(row), "lost_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+    updated = fetch_pass_by_qr(db, qr_code, include_deleted=True)
+    completed = complete_temporary_book_if_used(db, temporary_book_no(updated))
+    if completed and create_next_book:
+        create_temporary_pool(db, count=completed["size"], create_qr_files=create_qr_files)
+    return {"qr_code": qr_code, "name": _name(row), "status": temporary_status(updated), "lost_at": _now()}

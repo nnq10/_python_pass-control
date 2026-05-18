@@ -158,9 +158,14 @@ class Btn(tk.Frame):
 
 
 def typewrite(lbl, text, delay=30, i=0):
-    if i <= len(text):
-        lbl.configure(text=text[:i] + ("▌" if i < len(text) else ""))
-        lbl.after(delay, lambda: typewrite(lbl, text, delay, i + 1))
+    try:
+        if not lbl.winfo_exists():
+            return
+        if i <= len(text):
+            lbl.configure(text=text[:i] + ("▌" if i < len(text) else ""))
+            lbl.after(delay, lambda: typewrite(lbl, text, delay, i + 1))
+    except tk.TclError:
+        return
 
 
 def _sep(parent, color=None):

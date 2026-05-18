@@ -32,6 +32,7 @@ ACTION_TITLES = {
     "template.update": "Шаблон изменён",
     "temp.issue": "Временный пропуск выдан",
     "temp.lost": "Временный пропуск утерян",
+    "temp.book_create": "QR-книга временных пропусков создана",
     "temp.pool_create": "Пул временных QR создан",
     "temp.return": "Временный пропуск возвращён",
     "user.create": "Пользователь создан",
