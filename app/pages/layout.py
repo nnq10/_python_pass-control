@@ -53,15 +53,12 @@ def show_main(app):
     nav=[(text,cmd) for permission,text,cmd in nav_options if has_permission(app.user, permission)]
 
     app._nav_items = []
+    nav_body=_sidebar_nav_area(sb)
     for txt,cmd in nav:
-        app._nav_row(sb,txt,cmd)
+        app._nav_row(nav_body,txt,cmd)
 
-    tk.Frame(sb,bg=C["panel"]).pack(fill="y",expand=True)
-    _sep(sb).pack(fill="x",padx=14)
-
-  
     if has_permission(app.user, PERMISSION_SETTINGS):
-        app._gear_row(sb)
+        app._gear_row(nav_body)
 
     _sep(sb).pack(fill="x",padx=14)
     uf=tk.Frame(sb,bg=C["panel"])
@@ -115,6 +112,48 @@ def show_main(app):
         if has_permission(app.user, permission):
             callback()
             break
+
+def _sidebar_nav_area(parent):
+    host=tk.Frame(parent,bg=C["panel"])
+    host.pack(fill="both",expand=True,pady=(10,6))
+
+    canvas=tk.Canvas(host,bg=C["panel"],highlightthickness=0,bd=0)
+    scrollbar=tk.Scrollbar(host,orient="vertical",command=canvas.yview,
+                           bg=C["panel"],troughcolor=C["panel"],activebackground=C["border"],
+                           highlightthickness=0,bd=0,width=10)
+    body=tk.Frame(canvas,bg=C["panel"])
+    body_id=canvas.create_window((0,0),window=body,anchor="nw")
+    canvas.configure(yscrollcommand=scrollbar.set)
+
+    canvas.pack(side="left",fill="both",expand=True)
+    scrollbar.pack(side="right",fill="y")
+
+    def refresh_scroll(_event=None):
+        canvas.configure(scrollregion=canvas.bbox("all"))
+
+    def resize_body(event):
+        canvas.itemconfigure(body_id,width=event.width)
+
+    def wheel(event):
+        canvas.yview_scroll(int(-1*(event.delta/120)),"units")
+
+    def bind_wheel(_event=None):
+        canvas.bind_all("<MouseWheel>",wheel)
+
+    def unbind_wheel(_event=None):
+        try:
+            canvas.unbind_all("<MouseWheel>")
+        except tk.TclError:
+            pass
+
+    body.bind("<Configure>",refresh_scroll)
+    canvas.bind("<Configure>",resize_body)
+    canvas.bind("<Enter>",bind_wheel)
+    canvas.bind("<Leave>",unbind_wheel)
+    body.bind("<Enter>",bind_wheel)
+    body.bind("<Leave>",unbind_wheel)
+    parent.bind("<Destroy>",lambda _event: unbind_wheel(),add="+")
+    return body
 
 
 def _nav_row(app,parent,text,cmd):

@@ -15,6 +15,8 @@ from app.ui.widgets import FloatBG, _sep
 from app.pages import audit, import_page, layout, login, passes, print_page, scanner, settings, stats, temporary, trash, users
 
 logger = get_logger(__name__)
+MIN_APP_WIDTH = 1100
+MIN_APP_HEIGHT = 700
 
 class App(ctk.CTk):
     def __init__(self):
@@ -22,8 +24,8 @@ class App(ctk.CTk):
         self.title("Контроль пропусков")
         self._apply_app_icon()
         self.configure(fg_color=C["bg"])
-        self.attributes("-fullscreen", True)
-        self.bind("<Escape>", lambda e: self.attributes("-fullscreen", False))
+        self._is_fullscreen = False
+        self._configure_main_window()
         self._apply_tree_style()
         self.db = connect_db()
         init_db(self.db)
@@ -33,6 +35,63 @@ class App(ctk.CTk):
         self._bgcv    = None
         self._imgs    = []   # защита от GC
         self.show_login()
+
+    def _configure_main_window(self):
+        screen_w = max(800, self.winfo_screenwidth())
+        screen_h = max(600, self.winfo_screenheight())
+        min_w = min(MIN_APP_WIDTH, max(800, screen_w - 40))
+        min_h = min(MIN_APP_HEIGHT, max(600, screen_h - 80))
+        self.minsize(min_w, min_h)
+        self.resizable(True, True)
+        self.geometry(f"{min(screen_w, 1366)}x{min(screen_h, 768)}+0+0")
+        self.after(50, self._maximize_window)
+        self.after(350, self._ensure_large_window)
+        self.bind("<F11>", self._toggle_fullscreen)
+        self.bind("<Escape>", self._exit_fullscreen)
+
+    def _maximize_window(self):
+        try:
+            self.update_idletasks()
+            self.state("zoomed")
+            return
+        except tk.TclError:
+            logger.info("Window zoomed state is unavailable, using geometry fallback")
+        except Exception:
+            logger.exception("Failed to maximize application window")
+        self._fit_to_screen()
+
+    def _fit_to_screen(self):
+        screen_w = max(800, self.winfo_screenwidth())
+        screen_h = max(600, self.winfo_screenheight())
+        self.geometry(f"{screen_w}x{screen_h}+0+0")
+
+    def _ensure_large_window(self):
+        try:
+            self.update_idletasks()
+            screen_w = max(800, self.winfo_screenwidth())
+            screen_h = max(600, self.winfo_screenheight())
+            if self.winfo_width() < screen_w * 0.85 or self.winfo_height() < screen_h * 0.85:
+                self._fit_to_screen()
+        except Exception:
+            logger.exception("Failed to verify application window size")
+
+    def _toggle_fullscreen(self, _event=None):
+        self._is_fullscreen = not self._is_fullscreen
+        try:
+            self.attributes("-fullscreen", self._is_fullscreen)
+        except tk.TclError:
+            logger.info("Fullscreen attribute is unavailable")
+            self._maximize_window()
+
+    def _exit_fullscreen(self, _event=None):
+        if not self._is_fullscreen:
+            return
+        self._is_fullscreen = False
+        try:
+            self.attributes("-fullscreen", False)
+        except tk.TclError:
+            logger.info("Fullscreen attribute is unavailable")
+        self._maximize_window()
 
     def _apply_app_icon(self):
         png_path = app_path("assets/app_icon.png")
