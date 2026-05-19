@@ -10,7 +10,7 @@ from app.core.logging import get_logger
 from app.services.audit import safe_record_action
 from app.services.backups import create_daily_backup_if_needed
 from app.services.pass_db import connect_db, init_db
-from app.core.paths import ensure_data_dirs
+from app.core.paths import app_path, ensure_data_dirs
 from app.ui.widgets import FloatBG, _sep
 from app.pages import audit, import_page, layout, login, passes, print_page, scanner, settings, stats, temporary, trash, users
 
@@ -20,6 +20,7 @@ class App(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title("Контроль пропусков")
+        self._apply_app_icon()
         self.configure(fg_color=C["bg"])
         self.attributes("-fullscreen", True)
         self.bind("<Escape>", lambda e: self.attributes("-fullscreen", False))
@@ -32,6 +33,21 @@ class App(ctk.CTk):
         self._bgcv    = None
         self._imgs    = []   # защита от GC
         self.show_login()
+
+    def _apply_app_icon(self):
+        png_path = app_path("assets/app_icon.png")
+        ico_path = app_path("assets/app_icon.ico")
+        try:
+            if ico_path.exists():
+                self.iconbitmap(str(ico_path))
+        except Exception:
+            logger.exception("Failed to apply app ico: %s", ico_path)
+        try:
+            if png_path.exists():
+                self._app_icon_image = tk.PhotoImage(file=str(png_path))
+                self.iconphoto(True, self._app_icon_image)
+        except Exception:
+            logger.exception("Failed to apply app png icon: %s", png_path)
 
     # СТИЛИ
     def _apply_tree_style(self):

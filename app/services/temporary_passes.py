@@ -1,4 +1,5 @@
 from datetime import datetime
+from pathlib import Path
 
 from app.services.pass_db import CI, PASS_TYPE_TEMPORARY, fetch_pass_by_qr, pass_status
 from app.services.qr_codes import save_qr_code
@@ -94,6 +95,81 @@ def active_temporary_book(db):
            ORDER BY book_no DESC
            LIMIT 1"""
     ).fetchone()
+
+
+def latest_unarchived_completed_book(db):
+    cursor = db.cursor()
+    return cursor.execute(
+        """SELECT book_no, created_at, completed_at, size, archived_at, archive_path
+           FROM temporary_books
+           WHERE completed_at IS NOT NULL
+             AND (archived_at IS NULL OR archived_at='')
+           ORDER BY book_no ASC
+           LIMIT 1"""
+    ).fetchone()
+
+
+def mark_temporary_book_archived(db, book_no, archive_path):
+    db.execute(
+        "UPDATE temporary_books SET archived_at=?, archive_path=? WHERE book_no=?",
+        (_now(), str(archive_path or ""), int(book_no)),
+    )
+    db.commit()
+
+
+def export_temporary_book_xlsx(db, book_no, path):
+    from openpyxl import Workbook
+    from openpyxl.styles import Alignment, Font, PatternFill
+
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    book = db.execute(
+        "SELECT book_no, created_at, completed_at, size FROM temporary_books WHERE book_no=?",
+        (int(book_no),),
+    ).fetchone()
+    if not book:
+        raise TemporaryPassError("QR-книга не найдена")
+
+    rows = list_temporary_passes(db, "", "all", book_no=int(book_no))
+    wb = Workbook()
+    ws = wb.active
+    ws.title = f"Книга {int(book_no)}"
+
+    ws["A1"] = temporary_book_title(book_no)
+    ws["A1"].font = Font(bold=True, size=14)
+    ws["A2"] = f"Создана: {book[1] or ''}"
+    ws["A3"] = f"Закрыта: {book[2] or ''}"
+    ws["A4"] = f"Размер: {book[3] or TEMP_POOL_SIZE}"
+
+    headers = ["№", "QR", "Статус", "ФИО", "Куда", "Основание", "Выдан", "Срок, сут.", "Телефон"]
+    header_row = 6
+    for col, title in enumerate(headers, start=1):
+        cell = ws.cell(row=header_row, column=col, value=title)
+        cell.font = Font(bold=True, color="FFFFFF")
+        cell.fill = PatternFill("solid", fgColor="1F6FEB")
+        cell.alignment = Alignment(horizontal="center")
+
+    for row_index, row in enumerate(rows, start=header_row + 1):
+        values = [
+            row[CI["temp_number"]] or row_index - header_row,
+            row[CI["qr"]],
+            temporary_status_title(temporary_status(row)),
+            _name(row),
+            row[CI["unit"]] or row[CI["district"]] or "",
+            row[CI["rank"]] or "",
+            row[CI["issued"]] or "",
+            row[CI["days"]] or "",
+            row[CI["phone"]] or "",
+        ]
+        for col, value in enumerate(values, start=1):
+            ws.cell(row=row_index, column=col, value=value)
+
+    widths = [8, 20, 14, 30, 26, 28, 14, 12, 18]
+    for col, width in enumerate(widths, start=1):
+        ws.column_dimensions[ws.cell(row=header_row, column=col).column_letter].width = width
+    ws.freeze_panes = "A7"
+    wb.save(path)
+    return path
 
 
 def _book_total_count(db, book_no):

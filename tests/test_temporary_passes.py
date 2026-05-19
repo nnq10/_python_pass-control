@@ -1,6 +1,8 @@
 import sqlite3
+import tempfile
 import unittest
 from datetime import datetime
+from pathlib import Path
 from unittest.mock import patch
 
 from app.services.pass_db import CI, fetch_pass_by_qr, init_db, pass_status, search_passes
@@ -11,8 +13,11 @@ from app.services.temporary_passes import (
     TemporaryPassError,
     active_temporary_book,
     create_temporary_pool,
+    export_temporary_book_xlsx,
     issue_temporary_pass,
+    latest_unarchived_completed_book,
     list_temporary_passes,
+    mark_temporary_book_archived,
     mark_temporary_lost,
     next_free_temporary_pass,
     return_temporary_pass,
@@ -107,6 +112,30 @@ class TemporaryPassTests(unittest.TestCase):
         self.assertEqual(row[CI["qr"]], "TMP-B002-0001")
         self.assertEqual(temporary_book_no(row), 2)
         self.assertEqual(temporary_counts(self.db)[TEMP_STATUS_FREE], 2)
+
+    def test_completed_book_can_wait_for_archive_before_next_book(self):
+        create_temporary_pool(self.db, count=1, create_qr_files=False)
+        issue_temporary_pass(
+            self.db,
+            "TMP-B001-0001",
+            self._issue_data(),
+            create_next_book=False,
+            create_qr_files=False,
+        )
+
+        self.assertIsNone(active_temporary_book(self.db))
+        pending = latest_unarchived_completed_book(self.db)
+        self.assertEqual(pending[0], 1)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            path = export_temporary_book_xlsx(self.db, 1, Path(tmp) / "book.xlsx")
+            mark_temporary_book_archived(self.db, 1, path)
+
+            self.assertTrue(path.exists())
+            self.assertIsNone(latest_unarchived_completed_book(self.db))
+
+        created = create_temporary_pool(self.db, count=1, create_qr_files=False)
+        self.assertEqual(created, ["TMP-B002-0001"])
 
     def test_legacy_tmp_codes_are_kept_as_first_book(self):
         self.db.execute(

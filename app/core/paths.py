@@ -1,8 +1,15 @@
 import shutil
+import sys
 from pathlib import Path
 
 
-BASE_DIR = Path(__file__).resolve().parents[2]
+def _base_dir():
+    if getattr(sys, "frozen", False):
+        return Path(sys.executable).resolve().parent
+    return Path(__file__).resolve().parents[2]
+
+
+BASE_DIR = _base_dir()
 DATA_DIR = BASE_DIR / "data"
 
 SETTINGS_FILE = DATA_DIR / "settings.json"

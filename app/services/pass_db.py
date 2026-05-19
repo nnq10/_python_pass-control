@@ -84,9 +84,13 @@ def init_db(db):
             book_no      INTEGER PRIMARY KEY,
             created_at   TEXT NOT NULL,
             completed_at TEXT,
-            size         INTEGER DEFAULT 500
+            size         INTEGER DEFAULT 500,
+            archived_at  TEXT,
+            archive_path TEXT
         )"""
     )
+    _ensure_column(db, "temporary_books", "archived_at", "TEXT")
+    _ensure_column(db, "temporary_books", "archive_path", "TEXT")
     legacy_count = cursor.execute(
         "SELECT COUNT(*) FROM passes WHERE pass_type=?",
         (PASS_TYPE_TEMPORARY,),

@@ -11,20 +11,16 @@ from PIL import Image, ImageTk
 from app.core.config import C, FONT as F
 from app.core.logging import get_logger
 from app.services.audit import action_title, list_entity_actions, safe_record_action
-from app.services.auth import (PERMISSION_REGULAR, PERMISSION_SEMIANNUAL,
-                               has_permission)
 from app.services.camera import CameraUnavailable, frame_to_image, open_capture, save_camera_temp_image
 from app.services.default_photo import pass_photo_source
 from app.services.pass_db import (CI, PASS_TYPE_REGULAR, PASS_TYPE_SEMIANNUAL, create_pass,
                      delete_pass_forever, fetch_pass_by_qr, pass_status, search_passes,
                      soft_delete_pass, update_pass)
 from app.services.qr_codes import save_qr_code
-from app.services.reference_data import list_reference_values
 from app.services.temporary_passes import is_temporary_pass
 from app.services.validation import ValidationError, format_validation_errors, validate_pass_data
 from app.core.paths import app_path, photo_file_path, qr_code_path
-from app.pages.print_page import open_print_dialog
-from app.ui.widgets import Btn, FilterChip, _field, _suggest_field, accent_bar
+from app.ui.widgets import Btn, _field
 
 logger = get_logger(__name__)
 
@@ -84,7 +80,7 @@ def _capture_photo(app, on_selected):
         messagebox.showerror("Камера", f"Не удалось открыть камеру:\n{ex}")
         return
 
-    win=app._modal("Фото с камеры",760,620)
+    win=app._modal("Фото с камеры",760,920)
     win._camera_images=[]
     state={"frame": None, "captured": None, "paused": False, "closed": False}
 
@@ -143,7 +139,7 @@ def _capture_photo(app, on_selected):
             capture.release()
         except Exception:
             logger.exception("Failed to release camera")
-        app._close_modal(win)
+        win.destroy()
 
     def use_photo():
         if state["captured"] is None:
@@ -206,16 +202,10 @@ def _update_pass_stats(app):
 
 
 def show_list(app):
-    if not has_permission(app.user, PERMISSION_REGULAR):
-        app._toast("Недостаточно прав")
-        return
     return _show_passes(app, PASS_TYPE_REGULAR)
 
 
 def show_semiannual(app):
-    if not has_permission(app.user, PERMISSION_SEMIANNUAL):
-        app._toast("Недостаточно прав")
-        return
     return _show_passes(app, PASS_TYPE_SEMIANNUAL)
 
 
@@ -251,11 +241,8 @@ def _show_passes(app, pass_type):
         label.pack(anchor="w")
         app._pass_stat_labels[key]=label
 
-    filter_panel=tk.Frame(wrap,bg=C["panel"],highlightthickness=1,highlightbackground=C["border"])
-    filter_panel.pack(fill="x",pady=(0,12))
-    accent_bar(filter_panel).pack(fill="x")
-    filters=tk.Frame(filter_panel,bg=C["panel"])
-    filters.pack(fill="x",padx=14,pady=12)
+    filters=tk.Frame(wrap,bg=C["bg"])
+    filters.pack(fill="x",pady=(0,12))
     app._pass_search=sv
     app._pass_status=tk.StringVar(value=getattr(app, "_pass_status_value", "Все"))
     app._pass_unit=tk.StringVar(value=getattr(app, "_pass_unit_value", "Все"))
@@ -271,39 +258,28 @@ def _show_passes(app, pass_type):
         app._pass_sort_value=app._pass_sort.get()
         app._load_list(sv.get())
 
-    status_group=tk.Frame(filters,bg=C["panel"])
-    status_group.pack(side="left",padx=(0,14))
-    tk.Label(status_group,text="Статус",bg=C["panel"],fg=C["muted"],font=(F,9)).pack(anchor="w",pady=(0,4))
-    status_row=tk.Frame(status_group,bg=C["panel"])
-    status_row.pack(anchor="w")
-    for label in ["Все","Активные","Истекшие"]:
-        FilterChip(status_row,text=label,variable=app._pass_status,value=label,command=apply_filters,bg=C["panel"]).pack(side="left",padx=(0,6))
-
     for title,var,values,width in [
+        ("Статус",app._pass_status,["Все","Активные","Истекшие"],12),
         ("В/ч",app._pass_unit,_pass_units(app, pass_type),16),
         ("Сортировка",app._pass_sort,["Дата: новые","Дата: старые","ФИО","В/ч","Статус"],16),
     ]:
-        group=tk.Frame(filters,bg=C["panel"])
+        group=tk.Frame(filters,bg=C["bg"])
         group.pack(side="left",padx=(0,10))
-        tk.Label(group,text=title,bg=C["panel"],fg=C["muted"],font=(F,9)).pack(anchor="w",pady=(0,4))
+        tk.Label(group,text=title,bg=C["bg"],fg=C["muted"],font=(F,9)).pack(anchor="w")
         box=ttk.Combobox(group,textvariable=var,values=values,state="readonly",width=width)
         box.pack(ipady=3)
         box.bind("<<ComboboxSelected>>",apply_filters)
 
     for title,var in [("С даты",app._pass_date_from),("По дату",app._pass_date_to)]:
-        group=tk.Frame(filters,bg=C["panel"])
+        group=tk.Frame(filters,bg=C["bg"])
         group.pack(side="left",padx=(0,10))
-        tk.Label(group,text=title,bg=C["panel"],fg=C["muted"],font=(F,9)).pack(anchor="w",pady=(0,4))
-        entry_shell=tk.Frame(group,bg=C["input"],highlightthickness=1,highlightbackground=C["border"])
-        entry_shell.pack()
-        entry=tk.Entry(entry_shell,bg=C["input"],fg=C["text"],insertbackground=C["accent"],
+        tk.Label(group,text=title,bg=C["bg"],fg=C["muted"],font=(F,9)).pack(anchor="w")
+        entry=tk.Entry(group,bg=C["input"],fg=C["text"],insertbackground=C["accent"],
                        textvariable=var,relief="flat",font=(F,11),width=12)
-        entry.pack(padx=8,ipady=5)
-        entry.bind("<FocusIn>",lambda _e, shell=entry_shell:shell.configure(highlightbackground=C["accent"]))
-        entry.bind("<FocusOut>",lambda _e, shell=entry_shell:shell.configure(highlightbackground=C["border"]))
+        entry.pack(ipady=5)
         entry.bind("<Return>",apply_filters)
 
-    Btn(filters,text="Применить",cmd=apply_filters,variant="primary",w=110,h=34,fs=10,bg=C["panel"]).pack(side="left",padx=(0,8),pady=(18,0))
+    Btn(filters,text="Применить",cmd=apply_filters,variant="primary",w=110,h=34,fs=10,bg=C["bg"]).pack(side="left",padx=(0,8),pady=(17,0))
     Btn(filters,text="Сброс",cmd=lambda:(
         app._pass_status.set("Все"),
         app._pass_unit.set("Все"),
@@ -311,7 +287,7 @@ def _show_passes(app, pass_type):
         app._pass_date_to.set(""),
         app._pass_sort.set("Дата: новые"),
         apply_filters()
-    ),variant="ghost",w=90,h=34,fs=10,bg=C["panel"]).pack(side="left",pady=(18,0))
+    ),variant="ghost",w=90,h=34,fs=10,bg=C["bg"]).pack(side="left",pady=(17,0))
 
     # Таблица
     tf=tk.Frame(wrap,bg=C["panel"]); tf.pack(fill="both",expand=True)
@@ -334,8 +310,6 @@ def _show_passes(app, pass_type):
         variant="success",w=170,h=38,bg=C["bg"]).pack(side="left",padx=6)
     Btn(bf,text="Карточка",cmd=lambda:app._card(app.tree),
         variant="ghost",w=150,h=38,bg=C["bg"]).pack(side="left",padx=6)
-    Btn(bf,text="Печать",cmd=lambda:_print_selected_passes(app, app.tree, pass_type),
-        variant="primary",w=130,h=38,bg=C["bg"]).pack(side="left",padx=6)
     if app.user["role"]=="admin":
         Btn(bf,text="Изменить",cmd=lambda:app._edit(app.tree),
             variant="primary",w=150,h=38,bg=C["bg"]).pack(side="left",padx=6)
@@ -405,20 +379,6 @@ def _selected_qr(app, tree):
         app._toast("Выберите строку")
         return None
     return tree.item(sel[0])["values"][0]
-
-
-def _selected_qrs(app, tree):
-    selection = tree.selection()
-    if not selection:
-        app._toast("Выберите один или несколько пропусков")
-        return []
-    return [tree.item(item)["values"][0] for item in selection]
-
-
-def _print_selected_passes(app, tree, pass_type):
-    qrs = _selected_qrs(app, tree)
-    if qrs:
-        open_print_dialog(app, qrs, template_profile=pass_type)
 
 
 def _pass_name(row):
@@ -611,11 +571,11 @@ def _card(app, tree):
     _history_preview(right, list_entity_actions(app.db, "pass", qr, limit=5))
 
     def open_edit():
-        app._close_modal(win)
+        win.destroy()
         app._edit(tree)
 
     def open_history():
-        app._close_modal(win)
+        win.destroy()
         _show_history_for_qr(app, qr)
 
     def delete_current():
@@ -623,7 +583,7 @@ def _card(app, tree):
             return
         soft_delete_pass(app.db, qr)
         safe_record_action(app.db, app.user, "pass.delete", "pass", qr, {"name": name})
-        app._close_modal(win)
+        win.destroy()
         (app.show_semiannual if row[CI["type"]] == PASS_TYPE_SEMIANNUAL else app.show_list)()
 
     buttons=tk.Frame(win,bg=C["panel"])
@@ -679,10 +639,10 @@ def _edit(app,tree):
     pass_type = row[CI["type"]] or PASS_TYPE_REGULAR
     config = PASS_PAGE_CONFIGS.get(pass_type, PASS_PAGE_CONFIGS[PASS_TYPE_REGULAR])
 
-    win=app._modal(f"{config['edit_title']} — {qr}",560,700 if config["photo"] else 620, scroll=True)
-    di_e=_suggest_field(win,"Округ *",list_reference_values(app.db, "district"),row[CI["district"]] or "")
-    un_e=_suggest_field(win,"В/ч *",list_reference_values(app.db, "unit"),row[CI["unit"]] or "")
-    rk_e=_suggest_field(win,"Звание",list_reference_values(app.db, "rank"),row[CI["rank"]] or "")
+    win=app._modal(f"{config['edit_title']} — {qr}",560,700 if config["photo"] else 620)
+    di_e=_field(win,"Округ *",       row[CI["district"]] or "")
+    un_e=_field(win,"В/ч *",         row[CI["unit"]]     or "")
+    rk_e=_field(win,"Звание",        row[CI["rank"]]     or "")
     ln_e=_field(win,"Фамилия *",     row[CI["ln"]]       or "")
     fn_e=_field(win,"Имя",           row[CI["fn"]]       or "")
     mn_e=_field(win,"Отчество",      row[CI["mn"]]       or "")
@@ -761,7 +721,7 @@ def _edit(app,tree):
             logger.exception("Failed to update pass: %s", qr)
             messagebox.showerror("\u041e\u0448\u0438\u0431\u043a\u0430", f"\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u0441\u043e\u0445\u0440\u0430\u043d\u0438\u0442\u044c \u043f\u0440\u043e\u043f\u0443\u0441\u043a:\n{ex}")
             return
-        app._close_modal(win)
+        win.destroy()
         app._toast("\u041f\u0440\u043e\u043f\u0443\u0441\u043a \u043e\u0431\u043d\u043e\u0432\u043b\u0451\u043d",C["green"])
         (app.show_semiannual if pass_type == PASS_TYPE_SEMIANNUAL else app.show_list)()
     Btn(win,text="Сохранить",cmd=save,variant="success",w=504,h=44,fs=13,
@@ -779,16 +739,16 @@ def _del(app,tree):
         safe_record_action(app.db, app.user, "pass.delete", "pass", qr, {"name": nm})
         (app.show_semiannual if row and row[CI["type"]] == PASS_TYPE_SEMIANNUAL else app.show_list)()
 
-# ─────────────────────────────────────────
+
 #  ДОБАВИТЬ ПРОПУСК
-# ─────────────────────────────────────────
+
 
 def show_add(app, pass_type=PASS_TYPE_REGULAR):
     config = PASS_PAGE_CONFIGS.get(pass_type, PASS_PAGE_CONFIGS[PASS_TYPE_REGULAR])
-    win=app._modal(config["add_title"],560,780 if config["photo"] else 680, scroll=True)
-    di_e=_suggest_field(win,"Округ *",list_reference_values(app.db, "district"))
-    un_e=_suggest_field(win,"В/ч *",list_reference_values(app.db, "unit"))
-    rk_e=_suggest_field(win,"Звание",list_reference_values(app.db, "rank"))
+    win=app._modal(config["add_title"],560,780 if config["photo"] else 680)
+    di_e=_field(win,"Округ *")
+    un_e=_field(win,"В/ч *")
+    rk_e=_field(win,"Звание")
     ln_e=_field(win,"Фамилия *")
     fn_e=_field(win,"Имя")
     mn_e=_field(win,"Отчество")
@@ -870,12 +830,9 @@ def show_add(app, pass_type=PASS_TYPE_REGULAR):
                 logger.exception("Failed to rollback pass after create error: %s", qid)
             messagebox.showerror("\u041e\u0448\u0438\u0431\u043a\u0430", f"\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u0441\u043e\u0437\u0434\u0430\u0442\u044c \u043f\u0440\u043e\u043f\u0443\u0441\u043a:\n{ex}")
             return
-        app._close_modal(win)
+        win.destroy()
         app._toast(f"\u0421\u043e\u0437\u0434\u0430\u043d: {qid}",C["green"])
         (app.show_semiannual if pass_type == PASS_TYPE_SEMIANNUAL else app.show_list)()
     Btn(win,text=config["create_button"],cmd=save,variant="success",w=504,h=44,fs=13,
         bg=C["panel"]).pack(padx=28,pady=12)
 
-# ─────────────────────────────────────────
-#  ИМПОРТ ИЗ EXCEL
-# ─────────────────────────────────────────

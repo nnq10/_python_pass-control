@@ -11,12 +11,13 @@ from app.services.pass_db import (PASS_TYPE_REGULAR, PASS_TYPE_SEMIANNUAL,
                                   PASS_TYPE_TEMPORARY, create_pass, init_db)
 from app.services.print_passes import (A4_BATCH_CAPACITY, A4_PAGE_SIZE_PX,
                                        PRINT_PASS_SIZE_PX, a4_batch_positions,
-                                       compose_a4_print_pages, editable_template_config,
+                                       compose_a4_print_pages, compose_single_print_page, editable_template_config,
                                        ensure_temporary_stub_template, list_print_templates,
-                                       render_print_pass, save_batch_print_pdf, save_print_pdf,
+                                       print_batch_passes, print_image, render_print_pass, save_batch_print_pdf, save_print_pdf,
                                        save_print_png, save_template_choice,
                                        save_template_config, selected_template_for_profile,
-                                       template_config_path, _save_pdf_pages)
+                                       template_config_path, _fit_print_rect, _raise_if_printer_offline,
+                                       _save_pdf_pages)
 
 
 class PrintPassTests(unittest.TestCase):
@@ -336,11 +337,41 @@ class PrintPassTests(unittest.TestCase):
             with patch("app.services.print_passes.PRINTS_DIR", output_dir):
                 png = save_print_png(image, "EMP-PRINT")
                 pdf = save_print_pdf(image, "EMP-PRINT")
+                custom_png = save_print_png(image, "EMP-PRINT", Path(tmp) / "desktop" / "custom.png")
+                custom_pdf = save_print_pdf(image, "EMP-PRINT", Path(tmp) / "desktop" / "custom.pdf")
 
             self.assertTrue(png.exists())
             self.assertEqual(png.suffix, ".png")
             self.assertTrue(pdf.exists())
             self.assertEqual(pdf.suffix, ".pdf")
+            self.assertTrue(custom_png.exists())
+            self.assertTrue(custom_pdf.exists())
+
+    def test_fit_print_rect_preserves_real_size_and_centers(self):
+        rect = _fit_print_rect((300, 180), (1000, 800), (300, 300))
+
+        self.assertEqual(rect, (350, 310, 300, 180))
+
+    def test_offline_default_printer_is_reported_clearly(self):
+        with patch("app.services.print_passes._printer_state", return_value={"attributes": 0x400, "status": 0, "jobs": 0}):
+            with self.assertRaisesRegex(RuntimeError, "offline"):
+                _raise_if_printer_offline("Test Printer")
+
+    def test_print_image_uses_direct_windows_page_renderer(self):
+        captured = {}
+
+        def fake_print(pages, job_name):
+            captured["pages"] = list(pages)
+            captured["job_name"] = job_name
+            return {"printer": "Test Printer", "pages": len(captured["pages"])}
+
+        image = Image.new("RGBA", (300, 180), (255, 255, 255, 255))
+        with patch("app.services.print_passes._print_windows_pages", side_effect=fake_print):
+            result = print_image(image, "Test Job")
+
+        self.assertEqual(result, {"printer": "Test Printer", "pages": 1})
+        self.assertEqual(captured["job_name"], "Test Job")
+        self.assertEqual(captured["pages"][0].size, (300, 180))
 
     def test_compose_a4_print_pages_uses_10x6_layout(self):
         images = [
@@ -402,10 +433,11 @@ class PrintPassTests(unittest.TestCase):
             Image.new("RGBA", (300, 180), (255, 255, 255, 255)).save(template)
 
             with patch("app.services.print_passes.PRINTS_DIR", output_dir):
-                pdf = save_batch_print_pdf(self.db, ["EMP-PRINT", "EMP-PRINT-2"], template)
+                custom_path = root / "desktop" / "batch.pdf"
+                pdf = save_batch_print_pdf(self.db, ["EMP-PRINT", "EMP-PRINT-2"], template, custom_path)
 
             self.assertTrue(pdf.exists())
-            self.assertTrue(pdf.name.startswith("batch_2_"))
+            self.assertEqual(pdf, custom_path)
 
     def test_save_batch_print_pdf_streams_pages(self):
         calls = []
@@ -425,6 +457,27 @@ class PrintPassTests(unittest.TestCase):
              patch("app.services.print_passes._batch_output_path", return_value=Path(tmp) / "batch.pdf"):
             save_batch_print_pdf(self.db, qr_codes, Path("template.png"))
 
+        self.assertEqual(calls, qr_codes[:A4_BATCH_CAPACITY])
+
+    def test_print_batch_passes_streams_pages_to_windows_printer(self):
+        calls = []
+
+        def fake_render(_db, qr_code, _template):
+            calls.append(qr_code)
+            return Image.new("RGBA", (300, 180), (len(calls), 20, 30, 255))
+
+        def fake_print(pages, job_name):
+            first_page = next(iter(pages))
+            self.assertEqual(first_page.size, A4_PAGE_SIZE_PX)
+            return {"printer": "Test Printer", "pages": 1, "job": job_name}
+
+        qr_codes = [f"TMP-{index:04d}" for index in range(A4_BATCH_CAPACITY + 5)]
+        with patch("app.services.print_passes.render_print_pass", side_effect=fake_render), \
+             patch("app.services.print_passes._print_windows_pages", side_effect=fake_print):
+            result = print_batch_passes(self.db, qr_codes, Path("template.png"), "Batch Job")
+
+        self.assertEqual(result["printer"], "Test Printer")
+        self.assertEqual(result["job"], "Batch Job")
         self.assertEqual(calls, qr_codes[:A4_BATCH_CAPACITY])
 
     def test_save_pdf_pages_writes_single_trailer_document(self):

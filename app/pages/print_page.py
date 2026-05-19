@@ -1,5 +1,7 @@
 import tkinter as tk
-from tkinter import messagebox, ttk
+from datetime import datetime
+from pathlib import Path
+from tkinter import filedialog, messagebox, ttk
 
 from PIL import ImageTk
 
@@ -10,8 +12,8 @@ from app.services.auth import PERMISSION_PRINT, has_permission
 from app.services.pass_db import (CI, PASS_TYPE_REGULAR, PASS_TYPE_SEMIANNUAL,
                                   PASS_TYPE_TEMPORARY, fetch_pass_by_qr, pass_status,
                                   search_passes)
-from app.services.print_passes import (list_print_templates, print_file, render_print_pass,
-                                       save_batch_print_pdf, save_print_pdf, save_print_png,
+from app.services.print_passes import (list_print_templates, print_batch_passes, print_image,
+                                       render_print_pass, save_batch_print_pdf, save_print_pdf, save_print_png,
                                        save_template_choice, selected_template_for_profile)
 from app.pages.template_editor import open_template_editor
 from app.ui.widgets import Btn, _sep
@@ -26,6 +28,52 @@ PRINT_PROFILE_TITLES = {
     PASS_TYPE_REGULAR: "Временные",
     PASS_TYPE_SEMIANNUAL: "Полугодовые",
 }
+
+
+def _desktop_dir():
+    desktop = Path.home() / "Desktop"
+    return desktop if desktop.exists() else Path.home()
+
+
+def _file_part(value):
+    text = str(value or "").strip()
+    cleaned = "".join(char if char.isalnum() or char in "._-" else "_" for char in text)
+    return cleaned.strip("._-") or "pass"
+
+
+def _ask_print_path(app, title, initialfile, extension, filetypes):
+    path = filedialog.asksaveasfilename(
+        parent=app,
+        title=title,
+        initialdir=str(_desktop_dir()),
+        initialfile=initialfile,
+        defaultextension=extension,
+        filetypes=filetypes,
+    )
+    return Path(path) if path else None
+
+
+def _single_output_path(app, qr_code, extension):
+    stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    kind = extension.strip(".").upper()
+    return _ask_print_path(
+        app,
+        f"Сохранить {kind}",
+        f"{_file_part(qr_code)}_{stamp}{extension}",
+        extension,
+        [(kind, f"*{extension}")],
+    )
+
+
+def _batch_output_path(app, count):
+    stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    return _ask_print_path(
+        app,
+        "Сохранить PDF A4",
+        f"passes_a4_{count}_{stamp}.pdf",
+        ".pdf",
+        [("PDF", "*.pdf")],
+    )
 
 
 def _unique_qrs(qr_codes):
@@ -162,16 +210,22 @@ def open_print_dialog(app, qr_codes, template_profile=None, title=None):
         image, qr = build_preview()
         if image is None:
             return
-        path = save_print_png(image, qr)
-        safe_record_action(app.db, app.user, "print.png", "pass", qr, {"file": path.name, "profile": template_profile})
+        path = _single_output_path(app, qr, ".png")
+        if not path:
+            return
+        path = save_print_png(image, qr, path)
+        safe_record_action(app.db, app.user, "print.png", "pass", qr, {"file": str(path), "profile": template_profile})
         app._toast(f"PNG сохранён: {path.name}", C["green"])
 
     def save_pdf():
         image, qr = build_preview()
         if image is None:
             return
-        path = save_print_pdf(image, qr)
-        safe_record_action(app.db, app.user, "print.pdf", "pass", qr, {"file": path.name, "profile": template_profile})
+        path = _single_output_path(app, qr, ".pdf")
+        if not path:
+            return
+        path = save_print_pdf(image, qr, path)
+        safe_record_action(app.db, app.user, "print.pdf", "pass", qr, {"file": str(path), "profile": template_profile})
         app._toast(f"PDF сохранён: {path.name}", C["green"])
 
     def send_print():
@@ -180,8 +234,14 @@ def open_print_dialog(app, qr_codes, template_profile=None, title=None):
             return
         try:
             path = save_print_pdf(image, qr)
-            print_file(path)
-            safe_record_action(app.db, app.user, "print.send", "pass", qr, {"file": path.name, "profile": template_profile})
+            result = print_image(image, f"PassControl {qr}")
+            safe_record_action(app.db, app.user, "print.send", "pass", qr, {
+                "file": path.name,
+                "profile": template_profile,
+                "printer": result["printer"],
+                "pages": result["pages"],
+                "method": "windows_gdi",
+            })
             app._toast("Отправлено на печать", C["green"])
         except Exception as ex:
             messagebox.showerror("Печать", f"Не удалось отправить на печать:\n{ex}")
@@ -192,9 +252,12 @@ def open_print_dialog(app, qr_codes, template_profile=None, title=None):
         if not selected or not template:
             return
         try:
-            path = save_batch_print_pdf(app.db, selected, template)
+            path = _batch_output_path(app, len(selected))
+            if not path:
+                return
+            path = save_batch_print_pdf(app.db, selected, template, path)
             safe_record_action(app.db, app.user, "print.batch_pdf", "passes", len(selected), {
-                "file": path.name,
+                "file": str(path),
                 "count": len(selected),
                 "layout": "a4_10x6",
                 "profile": template_profile,
@@ -209,13 +272,14 @@ def open_print_dialog(app, qr_codes, template_profile=None, title=None):
         if not selected or not template:
             return
         try:
-            path = save_batch_print_pdf(app.db, selected, template)
-            print_file(path)
+            result = print_batch_passes(app.db, selected, template, f"PassControl A4 {len(selected)}")
             safe_record_action(app.db, app.user, "print.batch_send", "passes", len(selected), {
-                "file": path.name,
                 "count": len(selected),
                 "layout": "a4_10x6",
                 "profile": template_profile,
+                "printer": result["printer"],
+                "pages": result["pages"],
+                "method": "windows_gdi",
             })
             app._toast(f"Отправлено на печать: {len(selected)}", C["green"])
         except Exception as ex:
@@ -373,16 +437,22 @@ def show_print(app):
         image, qr=build_preview()
         if image is None:
             return
-        path=save_print_png(image, qr)
-        safe_record_action(app.db, app.user, "print.png", "pass", qr, {"file": path.name})
+        path=_single_output_path(app, qr, ".png")
+        if not path:
+            return
+        path=save_print_png(image, qr, path)
+        safe_record_action(app.db, app.user, "print.png", "pass", qr, {"file": str(path)})
         app._toast(f"PNG сохранён: {path.name}",C["green"])
 
     def save_pdf():
         image, qr=build_preview()
         if image is None:
             return
-        path=save_print_pdf(image, qr)
-        safe_record_action(app.db, app.user, "print.pdf", "pass", qr, {"file": path.name})
+        path=_single_output_path(app, qr, ".pdf")
+        if not path:
+            return
+        path=save_print_pdf(image, qr, path)
+        safe_record_action(app.db, app.user, "print.pdf", "pass", qr, {"file": str(path)})
         app._toast(f"PDF сохранён: {path.name}",C["green"])
 
     def send_print():
@@ -391,8 +461,13 @@ def show_print(app):
             return
         try:
             path=save_print_pdf(image, qr)
-            print_file(path)
-            safe_record_action(app.db, app.user, "print.send", "pass", qr, {"file": path.name})
+            result=print_image(image, f"PassControl {qr}")
+            safe_record_action(app.db, app.user, "print.send", "pass", qr, {
+                "file": path.name,
+                "printer": result["printer"],
+                "pages": result["pages"],
+                "method": "windows_gdi",
+            })
             app._toast("Отправлено на печать",C["green"])
         except Exception as ex:
             messagebox.showerror("Печать",f"Не удалось отправить на печать:\n{ex}")
@@ -403,8 +478,11 @@ def show_print(app):
         if not qrs or not template:
             return
         try:
-            path=save_batch_print_pdf(app.db,qrs,template)
-            safe_record_action(app.db,app.user,"print.batch_pdf","passes",len(qrs),{"file": path.name,"count": len(qrs),"layout": "a4_10x6"})
+            path=_batch_output_path(app, len(qrs))
+            if not path:
+                return
+            path=save_batch_print_pdf(app.db,qrs,template,path)
+            safe_record_action(app.db,app.user,"print.batch_pdf","passes",len(qrs),{"file": str(path),"count": len(qrs),"layout": "a4_10x6"})
             app._toast(f"PDF создан: {path.name}",C["green"])
         except Exception as ex:
             messagebox.showerror("Массовая печать",f"Не удалось создать PDF:\n{ex}")
@@ -415,9 +493,14 @@ def show_print(app):
         if not qrs or not template:
             return
         try:
-            path=save_batch_print_pdf(app.db,qrs,template)
-            print_file(path)
-            safe_record_action(app.db,app.user,"print.batch_send","passes",len(qrs),{"file": path.name,"count": len(qrs),"layout": "a4_10x6"})
+            result=print_batch_passes(app.db,qrs,template,f"PassControl A4 {len(qrs)}")
+            safe_record_action(app.db,app.user,"print.batch_send","passes",len(qrs),{
+                "count": len(qrs),
+                "layout": "a4_10x6",
+                "printer": result["printer"],
+                "pages": result["pages"],
+                "method": "windows_gdi",
+            })
             app._toast(f"Отправлено на печать: {len(qrs)}",C["green"])
         except Exception as ex:
             messagebox.showerror("Массовая печать",f"Не удалось отправить на печать:\n{ex}")

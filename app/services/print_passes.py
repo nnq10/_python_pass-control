@@ -842,62 +842,53 @@ def _save_pdf_pages(path, pages):
     next_object_id = 3
 
     path.parent.mkdir(parents=True, exist_ok=True)
-    tmp_path = path.with_name(f"{path.name}.tmp")
-    try:
-        with tmp_path.open("wb") as handle:
-            handle.write(b"%PDF-1.4\n%\xe2\xe3\xcf\xd3\n")
-            for index, page in enumerate(chain((first_page,), page_iter), start=1):
-                image_data, (width_px, height_px) = _pdf_image_stream(page)
-                width_pt = _pdf_number(width_px * 72.0 / DEFAULT_DPI)
-                height_pt = _pdf_number(height_px * 72.0 / DEFAULT_DPI)
-                name = f"Im{index}"
+    with path.open("wb") as handle: 
+        handle.write(b"%PDF-1.4\n%\xe2\xe3\xcf\xd3\n")
+        for index, page in enumerate(chain((first_page,), page_iter), start=1):
+            image_data, (width_px, height_px) = _pdf_image_stream(page)
+            width_pt = _pdf_number(width_px * 72.0 / DEFAULT_DPI)
+            height_pt = _pdf_number(height_px * 72.0 / DEFAULT_DPI)
+            name = f"Im{index}"
 
-                page_id = next_object_id
-                content_id = next_object_id + 1
-                image_id = next_object_id + 2
-                next_object_id += 3
-                offsets.extend([0, 0, 0])
-                page_ids.append(page_id)
+            page_id = next_object_id
+            content_id = next_object_id + 1
+            image_id = next_object_id + 2
+            next_object_id += 3
+            offsets.extend([0, 0, 0])
+            page_ids.append(page_id)
 
-                image_header = (
-                    f"<< /Type /XObject /Subtype /Image /Width {width_px} /Height {height_px} "
-                    f"/ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /FlateDecode "
-                    f"/Length {len(image_data)} >>\nstream\n"
-                ).encode("ascii")
-                _write_pdf_object(handle, offsets, image_id, image_header + image_data + b"\nendstream")
+            image_header = (
+                f"<< /Type /XObject /Subtype /Image /Width {width_px} /Height {height_px} "
+                f"/ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /FlateDecode "
+                f"/Length {len(image_data)} >>\nstream\n"
+            ).encode("ascii")
+            _write_pdf_object(handle, offsets, image_id, image_header + image_data + b"\nendstream")
 
-                content = f"q {width_pt} 0 0 {height_pt} 0 0 cm /{name} Do Q\n".encode("ascii")
-                content_body = f"<< /Length {len(content)} >>\nstream\n".encode("ascii") + content + b"endstream"
-                _write_pdf_object(handle, offsets, content_id, content_body)
+            content = f"q {width_pt} 0 0 {height_pt} 0 0 cm /{name} Do Q\n".encode("ascii")
+            content_body = f"<< /Length {len(content)} >>\nstream\n".encode("ascii") + content + b"endstream"
+            _write_pdf_object(handle, offsets, content_id, content_body)
 
-                page_body = (
-                    f"<< /Type /Page /Parent 1 0 R /Resources << /ProcSet [/PDF /ImageC] "
-                    f"/XObject << /{name} {image_id} 0 R >> >> "
-                    f"/MediaBox [0 0 {width_pt} {height_pt}] /Contents {content_id} 0 R >>"
-                ).encode("ascii")
-                _write_pdf_object(handle, offsets, page_id, page_body)
+            page_body = (
+                f"<< /Type /Page /Parent 1 0 R /Resources << /ProcSet [/PDF /ImageC] "
+                f"/XObject << /{name} {image_id} 0 R >> >> "
+                f"/MediaBox [0 0 {width_pt} {height_pt}] /Contents {content_id} 0 R >>"
+            ).encode("ascii")
+            _write_pdf_object(handle, offsets, page_id, page_body)
 
-            kids = " ".join(f"{page_id} 0 R" for page_id in page_ids)
-            pages_body = f"<< /Type /Pages /Count {len(page_ids)} /Kids [{kids}] >>".encode("ascii")
-            _write_pdf_object(handle, offsets, 1, pages_body)
-            _write_pdf_object(handle, offsets, 2, b"<< /Type /Catalog /Pages 1 0 R >>")
+        kids = " ".join(f"{page_id} 0 R" for page_id in page_ids)
+        pages_body = f"<< /Type /Pages /Count {len(page_ids)} /Kids [{kids}] >>".encode("ascii")
+        _write_pdf_object(handle, offsets, 1, pages_body)
+        _write_pdf_object(handle, offsets, 2, b"<< /Type /Catalog /Pages 1 0 R >>")
 
-            xref_offset = handle.tell()
-            handle.write(f"xref\n0 {len(offsets)}\n".encode("ascii"))
-            handle.write(b"0000000000 65535 f \n")
-            for offset in offsets[1:]:
-                handle.write(f"{offset:010d} 00000 n \n".encode("ascii"))
-            handle.write(
-                f"trailer\n<< /Size {len(offsets)} /Root 2 0 R >>\n"
-                f"startxref\n{xref_offset}\n%%EOF\n".encode("ascii")
-            )
-        tmp_path.replace(path)
-    except Exception:
-        try:
-            tmp_path.unlink()
-        except FileNotFoundError:
-            pass
-        raise
+        xref_offset = handle.tell()
+        handle.write(f"xref\n0 {len(offsets)}\n".encode("ascii"))
+        handle.write(b"0000000000 65535 f \n")
+        for offset in offsets[1:]:
+            handle.write(f"{offset:010d} 00000 n \n".encode("ascii"))
+        handle.write(
+            f"trailer\n<< /Size {len(offsets)} /Root 2 0 R >>\n"
+            f"startxref\n{xref_offset}\n%%EOF\n".encode("ascii")
+        )
 
 
 def save_batch_print_pdf(db, qr_codes, template_path):
