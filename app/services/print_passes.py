@@ -1,7 +1,9 @@
+import ctypes
 import json
 import os
 import re
 import zlib
+from ctypes import wintypes
 from copy import deepcopy
 from datetime import datetime, timedelta
 from itertools import chain
@@ -306,6 +308,12 @@ def _batch_output_path(count):
     ensure_data_dirs()
     stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     return PRINTS_DIR / f"batch_{count}_{stamp}.pdf"
+
+
+def _target_output_path(path):
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    return path
 
 
 def _full_name(row):
@@ -682,14 +690,19 @@ def render_print_pass(db, qr_code, template_path):
     return image
 
 
-def save_print_png(image, qr_code):
-    path = _output_path(qr_code, ".png")
+def save_print_png(image, qr_code, path=None):
+    path = _target_output_path(path) if path else _output_path(qr_code, ".png")
     image.save(path, format="PNG")
     return path
 
 
-def save_print_pdf(image, qr_code):
-    path = _output_path(qr_code, ".pdf")
+def save_print_pdf(image, qr_code, path=None):
+    path = _target_output_path(path) if path else _output_path(qr_code, ".pdf")
+    compose_single_print_page(image).save(path, "PDF", resolution=DEFAULT_DPI)
+    return path
+
+
+def compose_single_print_page(image):
     page_size = _image_pdf_size_px(image)
     binding_margin_left_px = _image_binding_margin_left_px(image)
     if binding_margin_left_px:
@@ -700,8 +713,7 @@ def save_print_pdf(image, qr_code):
         background.paste(_print_sized_pass(image, layout_size), positions[0])
     else:
         background = _print_sized_pass(image, page_size) if page_size != image.size else _pdf_page(image)
-    background.save(path, "PDF", resolution=DEFAULT_DPI)
-    return path
+    return background
 
 
 def _pdf_page(image):
@@ -842,62 +854,298 @@ def _save_pdf_pages(path, pages):
     next_object_id = 3
 
     path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("wb") as handle: 
-        handle.write(b"%PDF-1.4\n%\xe2\xe3\xcf\xd3\n")
-        for index, page in enumerate(chain((first_page,), page_iter), start=1):
-            image_data, (width_px, height_px) = _pdf_image_stream(page)
-            width_pt = _pdf_number(width_px * 72.0 / DEFAULT_DPI)
-            height_pt = _pdf_number(height_px * 72.0 / DEFAULT_DPI)
-            name = f"Im{index}"
+    tmp_path = path.with_name(f"{path.name}.tmp")
+    try:
+        with tmp_path.open("wb") as handle:
+            handle.write(b"%PDF-1.4\n%\xe2\xe3\xcf\xd3\n")
+            for index, page in enumerate(chain((first_page,), page_iter), start=1):
+                image_data, (width_px, height_px) = _pdf_image_stream(page)
+                width_pt = _pdf_number(width_px * 72.0 / DEFAULT_DPI)
+                height_pt = _pdf_number(height_px * 72.0 / DEFAULT_DPI)
+                name = f"Im{index}"
 
-            page_id = next_object_id
-            content_id = next_object_id + 1
-            image_id = next_object_id + 2
-            next_object_id += 3
-            offsets.extend([0, 0, 0])
-            page_ids.append(page_id)
+                page_id = next_object_id
+                content_id = next_object_id + 1
+                image_id = next_object_id + 2
+                next_object_id += 3
+                offsets.extend([0, 0, 0])
+                page_ids.append(page_id)
 
-            image_header = (
-                f"<< /Type /XObject /Subtype /Image /Width {width_px} /Height {height_px} "
-                f"/ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /FlateDecode "
-                f"/Length {len(image_data)} >>\nstream\n"
-            ).encode("ascii")
-            _write_pdf_object(handle, offsets, image_id, image_header + image_data + b"\nendstream")
+                image_header = (
+                    f"<< /Type /XObject /Subtype /Image /Width {width_px} /Height {height_px} "
+                    f"/ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /FlateDecode "
+                    f"/Length {len(image_data)} >>\nstream\n"
+                ).encode("ascii")
+                _write_pdf_object(handle, offsets, image_id, image_header + image_data + b"\nendstream")
 
-            content = f"q {width_pt} 0 0 {height_pt} 0 0 cm /{name} Do Q\n".encode("ascii")
-            content_body = f"<< /Length {len(content)} >>\nstream\n".encode("ascii") + content + b"endstream"
-            _write_pdf_object(handle, offsets, content_id, content_body)
+                content = f"q {width_pt} 0 0 {height_pt} 0 0 cm /{name} Do Q\n".encode("ascii")
+                content_body = f"<< /Length {len(content)} >>\nstream\n".encode("ascii") + content + b"endstream"
+                _write_pdf_object(handle, offsets, content_id, content_body)
 
-            page_body = (
-                f"<< /Type /Page /Parent 1 0 R /Resources << /ProcSet [/PDF /ImageC] "
-                f"/XObject << /{name} {image_id} 0 R >> >> "
-                f"/MediaBox [0 0 {width_pt} {height_pt}] /Contents {content_id} 0 R >>"
-            ).encode("ascii")
-            _write_pdf_object(handle, offsets, page_id, page_body)
+                page_body = (
+                    f"<< /Type /Page /Parent 1 0 R /Resources << /ProcSet [/PDF /ImageC] "
+                    f"/XObject << /{name} {image_id} 0 R >> >> "
+                    f"/MediaBox [0 0 {width_pt} {height_pt}] /Contents {content_id} 0 R >>"
+                ).encode("ascii")
+                _write_pdf_object(handle, offsets, page_id, page_body)
 
-        kids = " ".join(f"{page_id} 0 R" for page_id in page_ids)
-        pages_body = f"<< /Type /Pages /Count {len(page_ids)} /Kids [{kids}] >>".encode("ascii")
-        _write_pdf_object(handle, offsets, 1, pages_body)
-        _write_pdf_object(handle, offsets, 2, b"<< /Type /Catalog /Pages 1 0 R >>")
+            kids = " ".join(f"{page_id} 0 R" for page_id in page_ids)
+            pages_body = f"<< /Type /Pages /Count {len(page_ids)} /Kids [{kids}] >>".encode("ascii")
+            _write_pdf_object(handle, offsets, 1, pages_body)
+            _write_pdf_object(handle, offsets, 2, b"<< /Type /Catalog /Pages 1 0 R >>")
 
-        xref_offset = handle.tell()
-        handle.write(f"xref\n0 {len(offsets)}\n".encode("ascii"))
-        handle.write(b"0000000000 65535 f \n")
-        for offset in offsets[1:]:
-            handle.write(f"{offset:010d} 00000 n \n".encode("ascii"))
-        handle.write(
-            f"trailer\n<< /Size {len(offsets)} /Root 2 0 R >>\n"
-            f"startxref\n{xref_offset}\n%%EOF\n".encode("ascii")
-        )
+            xref_offset = handle.tell()
+            handle.write(f"xref\n0 {len(offsets)}\n".encode("ascii"))
+            handle.write(b"0000000000 65535 f \n")
+            for offset in offsets[1:]:
+                handle.write(f"{offset:010d} 00000 n \n".encode("ascii"))
+            handle.write(
+                f"trailer\n<< /Size {len(offsets)} /Root 2 0 R >>\n"
+                f"startxref\n{xref_offset}\n%%EOF\n".encode("ascii")
+            )
+        tmp_path.replace(path)
+    except Exception:
+        try:
+            tmp_path.unlink()
+        except FileNotFoundError:
+            pass
+        raise
 
 
-def save_batch_print_pdf(db, qr_codes, template_path):
+def save_batch_print_pdf(db, qr_codes, template_path, path=None):
     qr_codes = list(qr_codes)
     if not qr_codes:
         raise ValueError("no passes selected")
-    path = _batch_output_path(len(qr_codes))
+    path = _target_output_path(path) if path else _batch_output_path(len(qr_codes))
     _save_pdf_pages(path, _batch_print_pages(db, qr_codes, template_path))
     return path
+
+
+class DOCINFO(ctypes.Structure):
+    _fields_ = [
+        ("cbSize", ctypes.c_int),
+        ("lpszDocName", wintypes.LPCWSTR),
+        ("lpszOutput", wintypes.LPCWSTR),
+        ("lpszDatatype", wintypes.LPCWSTR),
+        ("fwType", wintypes.DWORD),
+    ]
+
+
+class BITMAPINFOHEADER(ctypes.Structure):
+    _fields_ = [
+        ("biSize", wintypes.DWORD),
+        ("biWidth", wintypes.LONG),
+        ("biHeight", wintypes.LONG),
+        ("biPlanes", wintypes.WORD),
+        ("biBitCount", wintypes.WORD),
+        ("biCompression", wintypes.DWORD),
+        ("biSizeImage", wintypes.DWORD),
+        ("biXPelsPerMeter", wintypes.LONG),
+        ("biYPelsPerMeter", wintypes.LONG),
+        ("biClrUsed", wintypes.DWORD),
+        ("biClrImportant", wintypes.DWORD),
+    ]
+
+
+class BITMAPINFO(ctypes.Structure):
+    _fields_ = [("bmiHeader", BITMAPINFOHEADER), ("bmiColors", wintypes.DWORD * 3)]
+
+
+class PRINTER_INFO_2W(ctypes.Structure):
+    _fields_ = [
+        ("pServerName", wintypes.LPWSTR),
+        ("pPrinterName", wintypes.LPWSTR),
+        ("pShareName", wintypes.LPWSTR),
+        ("pPortName", wintypes.LPWSTR),
+        ("pDriverName", wintypes.LPWSTR),
+        ("pComment", wintypes.LPWSTR),
+        ("pLocation", wintypes.LPWSTR),
+        ("pDevMode", wintypes.LPVOID),
+        ("pSepFile", wintypes.LPWSTR),
+        ("pPrintProcessor", wintypes.LPWSTR),
+        ("pDatatype", wintypes.LPWSTR),
+        ("pParameters", wintypes.LPWSTR),
+        ("pSecurityDescriptor", wintypes.LPVOID),
+        ("Attributes", wintypes.DWORD),
+        ("Priority", wintypes.DWORD),
+        ("DefaultPriority", wintypes.DWORD),
+        ("StartTime", wintypes.DWORD),
+        ("UntilTime", wintypes.DWORD),
+        ("Status", wintypes.DWORD),
+        ("cJobs", wintypes.DWORD),
+        ("AveragePPM", wintypes.DWORD),
+    ]
+
+
+HORZRES = 8
+VERTRES = 10
+LOGPIXELSX = 88
+LOGPIXELSY = 90
+BI_RGB = 0
+DIB_RGB_COLORS = 0
+SRCCOPY = 0x00CC0020
+PRINTER_ATTRIBUTE_WORK_OFFLINE = 0x00000400
+PRINTER_STATUS_OFFLINE = 0x00000080
+
+
+def _winapi_error(message):
+    return ctypes.WinError(ctypes.get_last_error(), message)
+
+
+def _printer_state(printer_name):
+    if os.name != "nt":
+        return {"attributes": 0, "status": 0, "jobs": 0}
+    winspool = ctypes.WinDLL("winspool.drv", use_last_error=True)
+    handle = wintypes.HANDLE()
+    if not winspool.OpenPrinterW(str(printer_name), ctypes.byref(handle), None):
+        raise _winapi_error("Не удалось открыть принтер")
+    try:
+        needed = wintypes.DWORD()
+        winspool.GetPrinterW(handle, 2, None, 0, ctypes.byref(needed))
+        buffer = ctypes.create_string_buffer(needed.value)
+        if not winspool.GetPrinterW(handle, 2, buffer, needed, ctypes.byref(needed)):
+            raise _winapi_error("Не удалось получить состояние принтера")
+        info = ctypes.cast(buffer, ctypes.POINTER(PRINTER_INFO_2W)).contents
+        return {
+            "status": int(info.Status or 0),
+            "jobs": int(info.cJobs or 0),
+            "attributes": int(info.Attributes or 0),
+        }
+    finally:
+        winspool.ClosePrinter(handle)
+
+
+def _raise_if_printer_offline(printer_name):
+    state = _printer_state(printer_name)
+    if (state.get("attributes", 0) & PRINTER_ATTRIBUTE_WORK_OFFLINE) or (state.get("status", 0) & PRINTER_STATUS_OFFLINE):
+        raise RuntimeError(
+            f"Принтер по умолчанию «{printer_name}» сейчас offline. "
+            "Включите принтер или выберите другой принтер по умолчанию в Windows."
+        )
+
+
+def _default_printer_name():
+    if os.name != "nt":
+        raise RuntimeError("Печать напрямую поддерживается только в Windows")
+    winspool = ctypes.WinDLL("winspool.drv", use_last_error=True)
+    needed = wintypes.DWORD()
+    winspool.GetDefaultPrinterW(None, ctypes.byref(needed))
+    if needed.value <= 1:
+        raise RuntimeError("В Windows не выбран принтер по умолчанию")
+    buffer = ctypes.create_unicode_buffer(needed.value)
+    if not winspool.GetDefaultPrinterW(buffer, ctypes.byref(needed)):
+        raise _winapi_error("Не удалось получить принтер по умолчанию")
+    printer_name = buffer.value
+    _raise_if_printer_offline(printer_name)
+    return printer_name
+
+
+def default_printer_name():
+    return _default_printer_name()
+
+
+def _printer_dc(printer_name):
+    gdi32 = ctypes.WinDLL("gdi32", use_last_error=True)
+    hdc = gdi32.CreateDCW("WINSPOOL", str(printer_name), None, None)
+    if not hdc:
+        raise _winapi_error("Не удалось создать контекст принтера")
+    return hdc
+
+
+def _fit_print_rect(image_size, printable_size, printer_dpi):
+    width, height = image_size
+    printable_width, printable_height = printable_size
+    dpi_x, dpi_y = printer_dpi
+    target_width = max(1, int(round(width * dpi_x / DEFAULT_DPI)))
+    target_height = max(1, int(round(height * dpi_y / DEFAULT_DPI)))
+    scale = min(1.0, printable_width / target_width, printable_height / target_height)
+    target_width = max(1, int(round(target_width * scale)))
+    target_height = max(1, int(round(target_height * scale)))
+    x = max(0, (printable_width - target_width) // 2)
+    y = max(0, (printable_height - target_height) // 2)
+    return x, y, target_width, target_height
+
+
+def _draw_page_to_printer(hdc, page):
+    gdi32 = ctypes.WinDLL("gdi32", use_last_error=True)
+    image = page.convert("RGB")
+    printable_size = (
+        int(gdi32.GetDeviceCaps(hdc, HORZRES)),
+        int(gdi32.GetDeviceCaps(hdc, VERTRES)),
+    )
+    printer_dpi = (
+        int(gdi32.GetDeviceCaps(hdc, LOGPIXELSX)),
+        int(gdi32.GetDeviceCaps(hdc, LOGPIXELSY)),
+    )
+    x, y, target_width, target_height = _fit_print_rect(image.size, printable_size, printer_dpi)
+    dib = image.transpose(Image.Transpose.FLIP_TOP_BOTTOM)
+    data = dib.tobytes("raw", "BGR")
+    header = BITMAPINFO()
+    header.bmiHeader.biSize = ctypes.sizeof(BITMAPINFOHEADER)
+    header.bmiHeader.biWidth = dib.width
+    header.bmiHeader.biHeight = dib.height
+    header.bmiHeader.biPlanes = 1
+    header.bmiHeader.biBitCount = 24
+    header.bmiHeader.biCompression = BI_RGB
+    if not gdi32.StretchDIBits(
+        hdc,
+        x,
+        y,
+        target_width,
+        target_height,
+        0,
+        0,
+        dib.width,
+        dib.height,
+        data,
+        ctypes.byref(header),
+        DIB_RGB_COLORS,
+        SRCCOPY,
+    ):
+        raise _winapi_error("Не удалось отправить страницу на принтер")
+
+
+def _print_windows_pages(pages, job_name="PassControl"):
+    printer_name = _default_printer_name()
+    gdi32 = ctypes.WinDLL("gdi32", use_last_error=True)
+    hdc = _printer_dc(printer_name)
+    doc = DOCINFO()
+    doc.cbSize = ctypes.sizeof(DOCINFO)
+    doc.lpszDocName = str(job_name or "PassControl")
+    page_count = 0
+    try:
+        if gdi32.StartDocW(hdc, ctypes.byref(doc)) <= 0:
+            raise _winapi_error("Не удалось начать печать")
+        try:
+            for page in pages:
+                if gdi32.StartPage(hdc) <= 0:
+                    raise _winapi_error("Не удалось начать страницу печати")
+                try:
+                    _draw_page_to_printer(hdc, page)
+                finally:
+                    gdi32.EndPage(hdc)
+                page_count += 1
+            if page_count == 0:
+                raise ValueError("no pages to print")
+        finally:
+            gdi32.EndDoc(hdc)
+    finally:
+        gdi32.DeleteDC(hdc)
+    return {"printer": printer_name, "pages": page_count}
+
+
+def print_image(image, job_name="PassControl"):
+    return _print_windows_pages([compose_single_print_page(image)], job_name)
+
+
+def print_batch_passes(db, qr_codes, template_path, job_name=None):
+    qr_codes = list(qr_codes)
+    if not qr_codes:
+        raise ValueError("no passes selected")
+    return _print_windows_pages(
+        _batch_print_pages(db, qr_codes, template_path),
+        job_name or f"PassControl A4 {len(qr_codes)}",
+    )
 
 
 def print_file(path):

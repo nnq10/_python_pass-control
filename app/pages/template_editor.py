@@ -81,7 +81,7 @@ def _field_title(field, options):
 
 
 def open_template_editor(app, template_path, on_saved=None):
-    win=app._modal("Редактор шаблона",1120,960)
+    win=app._modal("Редактор шаблона",1120,820)
     root=tk.Frame(win,bg=C["panel"])
     root.pack(fill="both",expand=True,padx=18,pady=16)
 

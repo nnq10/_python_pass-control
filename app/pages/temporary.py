@@ -1,11 +1,14 @@
 import tkinter as tk
 from datetime import datetime
-from tkinter import messagebox, ttk
+from pathlib import Path
+from tkinter import filedialog, messagebox, ttk
 
 from app.core.config import C, FONT as F
 from app.core.logging import get_logger
 from app.services.audit import safe_record_action
+from app.services.auth import PERMISSION_TEMPORARY, has_permission
 from app.services.pass_db import CI, PASS_TYPE_TEMPORARY
+from app.services.reference_data import list_reference_values
 from app.services.temporary_passes import (
     TEMP_POOL_SIZE,
     TEMP_STATUS_EXPIRED,
@@ -13,18 +16,24 @@ from app.services.temporary_passes import (
     TEMP_STATUS_ISSUED,
     TEMP_STATUS_LOST,
     TemporaryPassError,
+    active_temporary_book,
+    complete_temporary_book_if_used,
     create_temporary_pool,
+    export_temporary_book_xlsx,
     issue_temporary_pass,
+    latest_unarchived_completed_book,
     list_temporary_passes,
+    mark_temporary_book_archived,
     next_free_temporary_pass,
-    return_temporary_pass,
+    temporary_book_no,
+    temporary_book_title,
     temporary_counts,
     temporary_status,
     temporary_status_title,
 )
-from app.services.validation import ValidationError, format_validation_errors
 from app.pages.print_page import open_print_dialog
-from app.ui.widgets import Btn, _field
+from app.services.validation import ValidationError, format_validation_errors
+from app.ui.widgets import Btn, FilterChip, _field, _suggest_field, accent_bar
 
 
 logger = get_logger(__name__)
@@ -42,26 +51,100 @@ def _name(row):
     return " ".join(filter(None, [row[CI["ln"]], row[CI["fn"]], row[CI["mn"]]]))
 
 
-def _selected_qr(app, tree):
-    sel = tree.selection()
-    if not sel:
-        app._toast("Выберите временный QR")
-        return None
-    return tree.item(sel[0])["values"][0]
-
-
 def _selected_qrs(app, tree):
     selection = tree.selection()
     if not selection:
         app._toast("Выберите один или несколько временных пропусков")
         return []
-    return [tree.item(item)["values"][0] for item in selection]
+    return [tree.item(item)["values"][1] for item in selection]
 
 
 def _print_selected(app, tree):
     qrs = _selected_qrs(app, tree)
-    if qrs:
-        open_print_dialog(app, qrs, template_profile=PASS_TYPE_TEMPORARY)
+    if not qrs:
+        return
+    open_print_dialog(app, qrs, template_profile=PASS_TYPE_TEMPORARY)
+
+
+def _desktop_dir():
+    desktop = Path.home() / "Desktop"
+    return desktop if desktop.exists() else Path.home()
+
+
+def _archive_book_path(app, book_no):
+    path = filedialog.asksaveasfilename(
+        parent=app,
+        title="Сохранить закрытую QR-книгу",
+        initialdir=str(_desktop_dir()),
+        initialfile=f"qr_book_{int(book_no):03d}.xlsx",
+        defaultextension=".xlsx",
+        filetypes=[("Excel", "*.xlsx")],
+    )
+    return Path(path) if path else None
+
+
+def _save_completed_book(app, book):
+    book_no = int(book[0])
+    path = _archive_book_path(app, book_no)
+    if not path:
+        app._toast("Новая QR-книга не создана: сохранение закрытой книги отменено", C["yellow"])
+        return False
+    try:
+        saved_path = export_temporary_book_xlsx(app.db, book_no, path)
+        mark_temporary_book_archived(app.db, book_no, saved_path)
+        safe_record_action(app.db, app.user, "temp.book_archive", "temporary_book", book_no, {"file": str(saved_path)})
+        app._toast(f"QR-книга сохранена: {saved_path.name}", C["green"])
+        return True
+    except Exception as ex:
+        logger.exception("Failed to archive temporary QR book %s", book_no)
+        messagebox.showerror("QR-книга", f"Не удалось сохранить закрытую QR-книгу:\n{ex}")
+        return False
+
+
+def _archive_completed_books_before_new(app):
+    complete_temporary_book_if_used(app.db)
+    book = latest_unarchived_completed_book(app.db)
+    while book:
+        book_no = int(book[0])
+        if not messagebox.askyesno(
+            "Закрытая QR-книга",
+            f"{temporary_book_title(book_no)} закончилась.\n\nПеред созданием новой книги сохраните её заполненные данные в Excel.",
+        ):
+            app._toast("Новая QR-книга не создана без сохранения закрытой книги", C["yellow"])
+            return False
+        if not _save_completed_book(app, book):
+            return False
+        book = latest_unarchived_completed_book(app.db)
+    return True
+
+
+def _ensure_pool_after_archive(app, reason, on_saved=None, count=TEMP_POOL_SIZE):
+    if not _archive_completed_books_before_new(app):
+        return None
+    created = create_temporary_pool(app.db, count)
+    if created:
+        book = active_temporary_book(app.db)
+        safe_record_action(app.db, app.user, "temp.book_create", "temporary_book", book[0] if book else "TMP", {"created": len(created), "reason": reason})
+        if on_saved:
+            on_saved()
+    return created
+
+
+def _print_qr_book(app, on_saved=None):
+    if _ensure_pool_after_archive(app, "print_book", on_saved) is None:
+        return
+    book = active_temporary_book(app.db)
+    book_no = book[0] if book else None
+    qrs = [row[CI["qr"]] for row in list_temporary_passes(app.db, "", "all", book_no=book_no)]
+    if not qrs:
+        app._toast("Нет QR для печати книги")
+        return
+    open_print_dialog(
+        app,
+        qrs,
+        template_profile=PASS_TYPE_TEMPORARY,
+        title=f"Печать QR-книги {temporary_book_title(book_no)} — {len(qrs)} разовых пропусков",
+    )
 
 
 def _status_tag(status):
@@ -73,24 +156,27 @@ def _status_tag(status):
     }.get(status, "")
 
 
+def _next_free_row(app):
+    created = _ensure_pool_after_archive(app, "auto")
+    if created is None:
+        return None
+    return next_free_temporary_pass(app.db)
+
+
 def _issue_modal(app, qr_code=None, on_saved=None):
     if not qr_code:
-        row = next_free_temporary_pass(app.db)
+        row = _next_free_row(app)
         if not row:
             app._toast("Свободных временных QR нет")
             return
         qr_code = row[CI["qr"]]
 
-    win = app._modal(f"Выдать временный пропуск — {qr_code}", 560, 920)
+    win = app._modal(f"Выдать временный пропуск — {qr_code}", 560, 760, scroll=True)
     tk.Label(win, text=f"QR: {qr_code}", bg=C["panel"], fg=C["accent"], font=(F, 14, "bold")).pack(anchor="w", padx=28, pady=(18, 4))
 
-    di_e = _field(win, "Округ *")
-    un_e = _field(win, "В/ч *")
-    rk_e = _field(win, "Звание")
-    ln_e = _field(win, "Фамилия *")
-    fn_e = _field(win, "Имя")
-    mn_e = _field(win, "Отчество")
-    ph_e = _field(win, "Телефон")
+    fio_e = _field(win, "ФИО *")
+    destination_e = _suggest_field(win, "Куда войти *", list_reference_values(app.db, "unit"))
+    basis_e = _field(win, "Основание *")
     is_e = _field(win, "Дата выдачи (ГГГГ-ММ-ДД)", datetime.now().strftime("%Y-%m-%d"))
 
     tk.Label(win, text="Срок временного пропуска", bg=C["panel"], fg=C["muted"], font=(F, 9)).pack(anchor="w", padx=28, pady=(12, 4))
@@ -111,24 +197,35 @@ def _issue_modal(app, qr_code=None, on_saved=None):
         ).pack(side="left", padx=3)
 
     def save():
+        fio = fio_e.get().strip()
+        destination = destination_e.get().strip()
+        basis = basis_e.get().strip()
+        if not fio:
+            app._toast("Укажите ФИО")
+            return
+        if not destination:
+            app._toast("Укажите куда войти")
+            return
+        if not basis:
+            app._toast("Укажите основание")
+            return
         data = {
-            "district": di_e.get(),
-            "unit": un_e.get(),
-            "rank": rk_e.get(),
-            "last_name": ln_e.get(),
-            "first_name": fn_e.get(),
-            "middle_name": mn_e.get(),
-            "phone": ph_e.get(),
+            "district": destination,
+            "unit": destination,
+            "rank": basis,
+            "last_name": fio,
+            "first_name": "",
+            "middle_name": "",
+            "phone": "",
             "issued_date": is_e.get(),
             "days_count": days_var.get(),
         }
         try:
-            row = issue_temporary_pass(app.db, qr_code, data)
-            name = _name(row)
+            row = issue_temporary_pass(app.db, qr_code, data, create_next_book=False)
             safe_record_action(app.db, app.user, "temp.issue", "pass", qr_code, {
-                "name": name,
-                "district": row[CI["district"]],
-                "unit": row[CI["unit"]],
+                "name": _name(row),
+                "destination": row[CI["unit"]],
+                "basis": row[CI["rank"]],
                 "days": row[CI["days"]],
             })
         except ValidationError as ex:
@@ -141,8 +238,9 @@ def _issue_modal(app, qr_code=None, on_saved=None):
             logger.exception("Failed to issue temporary pass: %s", qr_code)
             messagebox.showerror("Ошибка", f"Не удалось выдать временный пропуск:\n{ex}")
             return
-        win.destroy()
+        app._close_modal(win)
         app._toast(f"Выдан временный QR: {qr_code}", C["green"])
+        _ensure_pool_after_archive(app, "auto_after_completed")
         if on_saved:
             on_saved()
 
@@ -150,6 +248,9 @@ def _issue_modal(app, qr_code=None, on_saved=None):
 
 
 def show_temporary(app):
+    if not has_permission(app.user, PERMISSION_TEMPORARY):
+        app._toast("Недостаточно прав")
+        return
     app._clr(app.content)
     app._pgtitle.configure(text="Одноразовые")
     wrap = tk.Frame(app.content, bg=C["bg"])
@@ -158,6 +259,8 @@ def show_temporary(app):
     top = tk.Frame(wrap, bg=C["bg"])
     top.pack(fill="x", pady=(0, 12))
     tk.Label(top, text="Одноразовые временные пропуска", bg=C["bg"], fg=C["text"], font=(F, 16, "bold")).pack(side="left")
+    book_state_label = tk.Label(top, text="", bg=C["bg"], fg=C["muted"], font=(F, 10, "bold"))
+    book_state_label.pack(side="left", padx=14)
 
     sf = tk.Frame(top, bg=C["input"], highlightthickness=1, highlightbackground=C["border"])
     sf.pack(side="right")
@@ -182,25 +285,40 @@ def show_temporary(app):
         label.pack(anchor="w")
         stat_labels[key] = label
 
-    filters = tk.Frame(wrap, bg=C["bg"])
-    filters.pack(fill="x", pady=(0, 12))
+    filter_panel = tk.Frame(wrap, bg=C["panel"], highlightthickness=1, highlightbackground=C["border"])
+    filter_panel.pack(fill="x", pady=(0, 12))
+    accent_bar(filter_panel).pack(fill="x")
+    filters = tk.Frame(filter_panel, bg=C["panel"])
+    filters.pack(fill="x", padx=14, pady=12)
     status_var = tk.StringVar(value="Все")
-    tk.Label(filters, text="Статус", bg=C["bg"], fg=C["muted"], font=(F, 9)).pack(side="left", padx=(0, 8))
-    status_box = ttk.Combobox(filters, textvariable=status_var, values=list(STATUS_FILTERS), state="readonly", width=14)
-    status_box.pack(side="left", ipady=3, padx=(0, 10))
+    status_group = tk.Frame(filters, bg=C["panel"])
+    status_group.pack(side="left")
+    tk.Label(status_group, text="Статус", bg=C["panel"], fg=C["muted"], font=(F, 9)).pack(anchor="w", pady=(0, 4))
+    status_row = tk.Frame(status_group, bg=C["panel"])
+    status_row.pack(anchor="w")
+    for label in STATUS_FILTERS:
+        FilterChip(
+            status_row,
+            text=label,
+            variable=status_var,
+            value=label,
+            command=lambda: load(),
+            bg=C["panel"],
+        ).pack(side="left", padx=(0, 6))
 
     tf = tk.Frame(wrap, bg=C["panel"])
     tf.pack(fill="both", expand=True)
     vsb = ttk.Scrollbar(tf, orient="vertical")
     vsb.pack(side="right", fill="y")
-    cols = ("qr", "status", "name", "unit", "issued", "days", "phone")
+    cols = ("book", "qr", "status", "name", "unit", "issued", "days", "phone")
     tree = ttk.Treeview(tf, style="T.Treeview", columns=cols, show="headings", yscrollcommand=vsb.set)
     vsb.configure(command=tree.yview)
     for col, txt, width in [
-        ("qr", "QR", 120),
+        ("book", "Книга", 80),
+        ("qr", "QR", 150),
         ("status", "Статус", 100),
         ("name", "ФИО", 220),
-        ("unit", "В/ч", 100),
+        ("unit", "Куда", 140),
         ("issued", "Выдан", 100),
         ("days", "Срок", 70),
         ("phone", "Телефон", 130),
@@ -217,6 +335,13 @@ def show_temporary(app):
         for item in tree.get_children():
             tree.delete(item)
         counts = temporary_counts(app.db)
+        active_book = counts.get("active_book")
+        if active_book:
+            book_state_label.configure(
+                text=f"{temporary_book_title(active_book)} · свободно {counts.get('active_book_free', 0)} из {counts.get('active_book_size', TEMP_POOL_SIZE)}"
+            )
+        else:
+            book_state_label.configure(text="QR-книга ещё не создана")
         for key, label in stat_labels.items():
             label.configure(text=str(counts.get(key, 0)))
         status = STATUS_FILTERS.get(status_var.get(), "all")
@@ -224,6 +349,7 @@ def show_temporary(app):
             status_code = temporary_status(row)
             days = row[CI["days"]] or 1
             tree.insert("", "end", tags=(_status_tag(status_code),), values=(
+                temporary_book_title(temporary_book_no(row)),
                 row[CI["qr"]],
                 temporary_status_title(status_code),
                 _name(row),
@@ -232,49 +358,35 @@ def show_temporary(app):
                 f"{days} сут.",
                 row[CI["phone"]] or "",
             ))
-    
+
     def generate_pool():
         if not messagebox.askyesno(
-            "Создать пул временных QR",
-            f"Создать недостающие временные QR до {TEMP_POOL_SIZE} штук?\n\nQR будут вида TMP-0001 ... TMP-{TEMP_POOL_SIZE:04d}.",
+            "Создать QR-книгу",
+            f"Создать недостающие QR для активной книги до {TEMP_POOL_SIZE} штук?\n\nПосле использования всех QR книга будет закрыта, а новая получит другой диапазон кодов.",
         ):
             return
         try:
-            created = create_temporary_pool(app.db, TEMP_POOL_SIZE)
-            safe_record_action(app.db, app.user, "temp.pool_create", "temporary_pool", "TMP", {"created": len(created)})
-            app._toast(f"Создано новых QR: {len(created)}", C["green"])
+            created = _ensure_pool_after_archive(app, "manual")
+            if created is None:
+                return
+            if created:
+                app._toast(f"QR-книга создана: {len(created)} кодов", C["green"])
+            else:
+                app._toast("Активная QR-книга уже создана", C["green"])
             load()
         except Exception as ex:
-            logger.exception("Failed to create temporary pass pool")
-            messagebox.showerror("Одноразовые", f"Не удалось создать пул QR:\n{ex}")
-
-    def issue_selected():
-        qr = _selected_qr(app, tree)
-        if qr:
-            _issue_modal(app, qr, load)
-
-    def return_selected():
-        qr = _selected_qr(app, tree)
-        if not qr:
-            return
-        if not messagebox.askyesno("Вернули пропуск", f"Освободить временный QR {qr} для повторной выдачи?"):
-            return
-        row = return_temporary_pass(app.db, qr)
-        safe_record_action(app.db, app.user, "temp.return", "pass", qr, {"status": temporary_status(row)})
-        app._toast(f"QR свободен: {qr}", C["green"])
-        load()
+            logger.exception("Failed to create temporary QR book")
+            messagebox.showerror("Одноразовые", f"Не удалось создать QR-книгу:\n{ex}")
 
     search_entry.bind("<Return>", lambda _e: load())
-    status_box.bind("<<ComboboxSelected>>", lambda _e: load())
     Btn(sf, text="Поиск", cmd=load, variant="primary", w=80, h=34, fs=10, bg=C["input"]).pack(side="left", padx=3)
 
     bf = tk.Frame(wrap, bg=C["bg"])
     bf.pack(pady=10)
     Btn(bf, text="Выдать следующий", cmd=lambda: _issue_modal(app, None, load), variant="success", w=170, h=38, bg=C["bg"]).pack(side="left", padx=5)
-    Btn(bf, text="Выдать выбранный", cmd=issue_selected, variant="primary", w=170, h=38, bg=C["bg"]).pack(side="left", padx=5)
-    Btn(bf, text="Вернули", cmd=return_selected, variant="ghost", w=130, h=38, bg=C["bg"]).pack(side="left", padx=5)
     Btn(bf, text="Печать", cmd=lambda: _print_selected(app, tree), variant="primary", w=130, h=38, bg=C["bg"]).pack(side="left", padx=5)
+    Btn(bf, text="QR-книга", cmd=lambda: _print_qr_book(app, load), variant="success", w=130, h=38, bg=C["bg"]).pack(side="left", padx=5)
     if app.user and app.user.get("role") == "admin":
-        Btn(bf, text="Создать QR-пул", cmd=generate_pool, variant="ghost", w=160, h=38, bg=C["bg"]).pack(side="left", padx=5)
-        
+        Btn(bf, text="Создать QR-книгу", cmd=generate_pool, variant="ghost", w=170, h=38, bg=C["bg"]).pack(side="left", padx=5)
+
     load()

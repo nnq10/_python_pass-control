@@ -28,7 +28,7 @@ def show_import(app):
     if not HAS_XL:
         messagebox.showerror("Ошибка","Установите openpyxl:\npip install openpyxl"); return
 
-    win=app._modal("📥  Импорт из Excel",780,780)
+    win=app._modal("📥  Импорт из Excel",780,720, scroll=True)
 
     # Инструкция
     inf=tk.Frame(win,bg=C["input"],highlightthickness=1,highlightbackground=C["border"])
