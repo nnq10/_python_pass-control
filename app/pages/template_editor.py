@@ -84,6 +84,44 @@ def _field_title(field, options):
     return options.get("title") or FIELD_TITLES.get(field) or FIELD_TITLES.get(options.get("source")) or field
 
 
+def _scrollable_controls(parent):
+    host = tk.Frame(parent, bg=C["panel"])
+    canvas = tk.Canvas(host, bg=C["panel"], highlightthickness=0, bd=0)
+    scrollbar = ttk.Scrollbar(host, orient="vertical", command=canvas.yview)
+    body = tk.Frame(canvas, bg=C["panel"])
+    body_id = canvas.create_window((0, 0), window=body, anchor="nw")
+    canvas.configure(yscrollcommand=scrollbar.set)
+    canvas.pack(side="left", fill="both", expand=True)
+    scrollbar.pack(side="right", fill="y")
+
+    def refresh_scroll(_event=None):
+        canvas.configure(scrollregion=canvas.bbox("all"))
+
+    def resize_body(event):
+        canvas.itemconfigure(body_id, width=event.width)
+
+    def wheel(event):
+        canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+
+    def bind_wheel(_event=None):
+        canvas.bind_all("<MouseWheel>", wheel)
+
+    def unbind_wheel(_event=None):
+        try:
+            canvas.unbind_all("<MouseWheel>")
+        except tk.TclError:
+            pass
+
+    body.bind("<Configure>", refresh_scroll)
+    canvas.bind("<Configure>", resize_body)
+    canvas.bind("<Enter>", bind_wheel)
+    canvas.bind("<Leave>", unbind_wheel)
+    body.bind("<Enter>", bind_wheel)
+    body.bind("<Leave>", unbind_wheel)
+    parent.bind("<Destroy>", lambda _event: unbind_wheel(), add="+")
+    return host, body
+
+
 def open_template_editor(app, template_path, on_saved=None):
     win=app._modal("Редактор шаблона",1280,900)
     root=tk.Frame(win,bg=C["panel"])
@@ -110,7 +148,7 @@ def open_template_editor(app, template_path, on_saved=None):
     right.pack_propagate(False)
     tk.Label(right,text="Элементы",bg=C["panel"],fg=C["text"],font=(F,13,"bold")).pack(anchor="w",pady=(0,10))
 
-    table=ttk.Treeview(right,style="T.Treeview",columns=("name","x","y","size"),show="headings",height=8)
+    table=ttk.Treeview(right,style="T.Treeview",columns=("name","x","y","size"),show="headings",height=6)
     for col,txt,w in [("name","Поле",100),("x","X",54),("y","Y",54),("size","Размер",70)]:
         table.heading(col,text=txt)
         table.column(col,width=w,minwidth=40)
@@ -119,6 +157,10 @@ def open_template_editor(app, template_path, on_saved=None):
     info=tk.Label(right,text="",bg=C["panel"],fg=C["muted"],font=(F,9),justify="left",wraplength=300)
     info.pack(anchor="w",pady=(12,10))
     _sep(right).pack(fill="x",pady=10)
+    footer=tk.Frame(right,bg=C["panel"])
+    footer.pack(side="bottom",fill="x",pady=(10,0))
+    controls_host,controls=_scrollable_controls(right)
+    controls_host.pack(side="top",fill="both",expand=True)
 
     def display_geometry():
         max_w=max(400,canvas.winfo_width()-24)
@@ -362,6 +404,10 @@ def open_template_editor(app, template_path, on_saved=None):
         if sel:
             set_selected(sel[0], sync_table=False)
 
+    def save_hotkey(_event):
+        save()
+        return "break"
+
     canvas.bind("<Configure>",lambda e:draw())
     canvas.tag_bind("draggable","<ButtonPress-1>",drag_start)
     canvas.tag_bind("draggable","<B1-Motion>",drag_move)
@@ -369,9 +415,11 @@ def open_template_editor(app, template_path, on_saved=None):
     table.bind("<<TreeviewSelect>>",select_from_table)
     for key in ("<Left>","<Right>","<Up>","<Down>"):
         win.bind(key, keyboard_nudge)
+    win.bind("<Control-s>", save_hotkey)
+    win.bind("<Control-S>", save_hotkey)
     init_table()
 
-    step_box=tk.Frame(right,bg=C["panel"])
+    step_box=tk.Frame(controls,bg=C["panel"])
     step_box.pack(fill="x",pady=(0,10))
     tk.Label(step_box,text="Шаг",bg=C["panel"],fg=C["muted"],font=(F,9)).pack(anchor="w",pady=(0,5))
     step_row=tk.Frame(step_box,bg=C["panel"])
@@ -389,19 +437,19 @@ def open_template_editor(app, template_path, on_saved=None):
             font=(F,10),
         ).pack(side="left",padx=(0,8))
 
-    arrows=tk.Frame(right,bg=C["panel"])
+    arrows=tk.Frame(controls,bg=C["panel"])
     arrows.pack(anchor="center",pady=(0,10))
     Btn(arrows,text="↑",cmd=lambda:nudge(0,-1),variant="ghost",w=48,h=34,fs=12,bg=C["panel"]).grid(row=0,column=1,padx=3,pady=3)
     Btn(arrows,text="←",cmd=lambda:nudge(-1,0),variant="ghost",w=48,h=34,fs=12,bg=C["panel"]).grid(row=1,column=0,padx=3,pady=3)
     Btn(arrows,text="→",cmd=lambda:nudge(1,0),variant="ghost",w=48,h=34,fs=12,bg=C["panel"]).grid(row=1,column=2,padx=3,pady=3)
     Btn(arrows,text="↓",cmd=lambda:nudge(0,1),variant="ghost",w=48,h=34,fs=12,bg=C["panel"]).grid(row=2,column=1,padx=3,pady=3)
 
-    qr_buttons=tk.Frame(right,bg=C["panel"])
+    qr_buttons=tk.Frame(controls,bg=C["panel"])
     qr_buttons.pack(fill="x",pady=(0,12))
     Btn(qr_buttons,text="QR -",cmd=lambda:resize_qr(-selected_step()),variant="ghost",w=104,h=36,fs=10,bg=C["panel"]).pack(side="left",padx=(0,8))
     Btn(qr_buttons,text="QR +",cmd=lambda:resize_qr(selected_step()),variant="ghost",w=104,h=36,fs=10,bg=C["panel"]).pack(side="left")
 
-    text_box=tk.Frame(right,bg=C["panel"])
+    text_box=tk.Frame(controls,bg=C["panel"])
     text_box.pack(fill="x",pady=(0,12))
     tk.Label(text_box,text=f"Шрифт: {DEFAULT_TEXT_FONT}",bg=C["panel"],fg=C["muted"],font=(F,9)).pack(anchor="w",pady=(0,5))
     text_buttons=tk.Frame(text_box,bg=C["panel"])
@@ -409,13 +457,12 @@ def open_template_editor(app, template_path, on_saved=None):
     Btn(text_buttons,text="Текст -",cmd=lambda:resize_text(-selected_step()),variant="ghost",w=104,h=36,fs=10,bg=C["panel"]).pack(side="left",padx=(0,8))
     Btn(text_buttons,text="Текст +",cmd=lambda:resize_text(selected_step()),variant="ghost",w=104,h=36,fs=10,bg=C["panel"]).pack(side="left")
 
-    photo_buttons=tk.Frame(right,bg=C["panel"])
+    photo_buttons=tk.Frame(controls,bg=C["panel"])
     photo_buttons.pack(fill="x",pady=(0,12))
     Btn(photo_buttons,text="Фото",cmd=toggle_photo,variant="primary",w=78,h=36,fs=10,bg=C["panel"]).pack(side="left",padx=(0,8))
     Btn(photo_buttons,text="Фото -",cmd=lambda:resize_photo(-selected_step()),variant="ghost",w=78,h=36,fs=10,bg=C["panel"]).pack(side="left",padx=(0,8))
     Btn(photo_buttons,text="Фото +",cmd=lambda:resize_photo(selected_step()),variant="ghost",w=78,h=36,fs=10,bg=C["panel"]).pack(side="left")
 
-    tk.Frame(right,bg=C["panel"]).pack(fill="y",expand=True)
-    Btn(right,text="Сохранить координаты",cmd=save,variant="success",w=300,h=42,fs=12,bg=C["panel"]).pack(fill="x",pady=(0,10))
-    Btn(right,text="Закрыть",cmd=win.destroy,variant="ghost",w=300,h=38,fs=11,bg=C["panel"]).pack(fill="x")
+    Btn(footer,text="Сохранить координаты",cmd=save,variant="success",w=300,h=42,fs=12,bg=C["panel"]).pack(fill="x",pady=(0,10))
+    Btn(footer,text="Закрыть",cmd=win.destroy,variant="ghost",w=300,h=38,fs=11,bg=C["panel"]).pack(fill="x")
     draw()

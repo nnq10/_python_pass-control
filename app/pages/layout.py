@@ -10,6 +10,73 @@ from app.services.auth import (PERMISSION_AUDIT, PERMISSION_IMPORT, PERMISSION_P
 from app.ui.widgets import Btn, Pulse, _sep
 
 logger = get_logger(__name__)
+MARQUEE_GAP = 34
+MARQUEE_INTERVAL_MS = 28
+MARQUEE_DELAY_MS = 850
+
+
+class MarqueeLabel(tk.Canvas):
+    def __init__(self, parent, text, font, fg, bg, height=24, **kwargs):
+        super().__init__(
+            parent,
+            bg=bg,
+            height=height,
+            highlightthickness=0,
+            bd=0,
+            **kwargs,
+        )
+        self._text = str(text or "")
+        self._font = font
+        self._fg = fg
+        self._height = height
+        self._offset = 0
+        self._after_id = None
+        self._text_item = self.create_text(0, height // 2, anchor="w", text=self._text, fill=fg, font=font)
+        self._clone_item = self.create_text(0, height // 2, anchor="w", text=self._text, fill=fg, font=font)
+        self.itemconfigure(self._clone_item, state="hidden")
+        self.bind("<Configure>", self._reset)
+        self.bind("<Destroy>", self._cancel)
+        self.after_idle(self._reset)
+
+    def _cancel(self, _event=None):
+        if self._after_id:
+            try:
+                self.after_cancel(self._after_id)
+            except tk.TclError:
+                pass
+            self._after_id = None
+
+    def _text_width(self):
+        bbox = self.bbox(self._text_item)
+        if not bbox:
+            return 0
+        return max(0, bbox[2] - bbox[0])
+
+    def _reset(self, _event=None):
+        self._cancel()
+        self._offset = 0
+        self.coords(self._text_item, 0, self._height // 2)
+        self.itemconfigure(self._clone_item, state="hidden")
+        self.coords(self._clone_item, 0, self._height // 2)
+        if self._text_width() > max(1, self.winfo_width()):
+            self._after_id = self.after(MARQUEE_DELAY_MS, self._tick)
+
+    def _tick(self):
+        self._after_id = None
+        if not self.winfo_exists():
+            return
+        text_width = self._text_width()
+        view_width = max(1, self.winfo_width())
+        if text_width <= view_width:
+            self._reset()
+            return
+        period = text_width + MARQUEE_GAP
+        self._offset = (self._offset + 1) % period
+        self.coords(self._text_item, -self._offset, self._height // 2)
+        self.coords(self._clone_item, period - self._offset, self._height // 2)
+        self.itemconfigure(self._clone_item, state="normal")
+        self._after_id = self.after(MARQUEE_INTERVAL_MS, self._tick)
+
 
 def show_main(app):
     app._clr(app)
@@ -66,7 +133,7 @@ def show_main(app):
     Pulse(uf,C["green"],10,bg=C["panel"]).pack(side="left",padx=(0,8))
     user_text=tk.Frame(uf,bg=C["panel"])
     user_text.pack(side="left",fill="x",expand=True)
-    tk.Label(user_text,text=app.user["name"],bg=C["panel"],fg=C["text"],font=(F,11,"bold"),anchor="w").pack(anchor="w")
+    MarqueeLabel(user_text,text=app.user["name"],bg=C["panel"],fg=C["text"],font=(F,11,"bold")).pack(fill="x")
     tk.Label(user_text,text=role_title(app.user.get("role", "guard")).lower(),
              bg=C["panel"],fg=C["muted"],font=(F,8),anchor="w").pack(anchor="w")
 
