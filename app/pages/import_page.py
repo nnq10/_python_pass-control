@@ -1,12 +1,16 @@
 import os
 import tkinter as tk
 from datetime import datetime
+from pathlib import Path
 from tkinter import filedialog, messagebox
 
 from app.core.config import C, FONT as F
 from app.core.logging import get_logger
 from app.services.audit import safe_record_action
 from app.services.auth import PERMISSION_IMPORT, has_permission
+from app.services.kpp_exchange import (PACKAGE_EXTENSION, export_kpp_package,
+                                       import_kpp_package,
+                                       inspect_kpp_package)
 from app.services.pass_db import delete_pass_forever, insert_pass_ignore
 from app.services.qr_codes import save_qr_code
 from app.services.validation import ValidationError, validate_pass_data
@@ -20,6 +24,18 @@ try:
     HAS_XL = True
 except ImportError:
     HAS_XL = False
+
+
+def _desktop_dir():
+    desktop = Path.home() / "Desktop"
+    return desktop if desktop.exists() else Path.home()
+
+
+def _package_summary(info):
+    counts = info.get("counts") or {}
+    monthly = counts.get("regular", 0)
+    semiannual = counts.get("semiannual", 0)
+    return f"Месячные: {monthly}\nПолугодовые: {semiannual}\nВсего: {info.get('count', monthly + semiannual)}"
 
 def show_import(app):
     if not has_permission(app.user, PERMISSION_IMPORT):
@@ -134,5 +150,70 @@ def show_import(app):
             logger.exception("Excel import failed for file: %s", path)
             log(f"Ошибка файла: {ex}",C["red"])
 
-    Btn(win,text="Начать импорт",cmd=do_import,variant="primary",
-        w=612,h=44,fs=13,bg=C["panel"]).pack(padx=28,pady=10)
+    def export_for_kpp():
+        initial = f"kpp_passes_{datetime.now().strftime('%Y%m%d_%H%M')}{PACKAGE_EXTENSION}"
+        path = filedialog.asksaveasfilename(
+            parent=app,
+            title="Сохранить пакет для КПП",
+            initialdir=str(_desktop_dir()),
+            initialfile=initial,
+            defaultextension=PACKAGE_EXTENSION,
+            filetypes=[("Пакет КПП", f"*{PACKAGE_EXTENSION}")],
+        )
+        if not path:
+            return
+        try:
+            user_name = (app.user or {}).get("username") or (app.user or {}).get("name") or ""
+            result = export_kpp_package(app.db, path, created_by=user_name)
+            safe_record_action(app.db, app.user, "kpp.export", "package", result["path"].name, {
+                "count": result["count"],
+                "counts": result["counts"],
+            })
+            log(f"✓ Пакет для КПП создан: {result['path']}", C["green"])
+            log(_package_summary(result), C["accent"])
+            app._toast("Пакет КПП сохранён", C["green"])
+        except Exception as ex:
+            logger.exception("Failed to export KPP package")
+            messagebox.showerror("Пакет КПП", f"Не удалось создать пакет:\n{ex}")
+
+    def import_from_kpp_package():
+        path = filedialog.askopenfilename(
+            parent=app,
+            title="Выбрать пакет КПП",
+            filetypes=[("Пакет КПП", f"*{PACKAGE_EXTENSION}"), ("Все файлы", "*.*")],
+        )
+        if not path:
+            return
+        try:
+            info = inspect_kpp_package(path)
+            if not messagebox.askyesno(
+                "Импорт пакета КПП",
+                f"Импортировать пакет?\n\n{_package_summary(info)}\n\nПеред импортом будет создан бэкап базы.",
+            ):
+                return
+            result = import_kpp_package(app.db, path, create_backup_before=True)
+            stats = result["stats"]
+            safe_record_action(app.db, app.user, "kpp.import", "package", os.path.basename(path), {
+                "created": stats["created"],
+                "updated": stats["updated"],
+                "errors": stats["errors"],
+            })
+            log(f"✓ Пакет импортирован: {os.path.basename(path)}", C["green"])
+            log(f"Добавлено: {stats['created']}, обновлено: {stats['updated']}, ошибок: {stats['errors']}", C["accent"])
+            for error in result["errors"][:20]:
+                log(f"  ✗ {error}", C["red"])
+            if len(result["errors"]) > 20:
+                log(f"  ... ещё ошибок: {len(result['errors']) - 20}", C["red"])
+            app._toast("Пакет КПП импортирован", C["green"] if not stats["errors"] else C["yellow"])
+        except Exception as ex:
+            logger.exception("Failed to import KPP package")
+            messagebox.showerror("Пакет КПП", f"Не удалось импортировать пакет:\n{ex}")
+
+    Btn(win,text="Начать импорт Excel",cmd=do_import,variant="primary",
+        w=612,h=44,fs=13,bg=C["panel"]).pack(padx=28,pady=(10,6))
+    package_buttons=tk.Frame(win,bg=C["panel"])
+    package_buttons.pack(fill="x",padx=28,pady=(0,12))
+    Btn(package_buttons,text="Экспорт для КПП",cmd=export_for_kpp,variant="success",
+        w=294,h=42,fs=12,bg=C["panel"]).pack(side="left")
+    Btn(package_buttons,text="Импорт пакета КПП",cmd=import_from_kpp_package,variant="ghost",
+        w=294,h=42,fs=12,bg=C["panel"]).pack(side="right")

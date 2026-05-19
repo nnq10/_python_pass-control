@@ -29,6 +29,7 @@ A4_BATCH_CAPACITY = A4_BATCH_COLUMNS * A4_BATCH_ROWS
 TEMPORARY_STUB_PRINT_SIZE_CM = (20.0, 7.0)
 TEMPORARY_STUB_BINDING_MARGIN_CM = 1.5
 TEMPORARY_STUB_TEMPLATE_VERSION = 4
+DEFAULT_TEXT_FONT = "Times New Roman"
 
 
 def _cm_to_px(value, dpi=DEFAULT_DPI):
@@ -54,9 +55,9 @@ RETURN_PASS_TEMPLATE_CONFIG = {
         "margin": 32,
     },
     "fields": {
-        "last_name": {"x": 445, "y": 315, "size": 28, "color": "#000000"},
-        "first_name": {"x": 375, "y": 394, "size": 28, "color": "#000000"},
-        "middle_name": {"x": 435, "y": 474, "size": 28, "color": "#000000"},
+        "last_name": {"x": 445, "y": 315, "size": 28, "font": DEFAULT_TEXT_FONT, "color": "#000000"},
+        "first_name": {"x": 375, "y": 394, "size": 28, "font": DEFAULT_TEXT_FONT, "color": "#000000"},
+        "middle_name": {"x": 435, "y": 474, "size": 28, "font": DEFAULT_TEXT_FONT, "color": "#000000"},
     },
     "photo": {
         "enabled": False,
@@ -73,9 +74,9 @@ KNOWN_TEMPLATE_CONFIGS = {
     "return_pass": RETURN_PASS_TEMPLATE_CONFIG,
 }
 DEFAULT_FIELDS_CONFIG = {
-    "last_name": {"x": 120, "y": 220, "size": 28, "color": "#000000"},
-    "first_name": {"x": 120, "y": 270, "size": 28, "color": "#000000"},
-    "middle_name": {"x": 120, "y": 320, "size": 28, "color": "#000000"},
+    "last_name": {"x": 120, "y": 220, "size": 28, "font": DEFAULT_TEXT_FONT, "color": "#000000"},
+    "first_name": {"x": 120, "y": 270, "size": 28, "font": DEFAULT_TEXT_FONT, "color": "#000000"},
+    "middle_name": {"x": 120, "y": 320, "size": 28, "font": DEFAULT_TEXT_FONT, "color": "#000000"},
 }
 DEFAULT_PHOTO_CONFIG = {
     "enabled": False,
@@ -411,6 +412,9 @@ def editable_template_config(template_path):
     if not has_fields_config:
         for name, options in DEFAULT_FIELDS_CONFIG.items():
             fields.setdefault(name, dict(options))
+    for options in fields.values():
+        if isinstance(options, dict):
+            options.setdefault("font", DEFAULT_TEXT_FONT)
     config.setdefault("photo", dict(DEFAULT_PHOTO_CONFIG))
     return config
 
@@ -553,11 +557,21 @@ def _layout_value(value, default, image_size, qr_size=0, axis="x", scale=1.0):
 
 def _font(size, font_path=None):
     if font_path:
-        try:
-            return ImageFont.truetype(font_path, size)
-        except OSError:
-            pass
-    for candidate in ("arial.ttf", "DejaVuSans.ttf"):
+        font_text = str(font_path)
+        candidates = [font_text]
+        if font_text.casefold() == DEFAULT_TEXT_FONT.casefold():
+            candidates = [
+                "times.ttf",
+                "Times New Roman.ttf",
+                r"C:\Windows\Fonts\times.ttf",
+                r"C:\Windows\Fonts\timesbd.ttf",
+            ]
+        for candidate in candidates:
+            try:
+                return ImageFont.truetype(candidate, size)
+            except OSError:
+                continue
+    for candidate in ("times.ttf", r"C:\Windows\Fonts\times.ttf", "arial.ttf", "DejaVuSans.ttf"):
         try:
             return ImageFont.truetype(candidate, size)
         except OSError:

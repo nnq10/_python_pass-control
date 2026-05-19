@@ -13,6 +13,8 @@ ACTION_TITLES = {
     "backup.restore": "Бэкап восстановлен",
     "files.cleanup": "Файлы очищены",
     "import.excel": "Импорт Excel",
+    "kpp.export": "Пакет КПП создан",
+    "kpp.import": "Пакет КПП импортирован",
     "integrity.check": "Проверка данных",
     "pass.create": "Пропуск создан",
     "pass.delete": "Пропуск в корзине",

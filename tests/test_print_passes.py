@@ -10,6 +10,7 @@ from PIL import Image, PdfParser
 from app.services.pass_db import (PASS_TYPE_REGULAR, PASS_TYPE_SEMIANNUAL,
                                   PASS_TYPE_TEMPORARY, create_pass, init_db)
 from app.services.print_passes import (A4_BATCH_CAPACITY, A4_PAGE_SIZE_PX,
+                                       DEFAULT_TEXT_FONT,
                                        PRINT_PASS_SIZE_PX, a4_batch_positions,
                                        compose_a4_print_pages, compose_single_print_page, editable_template_config,
                                        ensure_temporary_stub_template, list_print_templates,
@@ -93,6 +94,7 @@ class PrintPassTests(unittest.TestCase):
             self.assertEqual(saved["base_size"], [400, 240])
             self.assertEqual(saved["qr"]["x"], 260)
             self.assertEqual(saved["fields"]["last_name"]["x"], 140)
+            self.assertEqual(saved["fields"]["last_name"]["font"], DEFAULT_TEXT_FONT)
 
     def test_editable_template_config_keeps_custom_fields_clean(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -115,6 +117,7 @@ class PrintPassTests(unittest.TestCase):
             config = editable_template_config(template)
 
             self.assertIn("stub_name", config["fields"])
+            self.assertEqual(config["fields"]["stub_name"]["font"], DEFAULT_TEXT_FONT)
             self.assertNotIn("last_name", config["fields"])
             self.assertNotIn("first_name", config["fields"])
             self.assertNotIn("middle_name", config["fields"])

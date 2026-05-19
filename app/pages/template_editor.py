@@ -5,7 +5,7 @@ from PIL import Image, ImageTk
 
 from app.core.config import C, FONT as F
 from app.services.audit import safe_record_action
-from app.services.print_passes import editable_template_config, save_template_config
+from app.services.print_passes import DEFAULT_TEXT_FONT, editable_template_config, save_template_config
 from app.ui.widgets import Btn, _sep
 
 
@@ -48,6 +48,10 @@ def _is_qr_key(key):
     return key == "qr" or str(key).startswith("qr:")
 
 
+def _is_field_key(config, key):
+    return key in (config.get("fields") or {})
+
+
 def _qr_position(qr, image_size):
     size = int(qr.get("size", 120))
     margin = int(qr.get("margin", 30))
@@ -81,7 +85,7 @@ def _field_title(field, options):
 
 
 def open_template_editor(app, template_path, on_saved=None):
-    win=app._modal("Редактор шаблона",1120,820)
+    win=app._modal("Редактор шаблона",1280,900)
     root=tk.Frame(win,bg=C["panel"])
     root.pack(fill="both",expand=True,padx=18,pady=16)
 
@@ -101,7 +105,7 @@ def open_template_editor(app, template_path, on_saved=None):
     canvas=tk.Canvas(left,bg=C["input"],highlightthickness=1,highlightbackground=C["border"])
     canvas.pack(fill="both",expand=True)
 
-    right=tk.Frame(root,bg=C["panel"],width=300)
+    right=tk.Frame(root,bg=C["panel"],width=340)
     right.pack(side="right",fill="y")
     right.pack_propagate(False)
     tk.Label(right,text="Элементы",bg=C["panel"],fg=C["text"],font=(F,13,"bold")).pack(anchor="w",pady=(0,10))
@@ -112,7 +116,7 @@ def open_template_editor(app, template_path, on_saved=None):
         table.column(col,width=w,minwidth=40)
     table.pack(fill="x")
 
-    info=tk.Label(right,text="",bg=C["panel"],fg=C["muted"],font=(F,9),justify="left",wraplength=260)
+    info=tk.Label(right,text="",bg=C["panel"],fg=C["muted"],font=(F,9),justify="left",wraplength=300)
     info.pack(anchor="w",pady=(12,10))
     _sep(right).pack(fill="x",pady=10)
 
@@ -190,7 +194,8 @@ def open_template_editor(app, template_path, on_saved=None):
             x,y=to_canvas(int(options["x"]),int(options["y"]),scale,ox,oy)
             color=C["green"] if state.get("selected")==field else C["accent"]
             title=_field_title(field, options)
-            text_id=canvas.create_text(x,y,anchor="nw",text=title,fill=color,font=(F,13,"bold"),tags=("draggable",f"item:{field}"))
+            preview_size=max(8, round(int(options.get("size", 28))*scale))
+            text_id=canvas.create_text(x,y,anchor="nw",text=title,fill=color,font=(DEFAULT_TEXT_FONT,preview_size,"bold"),tags=("draggable",f"item:{field}"))
             bbox=canvas.bbox(text_id)
             if bbox:
                 canvas.create_rectangle(bbox[0]-5,bbox[1]-3,bbox[2]+5,bbox[3]+3,outline=color,dash=(4,2),tags=("draggable",f"item:{field}"))
@@ -274,6 +279,19 @@ def open_template_editor(app, template_path, on_saved=None):
         photo["x"]=_clamp(x,0,image.width-width)
         photo["y"]=_clamp(y,0,image.height-height)
         set_selected("photo")
+
+    def resize_text(delta):
+        key=state.get("selected")
+        if not _is_field_key(state["config"], key):
+            fields=_field_items(state["config"])
+            if not fields:
+                app._toast("В шаблоне нет текстовых полей")
+                return
+            key=fields[0][0]
+        options=state["config"]["fields"][key]
+        options["font"]=DEFAULT_TEXT_FONT
+        options["size"]=_clamp(int(options.get("size", 28))+delta,6,240)
+        set_selected(key)
 
     def toggle_photo():
         photo=state["config"].setdefault("photo", {})
@@ -380,8 +398,16 @@ def open_template_editor(app, template_path, on_saved=None):
 
     qr_buttons=tk.Frame(right,bg=C["panel"])
     qr_buttons.pack(fill="x",pady=(0,12))
-    Btn(qr_buttons,text="QR -",cmd=lambda:resize_qr(-selected_step()),variant="ghost",w=92,h=36,fs=10,bg=C["panel"]).pack(side="left",padx=(0,8))
-    Btn(qr_buttons,text="QR +",cmd=lambda:resize_qr(selected_step()),variant="ghost",w=92,h=36,fs=10,bg=C["panel"]).pack(side="left")
+    Btn(qr_buttons,text="QR -",cmd=lambda:resize_qr(-selected_step()),variant="ghost",w=104,h=36,fs=10,bg=C["panel"]).pack(side="left",padx=(0,8))
+    Btn(qr_buttons,text="QR +",cmd=lambda:resize_qr(selected_step()),variant="ghost",w=104,h=36,fs=10,bg=C["panel"]).pack(side="left")
+
+    text_box=tk.Frame(right,bg=C["panel"])
+    text_box.pack(fill="x",pady=(0,12))
+    tk.Label(text_box,text=f"Шрифт: {DEFAULT_TEXT_FONT}",bg=C["panel"],fg=C["muted"],font=(F,9)).pack(anchor="w",pady=(0,5))
+    text_buttons=tk.Frame(text_box,bg=C["panel"])
+    text_buttons.pack(fill="x")
+    Btn(text_buttons,text="Текст -",cmd=lambda:resize_text(-selected_step()),variant="ghost",w=104,h=36,fs=10,bg=C["panel"]).pack(side="left",padx=(0,8))
+    Btn(text_buttons,text="Текст +",cmd=lambda:resize_text(selected_step()),variant="ghost",w=104,h=36,fs=10,bg=C["panel"]).pack(side="left")
 
     photo_buttons=tk.Frame(right,bg=C["panel"])
     photo_buttons.pack(fill="x",pady=(0,12))
@@ -390,6 +416,6 @@ def open_template_editor(app, template_path, on_saved=None):
     Btn(photo_buttons,text="Фото +",cmd=lambda:resize_photo(selected_step()),variant="ghost",w=78,h=36,fs=10,bg=C["panel"]).pack(side="left")
 
     tk.Frame(right,bg=C["panel"]).pack(fill="y",expand=True)
-    Btn(right,text="Сохранить координаты",cmd=save,variant="success",w=260,h=42,fs=12,bg=C["panel"]).pack(fill="x",pady=(0,10))
-    Btn(right,text="Закрыть",cmd=win.destroy,variant="ghost",w=260,h=38,fs=11,bg=C["panel"]).pack(fill="x")
+    Btn(right,text="Сохранить координаты",cmd=save,variant="success",w=300,h=42,fs=12,bg=C["panel"]).pack(fill="x",pady=(0,10))
+    Btn(right,text="Закрыть",cmd=win.destroy,variant="ghost",w=300,h=38,fs=11,bg=C["panel"]).pack(fill="x")
     draw()
