@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import messagebox, ttk
+from tkinter import filedialog, messagebox, ttk
 
 from app.core.config import C, CFG, FONT as F, apply_theme, save_config
 from app.core.logging import get_logger
@@ -12,9 +12,14 @@ from app.services.pass_db import connect_db, init_db
 from app.services.reference_data import (REFERENCE_TITLES, add_reference_value,
                                          delete_reference_value, list_reference_values,
                                          sync_reference_values_from_passes)
+from app.services.sounds import (CONFIG_ALLOWED_SOUND, CONFIG_DENIED_SOUND,
+                                 import_sound_file, list_available_sounds,
+                                 play_scan_sound, play_sound_file,
+                                 sound_path_by_name)
 from app.ui.widgets import Btn, _sep
 
 logger = get_logger(__name__)
+AUTO_SOUND_CHOICE = "Авто"
 
 
 def _reason_title(reason):
@@ -288,11 +293,65 @@ def _show_reference_catalogs(app):
     load()
 
 
+def _sound_choice_values():
+    return [AUTO_SOUND_CHOICE] + list_available_sounds()
+
+
+def _sound_choice_var(key):
+    value = CFG.get(key) or AUTO_SOUND_CHOICE
+    if value != AUTO_SOUND_CHOICE and value not in list_available_sounds():
+        return AUTO_SOUND_CHOICE
+    return value
+
+
+def _refresh_sound_boxes(boxes, *vars_):
+    values = _sound_choice_values()
+    for box in boxes:
+        box.configure(values=values)
+    for var in vars_:
+        if var.get() not in values:
+            var.set(AUTO_SOUND_CHOICE)
+
+
+def _add_sound_file(app, target_var, boxes, *vars_):
+    path = filedialog.askopenfilename(
+        title="Выбрать звук сканера",
+        filetypes=[
+            ("Звуки WAV/MP3", "*.wav *.mp3"),
+            ("WAV", "*.wav"),
+            ("MP3", "*.mp3"),
+            ("Все файлы", "*.*"),
+        ],
+    )
+    if not path:
+        return
+    try:
+        target = import_sound_file(path)
+        _refresh_sound_boxes(boxes, target_var, *vars_)
+        target_var.set(target.name)
+        app._toast("Звук добавлен", C["green"])
+    except Exception as ex:
+        logger.exception("Failed to import scanner sound: %s", path)
+        messagebox.showerror("Звук сканера", f"Не удалось добавить звук:\n{ex}")
+
+
+def _preview_sound(app, sound_name, granted):
+    if sound_name and sound_name != AUTO_SOUND_CHOICE:
+        path = sound_path_by_name(sound_name)
+        if not path:
+            app._toast("Файл звука не найден")
+            return
+        play_sound_file(path, granted)
+        return
+    play_scan_sound(granted)
+
+
 def show_settings(app):
     if not has_permission(app.user, PERMISSION_SETTINGS):
         app._toast("Недостаточно прав")
         return
-    win=app._modal("⚙  Настройки",480,760 if app.user and app.user.get("role")=="admin" else 360, scroll=bool(app.user and app.user.get("role")=="admin"))
+    is_admin = bool(app.user and app.user.get("role")=="admin")
+    win=app._modal("⚙  Настройки",520,800 if is_admin else 640, scroll=True)
 
     tk.Label(win,text="Тема оформления",bg=C["panel"],fg=C["muted"],font=(F,9)).pack(anchor="w",padx=28,pady=(20,8))
     tf=tk.Frame(win,bg=C["panel"]); tf.pack(anchor="w",padx=28)
@@ -337,7 +396,35 @@ def show_settings(app):
 
     _sep(win).pack(fill="x",padx=28,pady=16)
 
-    if app.user and app.user.get("role")=="admin":
+    tk.Label(win,text="Звуки сканера",bg=C["panel"],fg=C["muted"],font=(F,9)).pack(anchor="w",padx=28,pady=(0,8))
+    allowed_sound_var=tk.StringVar(value=_sound_choice_var(CONFIG_ALLOWED_SOUND))
+    denied_sound_var=tk.StringVar(value=_sound_choice_var(CONFIG_DENIED_SOUND))
+    sound_boxes=[]
+
+    def sound_row(title, variable, granted):
+        row=tk.Frame(win,bg=C["panel"])
+        row.pack(fill="x",padx=28,pady=(0,10))
+        tk.Label(row,text=title,bg=C["panel"],fg=C["text"],font=(F,10,"bold"),anchor="w").pack(anchor="w",pady=(0,5))
+        line=tk.Frame(row,bg=C["panel"])
+        line.pack(fill="x")
+        box=ttk.Combobox(line,textvariable=variable,values=_sound_choice_values(),state="readonly",width=28)
+        box.pack(side="left",fill="x",expand=True,ipady=3)
+        sound_boxes.append(box)
+        Btn(line,text="▶",cmd=lambda:_preview_sound(app, variable.get(), granted),variant="ghost",
+            w=40,h=34,fs=11,bg=C["panel"]).pack(side="left",padx=(8,0))
+        Btn(line,text="+",cmd=lambda:_add_sound_file(app, variable, sound_boxes, allowed_sound_var, denied_sound_var),variant="primary",
+            w=40,h=34,fs=12,bg=C["panel"]).pack(side="left",padx=(6,0))
+        Btn(line,text="Сброс",cmd=lambda:variable.set(AUTO_SOUND_CHOICE),variant="ghost",
+            w=70,h=34,fs=10,bg=C["panel"]).pack(side="left",padx=(6,0))
+
+    sound_row("Разрешённый пропуск", allowed_sound_var, True)
+    sound_row("Отказ пропуска", denied_sound_var, False)
+    tk.Label(win,text="Файлы хранятся в data\\sounds. Можно добавить WAV или MP3.",
+             bg=C["panel"],fg=C["muted"],font=(F,8),wraplength=430,justify="left").pack(anchor="w",padx=28,pady=(0,2))
+
+    _sep(win).pack(fill="x",padx=28,pady=16)
+
+    if is_admin:
         tk.Label(win,text="Резервная копия",bg=C["panel"],fg=C["muted"],font=(F,9)).pack(anchor="w",padx=28,pady=(0,6))
 
         def backup_now():
@@ -365,10 +452,19 @@ def show_settings(app):
 
     def save():
         old_timeout=CFG.get("scan_timeout")
-        CFG["scan_timeout"]=tv.get(); save_config(CFG)
+        old_allowed=CFG.get(CONFIG_ALLOWED_SOUND, "")
+        old_denied=CFG.get(CONFIG_DENIED_SOUND, "")
+        CFG["scan_timeout"]=tv.get()
+        CFG[CONFIG_ALLOWED_SOUND]="" if allowed_sound_var.get()==AUTO_SOUND_CHOICE else allowed_sound_var.get()
+        CFG[CONFIG_DENIED_SOUND]="" if denied_sound_var.get()==AUTO_SOUND_CHOICE else denied_sound_var.get()
+        save_config(CFG)
         safe_record_action(app.db, app.user, "settings.update", "settings", "scan_timeout", {
             "old": old_timeout,
             "new": tv.get(),
+            "sound_allowed_old": old_allowed,
+            "sound_allowed_new": CFG.get(CONFIG_ALLOWED_SOUND, ""),
+            "sound_denied_old": old_denied,
+            "sound_denied_new": CFG.get(CONFIG_DENIED_SOUND, ""),
         })
         app._close_modal(win); app._toast("Настройки сохранены",C["green"])
 

@@ -10,6 +10,7 @@ from app.core.logging import get_logger
 from app.services.audit import safe_record_action
 from app.services.backups import create_daily_backup_if_needed
 from app.services.pass_db import connect_db, init_db
+from app.services.sounds import ensure_sounds_hint_file
 from app.core.paths import app_path, ensure_data_dirs
 from app.ui.widgets import FloatBG, _sep
 from app.pages import audit, import_page, layout, login, passes, print_page, scanner, settings, stats, temporary, trash, users
@@ -30,6 +31,7 @@ class App(ctk.CTk):
         self.db = connect_db()
         init_db(self.db)
         ensure_data_dirs()
+        ensure_sounds_hint_file()
         self._auto_backup()
         self.user     = None
         self._bgcv    = None

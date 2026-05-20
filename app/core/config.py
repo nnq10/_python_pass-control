@@ -7,7 +7,12 @@ from app.core.logging import get_logger
 from app.core.paths import SETTINGS_FILE, ensure_data_dirs
 
 
-DEFAULT_CONFIG = {"theme": "dark", "scan_timeout": 8}
+DEFAULT_CONFIG = {
+    "theme": "dark",
+    "scan_timeout": 8,
+    "scan_sound_allowed": "",
+    "scan_sound_denied": "",
+}
 FONT = "Segoe UI"
 logger = get_logger(__name__)
 
