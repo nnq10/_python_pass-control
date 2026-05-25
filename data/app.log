@@ -1,0 +1,1073 @@
+2026-05-06 11:06:57,675 [ERROR] __main__: Clock tick failed
+Traceback (most recent call last):
+  File "C:\Users\user\Desktop\project\pass_control.py", line 331, in _tick
+    self._clklbl.configure(text=datetime.now().strftime("%d.%m.%Y  %H:%M:%S"))
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Python\pythoncore-3.14-64\Lib\tkinter\__init__.py", line 1842, in configure
+    return self._configure('configure', cnf, kw)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Python\pythoncore-3.14-64\Lib\tkinter\__init__.py", line 1826, in _configure
+    self.tk.call(_flatten((self._w, cmd)) + self._options(cnf))
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_tkinter.TclError: invalid command name ".!frame4.!frame.!label2"
+2026-05-06 14:12:32,412 [ERROR] __main__: Clock tick failed
+Traceback (most recent call last):
+  File "C:\Users\user\Desktop\project\pass_control.py", line 326, in _tick
+    self._clklbl.configure(text=datetime.now().strftime("%d.%m.%Y  %H:%M:%S"))
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Python\pythoncore-3.14-64\Lib\tkinter\__init__.py", line 1842, in configure
+    return self._configure('configure', cnf, kw)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Python\pythoncore-3.14-64\Lib\tkinter\__init__.py", line 1826, in _configure
+    self.tk.call(_flatten((self._w, cmd)) + self._options(cnf))
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_tkinter.TclError: invalid command name ".!frame4.!frame.!label2"
+2026-05-06 14:12:50,521 [ERROR] __main__: Clock tick failed
+Traceback (most recent call last):
+  File "C:\Users\user\Desktop\project\pass_control.py", line 326, in _tick
+    self._clklbl.configure(text=datetime.now().strftime("%d.%m.%Y  %H:%M:%S"))
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Python\pythoncore-3.14-64\Lib\tkinter\__init__.py", line 1842, in configure
+    return self._configure('configure', cnf, kw)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Python\pythoncore-3.14-64\Lib\tkinter\__init__.py", line 1826, in _configure
+    self.tk.call(_flatten((self._w, cmd)) + self._options(cnf))
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_tkinter.TclError: invalid command name ".!frame8.!frame.!label2"
+2026-05-06 14:14:47,370 [INFO] backups: Backup created: C:\Users\user\Desktop\project\backups\pass_control_20260506_141447_test.zip
+2026-05-06 14:14:47,380 [INFO] backups: Backup created: C:\Users\user\Desktop\project\backups\pass_control_20260506_141447_auto.zip
+2026-05-06 14:17:03,941 [ERROR] __main__: Clock tick failed
+Traceback (most recent call last):
+  File "C:\Users\user\Desktop\project\pass_control.py", line 336, in _tick
+    self._clklbl.configure(text=datetime.now().strftime("%d.%m.%Y  %H:%M:%S"))
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Python\pythoncore-3.14-64\Lib\tkinter\__init__.py", line 1842, in configure
+    return self._configure('configure', cnf, kw)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Python\pythoncore-3.14-64\Lib\tkinter\__init__.py", line 1826, in _configure
+    self.tk.call(_flatten((self._w, cmd)) + self._options(cnf))
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_tkinter.TclError: invalid command name ".!frame4.!frame.!label2"
+2026-05-06 14:33:10,623 [INFO] backups: Backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260506_143310_unittest.zip
+2026-05-06 14:33:48,010 [INFO] backups: Backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260506_143348_unittest.zip
+2026-05-06 14:36:47,149 [INFO] backups: Backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260506_143647_unittest.zip
+2026-05-06 14:41:46,892 [INFO] backups: Backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260506_144146_unittest.zip
+2026-05-06 14:42:07,486 [INFO] backups: Backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260506_144207_unittest.zip
+2026-05-06 14:46:52,047 [INFO] backups: Backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260506_144652_unittest.zip
+2026-05-06 14:49:25,566 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpzgta_ipp\users.json
+2026-05-06 14:49:25,672 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpfiu0u5kb\users.json
+2026-05-06 14:49:25,886 [INFO] backups: Backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260506_144925_unittest.zip
+2026-05-06 14:49:45,299 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpjf4fh124\users.json
+2026-05-06 14:49:45,389 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp9ku7dng6\users.json
+2026-05-06 14:49:45,698 [INFO] backups: Backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260506_144945_unittest.zip
+2026-05-06 14:50:12,769 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpa8jj4_xo\users.json
+2026-05-06 14:50:12,881 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpdpzqjskn\users.json
+2026-05-06 14:50:13,202 [INFO] backups: Backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260506_145013_unittest.zip
+2026-05-06 14:50:37,415 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp4bq7x0xs\users.json
+2026-05-06 14:50:37,522 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpwzb55ozk\users.json
+2026-05-06 14:50:37,790 [INFO] backups: Backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260506_145037_unittest.zip
+2026-05-06 15:18:31,928 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpyj8gpw_q\users.json
+2026-05-06 15:18:32,018 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp3hpeiksv\users.json
+2026-05-06 15:18:32,334 [INFO] backups: Backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260506_151832_unittest.zip
+2026-05-06 15:22:58,253 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp1a5xvpva\users.json
+2026-05-06 15:22:58,359 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp3tiz7fl4\users.json
+2026-05-06 15:22:58,651 [INFO] backups: Backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260506_152258_unittest.zip
+2026-05-06 15:24:10,444 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp_agkohn1\users.json
+2026-05-06 15:24:10,564 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpiqcvz6pf\users.json
+2026-05-06 15:24:10,867 [INFO] backups: Backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260506_152410_unittest.zip
+2026-05-06 15:25:04,061 [ERROR] __main__: Clock tick failed
+Traceback (most recent call last):
+  File "C:\Users\user\Desktop\project\pass_control.py", line 105, in _tick
+    self._clklbl.configure(text=datetime.now().strftime("%d.%m.%Y  %H:%M:%S"))
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Python\pythoncore-3.14-64\Lib\tkinter\__init__.py", line 1842, in configure
+    return self._configure('configure', cnf, kw)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Python\pythoncore-3.14-64\Lib\tkinter\__init__.py", line 1826, in _configure
+    self.tk.call(_flatten((self._w, cmd)) + self._options(cnf))
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_tkinter.TclError: invalid command name ".!frame4.!frame.!label2"
+2026-05-06 15:35:26,362 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpzuft21t0\users.json
+2026-05-06 15:35:26,567 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpr4opls5d\users.json
+2026-05-06 15:35:26,656 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpln8pek07\users.json
+2026-05-06 15:35:26,840 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpfc8t2h3_\users.json
+2026-05-06 15:35:27,111 [INFO] backups: Backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260506_153527_unittest.zip
+2026-05-06 15:38:17,619 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp6jexhxvt\users.json
+2026-05-06 15:38:17,823 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpr0l0du9q\users.json
+2026-05-06 15:38:17,943 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp9wcokqbw\users.json
+2026-05-06 15:38:18,128 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpsbasnh5k\users.json
+2026-05-06 15:38:18,416 [INFO] backups: Backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260506_153818_unittest.zip
+2026-05-06 15:57:57,432 [ERROR] __main__: Clock tick failed
+Traceback (most recent call last):
+  File "C:\Users\user\Desktop\project\pass_control.py", line 105, in _tick
+    self._clklbl.configure(text=datetime.now().strftime("%d.%m.%Y  %H:%M:%S"))
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Python\pythoncore-3.14-64\Lib\tkinter\__init__.py", line 1842, in configure
+    return self._configure('configure', cnf, kw)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Python\pythoncore-3.14-64\Lib\tkinter\__init__.py", line 1826, in _configure
+    self.tk.call(_flatten((self._w, cmd)) + self._options(cnf))
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_tkinter.TclError: invalid command name ".!frame4.!frame.!label2"
+2026-05-06 16:13:58,828 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpzxkam16r\users.json
+2026-05-06 16:13:59,021 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp9emhotwt\users.json
+2026-05-06 16:13:59,118 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpzgn60idj\users.json
+2026-05-06 16:13:59,333 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpbl7qdneu\users.json
+2026-05-06 16:13:59,617 [INFO] backups: Backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260506_161359_unittest.zip
+2026-05-06 16:14:29,236 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpwqc_06tm\users.json
+2026-05-06 16:14:29,466 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmprk3myupn\users.json
+2026-05-06 16:14:29,579 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpk30z0p6l\users.json
+2026-05-06 16:14:29,806 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp75e2xd5z\users.json
+2026-05-06 16:14:30,169 [INFO] backups: Backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260506_161430_unittest.zip
+2026-05-06 16:19:59,843 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp8cnko89w\users.json
+2026-05-06 16:20:00,048 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpbq1hfnvj\users.json
+2026-05-06 16:20:00,147 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpgtphjcfe\users.json
+2026-05-06 16:20:00,344 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpp02981yt\users.json
+2026-05-06 16:20:00,644 [INFO] backups: Backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260506_162000_unittest.zip
+2026-05-06 16:22:13,449 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp9st72tfg\users.json
+2026-05-06 16:22:13,638 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpn3029jxc\users.json
+2026-05-06 16:22:13,742 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpi8du8gy4\users.json
+2026-05-06 16:22:13,924 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmprss_mj5k\users.json
+2026-05-06 16:22:14,241 [INFO] backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpcl6t7d72\backups\pass_control_20260506_162214_unittest.zip
+2026-05-06 16:22:14,273 [INFO] backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp39ip5vtc\backups\pass_control_20260506_162214_unittest.zip
+2026-05-06 16:22:14,282 [INFO] backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmp39ip5vtc\backups\pass_control_20260506_162214_unittest.zip
+2026-05-06 16:26:02,959 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp923rrp3s\users.json
+2026-05-06 16:26:03,141 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpsxhnr9hr\users.json
+2026-05-06 16:26:03,232 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmplf4juqjo\users.json
+2026-05-06 16:26:03,429 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp2opaocaj\users.json
+2026-05-06 16:26:03,714 [INFO] backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpan7j0ezn\backups\pass_control_20260506_162603_unittest.zip
+2026-05-06 16:26:03,753 [INFO] backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpu744xvyi\backups\pass_control_20260506_162603_unittest.zip
+2026-05-06 16:26:03,765 [INFO] backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpu744xvyi\backups\pass_control_20260506_162603_unittest.zip
+2026-05-06 16:27:42,521 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp8ndw1ga6\users.json
+2026-05-06 16:27:42,723 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpxjr9q6f8\users.json
+2026-05-06 16:27:42,825 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpdia3go6o\users.json
+2026-05-06 16:27:43,027 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpslm09yj1\users.json
+2026-05-06 16:27:43,330 [INFO] backups: Backup created: C:\Users\user\AppData\Local\Temp\tmphzn5h8vd\backups\pass_control_20260506_162743_unittest.zip
+2026-05-06 16:27:43,368 [INFO] backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpo5hg36_h\backups\pass_control_20260506_162743_unittest.zip
+2026-05-06 16:27:43,381 [INFO] backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpo5hg36_h\backups\pass_control_20260506_162743_unittest.zip
+2026-05-06 16:31:54,765 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpkp33su7c\users.json
+2026-05-06 16:31:54,966 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp5svgksf5\users.json
+2026-05-06 16:31:55,056 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp011ju9t1\users.json
+2026-05-06 16:31:55,236 [ERROR] auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp9_fsjdhy\users.json
+2026-05-06 16:31:55,524 [INFO] backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpy72wh2z6\backups\pass_control_20260506_163155_unittest.zip
+2026-05-06 16:31:55,561 [INFO] backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpff2awng1\backups\pass_control_20260506_163155_unittest.zip
+2026-05-06 16:31:55,571 [INFO] backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpff2awng1\backups\pass_control_20260506_163155_unittest.zip
+2026-05-06 16:36:35,927 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp2vi1_fsv\users.json
+2026-05-06 16:36:36,105 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpo14xaapg\users.json
+2026-05-06 16:36:36,201 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpja1_kjl8\users.json
+2026-05-06 16:36:36,390 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpebk4gp9w\users.json
+2026-05-06 16:36:36,678 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpqu7fasj8\backups\pass_control_20260506_163636_unittest.zip
+2026-05-06 16:36:36,716 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpvfrkjklt\backups\pass_control_20260506_163636_unittest.zip
+2026-05-06 16:36:36,728 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpvfrkjklt\backups\pass_control_20260506_163636_unittest.zip
+2026-05-06 16:37:14,936 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpkl_p2a0s\users.json
+2026-05-06 16:37:15,119 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpg_cw_mir\users.json
+2026-05-06 16:37:15,229 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpfkyva8x4\users.json
+2026-05-06 16:37:15,429 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp_mc1p2wv\users.json
+2026-05-06 16:37:15,717 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpaqwx3snl\backups\pass_control_20260506_163715_unittest.zip
+2026-05-06 16:37:15,752 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp_2kcdw7w\backups\pass_control_20260506_163715_unittest.zip
+2026-05-06 16:37:15,762 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmp_2kcdw7w\backups\pass_control_20260506_163715_unittest.zip
+2026-05-06 17:13:17,392 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpet0sja0c\users.json
+2026-05-06 17:13:17,561 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp0n522283\users.json
+2026-05-06 17:13:17,643 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpzmujasae\users.json
+2026-05-06 17:13:17,836 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpzk4egxup\users.json
+2026-05-06 17:13:18,106 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp_sb2rghp\backups\pass_control_20260506_171318_unittest.zip
+2026-05-06 17:13:18,140 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpawuww6ey\backups\pass_control_20260506_171318_unittest.zip
+2026-05-06 17:13:18,152 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpawuww6ey\backups\pass_control_20260506_171318_unittest.zip
+2026-05-06 20:35:38,341 [ERROR] __main__: Clock tick failed
+Traceback (most recent call last):
+  File "C:\Users\user\Desktop\project\pass_control.py", line 105, in _tick
+    self._clklbl.configure(text=datetime.now().strftime("%d.%m.%Y  %H:%M:%S"))
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Python\pythoncore-3.14-64\Lib\tkinter\__init__.py", line 1842, in configure
+    return self._configure('configure', cnf, kw)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Python\pythoncore-3.14-64\Lib\tkinter\__init__.py", line 1826, in _configure
+    self.tk.call(_flatten((self._w, cmd)) + self._options(cnf))
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_tkinter.TclError: invalid command name ".!frame4.!frame.!label2"
+2026-05-06 21:19:15,706 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpv5wqzdnp\users.json
+2026-05-06 21:19:15,889 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpk1sfvhxg\users.json
+2026-05-06 21:19:15,979 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp6s4csoph\users.json
+2026-05-06 21:19:16,160 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp_n3tv4hi\users.json
+2026-05-06 21:19:16,463 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpj76yar40\backups\pass_control_20260506_211916_unittest.zip
+2026-05-06 21:19:16,494 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmplednjdc9\backups\pass_control_20260506_211916_unittest.zip
+2026-05-06 21:19:16,504 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmplednjdc9\backups\pass_control_20260506_211916_unittest.zip
+2026-05-06 21:26:50,358 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp434qo236\users.json
+2026-05-06 21:26:50,543 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpjthqi4c1\users.json
+2026-05-06 21:26:50,642 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp3f1txv6f\users.json
+2026-05-06 21:26:50,834 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpahwhbksx\users.json
+2026-05-06 21:26:51,117 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmplcdlh8vy\backups\pass_control_20260506_212651_unittest.zip
+2026-05-06 21:26:51,148 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp_h58alpd\backups\pass_control_20260506_212651_unittest.zip
+2026-05-06 21:26:51,157 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmp_h58alpd\backups\pass_control_20260506_212651_unittest.zip
+2026-05-06 21:29:22,219 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpehj10147\users.json
+2026-05-06 21:29:22,394 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpyx1i_f25\users.json
+2026-05-06 21:29:22,484 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpnhd123cc\users.json
+2026-05-06 21:29:22,658 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp5e8pqqc1\users.json
+2026-05-06 21:29:22,949 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpy60shilv\backups\pass_control_20260506_212922_unittest.zip
+2026-05-06 21:29:22,983 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp7ooqyj1a\backups\pass_control_20260506_212922_unittest.zip
+2026-05-06 21:29:22,991 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmp7ooqyj1a\backups\pass_control_20260506_212922_unittest.zip
+2026-05-06 21:29:51,472 [ERROR] __main__: Clock tick failed
+Traceback (most recent call last):
+  File "C:\Users\user\Desktop\project\pass_control.py", line 105, in _tick
+    self._clklbl.configure(text=datetime.now().strftime("%d.%m.%Y  %H:%M:%S"))
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Python\pythoncore-3.14-64\Lib\tkinter\__init__.py", line 1842, in configure
+    return self._configure('configure', cnf, kw)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Python\pythoncore-3.14-64\Lib\tkinter\__init__.py", line 1826, in _configure
+    self.tk.call(_flatten((self._w, cmd)) + self._options(cnf))
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_tkinter.TclError: invalid command name ".!frame4.!frame.!label2"
+2026-05-06 21:34:06,185 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpk4yw72w0\users.json
+2026-05-06 21:34:06,363 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpidfkjhl6\users.json
+2026-05-06 21:34:06,451 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpez2ls_lg\users.json
+2026-05-06 21:34:06,628 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmph3_j1n7o\users.json
+2026-05-06 21:34:06,904 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmptznev0a8\backups\pass_control_20260506_213406_unittest.zip
+2026-05-06 21:34:06,936 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpxsi0dbdn\backups\pass_control_20260506_213406_unittest.zip
+2026-05-06 21:34:06,945 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpxsi0dbdn\backups\pass_control_20260506_213406_unittest.zip
+2026-05-06 21:34:54,941 [ERROR] __main__: Clock tick failed
+Traceback (most recent call last):
+  File "C:\Users\user\Desktop\project\pass_control.py", line 107, in _tick
+    self._clklbl.configure(text=datetime.now().strftime("%d.%m.%Y  %H:%M:%S"))
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Python\pythoncore-3.14-64\Lib\tkinter\__init__.py", line 1842, in configure
+    return self._configure('configure', cnf, kw)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Python\pythoncore-3.14-64\Lib\tkinter\__init__.py", line 1826, in _configure
+    self.tk.call(_flatten((self._w, cmd)) + self._options(cnf))
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_tkinter.TclError: invalid command name ".!frame4.!frame.!label2"
+2026-05-06 21:39:08,456 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp4gafvpn_\users.json
+2026-05-06 21:39:08,642 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmprgeu7sfs\users.json
+2026-05-06 21:39:08,733 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmprrsb7yqk\users.json
+2026-05-06 21:39:08,913 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp77m5p848\users.json
+2026-05-06 21:39:09,201 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpcrf097mz\backups\pass_control_20260506_213909_unittest.zip
+2026-05-06 21:39:09,234 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpnimxo3us\backups\pass_control_20260506_213909_unittest.zip
+2026-05-06 21:39:09,245 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpnimxo3us\backups\pass_control_20260506_213909_unittest.zip
+2026-05-07 09:03:03,416 [INFO] app.services.backups: Backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260507_090303_auto.zip
+2026-05-07 09:03:03,419 [INFO] __main__: Daily backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260507_090303_auto.zip
+2026-05-07 09:05:23,959 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp8sel06_z\users.json
+2026-05-07 09:05:24,132 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpby_pn8d5\users.json
+2026-05-07 09:05:24,221 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpik8qrdys\users.json
+2026-05-07 09:05:24,390 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpb3csui0t\users.json
+2026-05-07 09:05:24,685 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpgcdb2iym\backups\pass_control_20260507_090524_unittest.zip
+2026-05-07 09:05:24,719 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp9x5klppz\backups\pass_control_20260507_090524_unittest.zip
+2026-05-07 09:05:24,729 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmp9x5klppz\backups\pass_control_20260507_090524_unittest.zip
+2026-05-08 14:49:36,886 [INFO] app.services.backups: Backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260508_144936_auto.zip
+2026-05-08 14:49:36,890 [INFO] __main__: Daily backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260508_144936_auto.zip
+2026-05-08 17:48:13,797 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp9bjwacqz\users.json
+2026-05-08 17:48:13,954 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmposkxbktk\users.json
+2026-05-08 17:48:14,031 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp9ak7zjwa\users.json
+2026-05-08 17:48:14,193 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp13sdzcb8\users.json
+2026-05-08 17:48:14,454 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp077m31m5\backups\pass_control_20260508_174814_unittest.zip
+2026-05-08 17:48:14,481 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpfjmi5oey\backups\pass_control_20260508_174814_unittest.zip
+2026-05-08 17:48:14,491 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpfjmi5oey\backups\pass_control_20260508_174814_unittest.zip
+2026-05-08 17:52:18,771 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpykhgfren\users.json
+2026-05-08 17:52:18,944 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpb0zzxx4o\users.json
+2026-05-08 17:52:19,030 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp9oul80pc\users.json
+2026-05-08 17:52:19,200 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpi6o7gpuk\users.json
+2026-05-08 17:52:19,459 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmplm5kcx5c\backups\pass_control_20260508_175219_unittest.zip
+2026-05-08 17:52:19,484 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpbs7_mu06\backups\pass_control_20260508_175219_unittest.zip
+2026-05-08 17:52:19,492 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpbs7_mu06\backups\pass_control_20260508_175219_unittest.zip
+2026-05-08 19:04:06,429 [ERROR] __main__: Clock tick failed
+Traceback (most recent call last):
+  File "C:\Users\user\Desktop\project\pass_control.py", line 107, in _tick
+    self._clklbl.configure(text=datetime.now().strftime("%d.%m.%Y  %H:%M:%S"))
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Python\pythoncore-3.14-64\Lib\tkinter\__init__.py", line 1842, in configure
+    return self._configure('configure', cnf, kw)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Python\pythoncore-3.14-64\Lib\tkinter\__init__.py", line 1826, in _configure
+    self.tk.call(_flatten((self._w, cmd)) + self._options(cnf))
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_tkinter.TclError: invalid command name ".!frame4.!frame.!label2"
+2026-05-08 19:23:54,643 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpd8l4g0bn\users.json
+2026-05-08 19:23:54,811 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpd3afv50m\users.json
+2026-05-08 19:23:54,892 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpv0p1_nfg\users.json
+2026-05-08 19:23:55,059 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp_5szq3pc\users.json
+2026-05-08 19:23:55,323 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpt2d1bvj3\backups\pass_control_20260508_192355_unittest.zip
+2026-05-08 19:23:55,351 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpp5n9d37h\backups\pass_control_20260508_192355_unittest.zip
+2026-05-08 19:23:55,360 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpp5n9d37h\backups\pass_control_20260508_192355_unittest.zip
+2026-05-08 20:42:40,483 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmphk_ls5b7\users.json
+2026-05-08 20:42:40,656 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpt8c0d4_q\users.json
+2026-05-08 20:42:40,745 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp5rfn12sr\users.json
+2026-05-08 20:42:40,911 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpt192ttq3\users.json
+2026-05-08 20:42:41,181 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpg41ioz8i\backups\pass_control_20260508_204241_unittest.zip
+2026-05-08 20:42:41,213 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpp1xbseic\backups\pass_control_20260508_204241_unittest.zip
+2026-05-08 20:42:41,221 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpp1xbseic\backups\pass_control_20260508_204241_unittest.zip
+2026-05-08 21:06:34,193 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpqkc12qz6\users.json
+2026-05-08 21:06:34,363 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpo2fx37j7\users.json
+2026-05-08 21:06:34,456 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmps_q3fldi\users.json
+2026-05-08 21:06:34,618 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp6hj0qh3e\users.json
+2026-05-08 21:06:34,885 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpp2mk1hj9\backups\pass_control_20260508_210634_unittest.zip
+2026-05-08 21:06:34,918 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpj_gjl9n7\backups\pass_control_20260508_210634_unittest.zip
+2026-05-08 21:06:34,927 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpj_gjl9n7\backups\pass_control_20260508_210634_unittest.zip
+2026-05-08 21:10:06,666 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmprs94vm2e\users.json
+2026-05-08 21:10:06,825 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpribmttvm\users.json
+2026-05-08 21:10:06,911 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp6aps_ym9\users.json
+2026-05-08 21:10:07,083 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpb5x_cjic\users.json
+2026-05-08 21:10:07,348 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp_5dfy5v9\backups\pass_control_20260508_211007_unittest.zip
+2026-05-08 21:10:07,379 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp4m7fjr9s\backups\pass_control_20260508_211007_unittest.zip
+2026-05-08 21:10:07,388 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmp4m7fjr9s\backups\pass_control_20260508_211007_unittest.zip
+2026-05-08 21:14:50,377 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpk0e_bkya\users.json
+2026-05-08 21:14:50,545 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpaofonb44\users.json
+2026-05-08 21:14:50,624 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpnye19zlb\users.json
+2026-05-08 21:14:50,782 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpjszmxlg7\users.json
+2026-05-08 21:14:51,043 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpx8_6nhh5\backups\pass_control_20260508_211451_unittest.zip
+2026-05-08 21:14:51,076 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp3xqyy5dd\backups\pass_control_20260508_211451_unittest.zip
+2026-05-08 21:14:51,085 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmp3xqyy5dd\backups\pass_control_20260508_211451_unittest.zip
+2026-05-08 21:31:47,279 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpkditiam3\users.json
+2026-05-08 21:31:47,451 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpoyrgddp7\users.json
+2026-05-08 21:31:47,533 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpf4z2rvmj\users.json
+2026-05-08 21:31:47,702 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmphme6ya45\users.json
+2026-05-08 21:31:47,984 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpgvov587p\backups\pass_control_20260508_213147_unittest.zip
+2026-05-08 21:31:48,018 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpvr65gk5j\backups\pass_control_20260508_213148_unittest.zip
+2026-05-08 21:31:48,042 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpvr65gk5j\backups\pass_control_20260508_213148_unittest.zip
+2026-05-08 21:32:19,837 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmphypqezq1\users.json
+2026-05-08 21:32:20,010 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp9b6l4bst\users.json
+2026-05-08 21:32:20,098 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp4_4db0r9\users.json
+2026-05-08 21:32:20,265 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpry_oe3zc\users.json
+2026-05-08 21:32:20,539 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp0l14phz7\backups\pass_control_20260508_213220_unittest.zip
+2026-05-08 21:32:20,574 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpr4ue0tua\backups\pass_control_20260508_213220_unittest.zip
+2026-05-08 21:32:20,584 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpr4ue0tua\backups\pass_control_20260508_213220_unittest.zip
+2026-05-08 21:41:15,455 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpndk6wy1f\users.json
+2026-05-08 21:41:15,633 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpey0nv2by\users.json
+2026-05-08 21:41:15,722 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpet56sq2b\users.json
+2026-05-08 21:41:15,898 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp4a2__t6e\users.json
+2026-05-08 21:41:16,154 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpeahcr1dp\backups\pass_control_20260508_214116_unittest.zip
+2026-05-08 21:41:16,188 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp14dvkn3v\backups\pass_control_20260508_214116_unittest.zip
+2026-05-08 21:41:16,196 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmp14dvkn3v\backups\pass_control_20260508_214116_unittest.zip
+2026-05-09 10:57:00,765 [INFO] app.services.backups: Backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260509_105700_auto.zip
+2026-05-09 10:57:00,770 [INFO] __main__: Daily backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260509_105700_auto.zip
+2026-05-09 11:11:27,186 [ERROR] __main__: Clock tick failed
+Traceback (most recent call last):
+  File "C:\Users\user\Desktop\project\pass_control.py", line 107, in _tick
+    self._clklbl.configure(text=datetime.now().strftime("%d.%m.%Y  %H:%M:%S"))
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Python\pythoncore-3.14-64\Lib\tkinter\__init__.py", line 1842, in configure
+    return self._configure('configure', cnf, kw)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Python\pythoncore-3.14-64\Lib\tkinter\__init__.py", line 1826, in _configure
+    self.tk.call(_flatten((self._w, cmd)) + self._options(cnf))
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_tkinter.TclError: invalid command name ".!frame4.!frame.!label2"
+2026-05-09 11:22:53,118 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp6aruforh\users.json
+2026-05-09 11:22:53,280 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpbl1hfb3f\users.json
+2026-05-09 11:22:53,370 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpl6d5n9jk\users.json
+2026-05-09 11:22:53,531 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpdfp0m6fi\users.json
+2026-05-09 11:22:53,792 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp8ohv3ori\backups\pass_control_20260509_112253_unittest.zip
+2026-05-09 11:22:53,828 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp5fp0cgyt\backups\pass_control_20260509_112253_unittest.zip
+2026-05-09 11:22:53,840 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmp5fp0cgyt\backups\pass_control_20260509_112253_unittest.zip
+2026-05-09 11:26:52,739 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpkspq0_hi\users.json
+2026-05-09 11:26:52,906 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp4hvv3n8p\users.json
+2026-05-09 11:26:52,991 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpjr3kl63x\users.json
+2026-05-09 11:26:53,145 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpchi5pdiz\users.json
+2026-05-09 11:26:53,389 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp9h_8j5ok\backups\pass_control_20260509_112653_unittest.zip
+2026-05-09 11:26:53,421 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpr5ldz5a1\backups\pass_control_20260509_112653_unittest.zip
+2026-05-09 11:26:53,429 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpr5ldz5a1\backups\pass_control_20260509_112653_unittest.zip
+2026-05-09 11:27:12,289 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpfyjo0us6\users.json
+2026-05-09 11:27:12,462 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpt2eqqa35\users.json
+2026-05-09 11:27:12,551 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp2pcpy7js\users.json
+2026-05-09 11:27:12,720 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpz9rm165s\users.json
+2026-05-09 11:27:12,993 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp2g2dpnju\backups\pass_control_20260509_112712_unittest.zip
+2026-05-09 11:27:13,025 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpykq4qm98\backups\pass_control_20260509_112713_unittest.zip
+2026-05-09 11:27:13,046 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpykq4qm98\backups\pass_control_20260509_112713_unittest.zip
+2026-05-09 16:34:55,717 [ERROR] __main__: Clock tick failed
+Traceback (most recent call last):
+  File "C:\Users\user\Desktop\project\pass_control.py", line 107, in _tick
+    self._clklbl.configure(text=datetime.now().strftime("%d.%m.%Y  %H:%M:%S"))
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Python\pythoncore-3.14-64\Lib\tkinter\__init__.py", line 1842, in configure
+    return self._configure('configure', cnf, kw)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Python\pythoncore-3.14-64\Lib\tkinter\__init__.py", line 1826, in _configure
+    self.tk.call(_flatten((self._w, cmd)) + self._options(cnf))
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_tkinter.TclError: invalid command name ".!frame4.!frame.!label2"
+2026-05-09 18:26:08,668 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpuxoiz5zx\users.json
+2026-05-09 18:26:08,845 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp7hz9lwz0\users.json
+2026-05-09 18:26:08,929 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp6rzgj4mh\users.json
+2026-05-09 18:26:09,117 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp2eatuk40\users.json
+2026-05-09 18:26:09,384 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp68ij5f37\backups\pass_control_20260509_182609_unittest.zip
+2026-05-09 18:26:09,419 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp_198fhh0\backups\pass_control_20260509_182609_unittest.zip
+2026-05-09 18:26:09,431 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmp_198fhh0\backups\pass_control_20260509_182609_unittest.zip
+2026-05-09 18:26:47,282 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpurutkju4\users.json
+2026-05-09 18:26:47,456 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpmqnwrd_t\users.json
+2026-05-09 18:26:47,540 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp1hf5jit6\users.json
+2026-05-09 18:26:47,715 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpl22s7_zu\users.json
+2026-05-09 18:26:48,001 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp9w4yge8b\backups\pass_control_20260509_182647_unittest.zip
+2026-05-09 18:26:48,033 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpij8s_8by\backups\pass_control_20260509_182648_unittest.zip
+2026-05-09 18:26:48,049 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpij8s_8by\backups\pass_control_20260509_182648_unittest.zip
+2026-05-10 13:02:20,243 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmps8eyn833\users.json
+2026-05-10 13:02:20,438 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp312y3fb_\users.json
+2026-05-10 13:02:20,525 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpovpegq0z\users.json
+2026-05-10 13:02:20,694 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp1dv96k5k\users.json
+2026-05-10 13:02:21,003 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmplhy1shdd\backups\pass_control_20260510_130220_unittest.zip
+2026-05-10 13:02:21,041 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp_mj8ac3j\backups\pass_control_20260510_130221_unittest.zip
+2026-05-10 13:02:21,071 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmp_mj8ac3j\backups\pass_control_20260510_130221_unittest.zip
+2026-05-10 21:37:52,754 [INFO] app.services.backups: Backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260510_213751_auto.zip
+2026-05-10 21:37:52,759 [INFO] __main__: Daily backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260510_213751_auto.zip
+2026-05-10 22:02:16,079 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpxiylt8hl\users.json
+2026-05-10 22:02:16,263 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpeho183hd\users.json
+2026-05-10 22:02:16,347 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpgil3hokh\users.json
+2026-05-10 22:02:16,530 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmppi_3z01j\users.json
+2026-05-10 22:02:16,802 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmprl7s1jav\backups\pass_control_20260510_220216_unittest.zip
+2026-05-10 22:02:16,839 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpzlkgysum\backups\pass_control_20260510_220216_unittest.zip
+2026-05-10 22:02:16,850 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpzlkgysum\backups\pass_control_20260510_220216_unittest.zip
+2026-05-10 22:06:13,465 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpo2t4i1op\users.json
+2026-05-10 22:06:13,651 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpfmatwlr0\users.json
+2026-05-10 22:06:13,738 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpzhaw95yq\users.json
+2026-05-10 22:06:13,900 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpb9e4o3i8\users.json
+2026-05-10 22:06:14,155 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpuf42ifrf\backups\pass_control_20260510_220614_unittest.zip
+2026-05-10 22:06:14,187 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpa3xve46j\backups\pass_control_20260510_220614_unittest.zip
+2026-05-10 22:06:14,196 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpa3xve46j\backups\pass_control_20260510_220614_unittest.zip
+2026-05-10 22:23:19,467 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpa5awov1j\users.json
+2026-05-10 22:23:19,639 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpst3s2m4e\users.json
+2026-05-10 22:23:19,728 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpkt6x0pp4\users.json
+2026-05-10 22:23:19,928 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpy0w_0syp\users.json
+2026-05-10 22:23:20,212 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmph5w1uwfy\backups\pass_control_20260510_222320_unittest.zip
+2026-05-10 22:23:20,248 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpmg0nav8l\backups\pass_control_20260510_222320_unittest.zip
+2026-05-10 22:23:20,257 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpmg0nav8l\backups\pass_control_20260510_222320_unittest.zip
+2026-05-10 22:30:29,298 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpxv99mgo3\users.json
+2026-05-10 22:30:29,466 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpwvjwqey7\users.json
+2026-05-10 22:30:29,553 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpglbld9o4\users.json
+2026-05-10 22:30:29,726 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpet_1cmqa\users.json
+2026-05-10 22:30:29,990 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp7o1xdy_7\backups\pass_control_20260510_223029_unittest.zip
+2026-05-10 22:30:30,029 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpp3e7n8ds\backups\pass_control_20260510_223030_unittest.zip
+2026-05-10 22:30:30,045 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpp3e7n8ds\backups\pass_control_20260510_223030_unittest.zip
+2026-05-10 22:30:39,530 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpvsxezngc\users.json
+2026-05-10 22:30:39,702 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpd3ltfkcm\users.json
+2026-05-10 22:30:39,791 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp4jcjfl2s\users.json
+2026-05-10 22:30:39,969 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp8mkkk8ti\users.json
+2026-05-10 22:30:40,236 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpph52q1je\backups\pass_control_20260510_223040_unittest.zip
+2026-05-10 22:30:40,276 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpm8bhxi78\backups\pass_control_20260510_223040_unittest.zip
+2026-05-10 22:30:40,287 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpm8bhxi78\backups\pass_control_20260510_223040_unittest.zip
+2026-05-10 22:31:31,400 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp2kvye4os\users.json
+2026-05-10 22:31:31,606 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp3huwf7zf\users.json
+2026-05-10 22:31:31,702 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpdpfqqz35\users.json
+2026-05-10 22:31:31,898 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmplmcyv28u\users.json
+2026-05-10 22:31:32,199 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpgf8djgj8\backups\pass_control_20260510_223132_unittest.zip
+2026-05-10 22:31:32,242 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp6jpw0685\backups\pass_control_20260510_223132_unittest.zip
+2026-05-10 22:31:32,256 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmp6jpw0685\backups\pass_control_20260510_223132_unittest.zip
+2026-05-12 18:45:05,017 [INFO] app.services.backups: Backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260512_184458_auto.zip
+2026-05-12 18:45:05,023 [INFO] __main__: Daily backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260512_184458_auto.zip
+2026-05-13 10:51:49,443 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp1qq4l9uj\users.json
+2026-05-13 10:51:49,623 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp291qfeky\users.json
+2026-05-13 10:51:49,707 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpry3izhj6\users.json
+2026-05-13 10:51:49,873 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpu8ooogp7\users.json
+2026-05-13 10:51:50,145 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmptk9h2h5w\backups\pass_control_20260513_105150_unittest.zip
+2026-05-13 10:51:50,175 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmppqwfr_vt\backups\pass_control_20260513_105150_unittest.zip
+2026-05-13 10:51:50,187 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmppqwfr_vt\backups\pass_control_20260513_105150_unittest.zip
+2026-05-13 10:52:05,074 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpfgdwq9bo\users.json
+2026-05-13 10:52:05,229 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpm4nfef1w\users.json
+2026-05-13 10:52:05,310 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpgksmaxw0\users.json
+2026-05-13 10:52:05,467 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp6jwf34lm\users.json
+2026-05-13 10:52:05,721 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp57ccw_60\backups\pass_control_20260513_105205_unittest.zip
+2026-05-13 10:52:05,744 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpc9ryhctv\backups\pass_control_20260513_105205_unittest.zip
+2026-05-13 10:52:05,756 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpc9ryhctv\backups\pass_control_20260513_105205_unittest.zip
+2026-05-13 11:58:02,976 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpg5lvyepn\users.json
+2026-05-13 11:58:03,148 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpmmrlo4mp\users.json
+2026-05-13 11:58:03,235 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp8r9u3_bs\users.json
+2026-05-13 11:58:03,407 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpert65gq8\users.json
+2026-05-13 11:58:03,700 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp0hih1qyc\backups\pass_control_20260513_115803_unittest.zip
+2026-05-13 11:58:03,736 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp8mf1qnc3\backups\pass_control_20260513_115803_unittest.zip
+2026-05-13 11:58:03,750 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmp8mf1qnc3\backups\pass_control_20260513_115803_unittest.zip
+2026-05-13 13:03:18,483 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp03zpaqud\users.json
+2026-05-13 13:03:18,651 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpixefkp_i\users.json
+2026-05-13 13:03:18,735 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp_82a76r3\users.json
+2026-05-13 13:03:18,898 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp_ehojd5y\users.json
+2026-05-13 13:03:19,172 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmps52_o7lq\backups\pass_control_20260513_130319_unittest.zip
+2026-05-13 13:03:19,201 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp1wuyl8w_\backups\pass_control_20260513_130319_unittest.zip
+2026-05-13 13:03:19,213 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmp1wuyl8w_\backups\pass_control_20260513_130319_unittest.zip
+2026-05-13 13:05:52,922 [INFO] app.services.backups: Backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260513_130552_auto.zip
+2026-05-13 13:05:52,927 [INFO] __main__: Daily backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260513_130552_auto.zip
+2026-05-13 21:03:03,461 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp08xeg0ip\users.json
+2026-05-13 21:03:03,636 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpfo32yib0\users.json
+2026-05-13 21:03:03,725 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp1k585ff5\users.json
+2026-05-13 21:03:03,911 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpdjm07uj0\users.json
+2026-05-13 21:03:04,226 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp5rtvouy3\backups\pass_control_20260513_210304_unittest.zip
+2026-05-13 21:03:04,268 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpf24z_3u5\backups\pass_control_20260513_210304_unittest.zip
+2026-05-13 21:03:04,281 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpf24z_3u5\backups\pass_control_20260513_210304_unittest.zip
+2026-05-14 00:24:39,966 [INFO] app.services.backups: Backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260514_002438_auto.zip
+2026-05-14 00:24:39,971 [INFO] __main__: Daily backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260514_002438_auto.zip
+2026-05-14 00:34:11,602 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpxoe2j494\users.json
+2026-05-14 00:34:11,790 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpszvvte8_\users.json
+2026-05-14 00:34:11,878 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpmwo8_sb1\users.json
+2026-05-14 00:34:12,069 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpnvmip057\users.json
+2026-05-14 00:34:12,364 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp3sfcvl2s\backups\pass_control_20260514_003412_unittest.zip
+2026-05-14 00:34:12,411 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmprrh8lsxd\backups\pass_control_20260514_003412_unittest.zip
+2026-05-14 00:34:12,423 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmprrh8lsxd\backups\pass_control_20260514_003412_unittest.zip
+2026-05-14 00:38:14,238 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpj6r7f0bk\users.json
+2026-05-14 00:38:14,431 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpijd7kw7o\users.json
+2026-05-14 00:38:14,530 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp6m4f75ty\users.json
+2026-05-14 00:38:14,744 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpzp7w0sef\users.json
+2026-05-14 00:38:15,035 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpqgz1xmbm\backups\pass_control_20260514_003815_unittest.zip
+2026-05-14 00:38:15,081 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp_f0oxaxt\backups\pass_control_20260514_003815_unittest.zip
+2026-05-14 00:38:15,094 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmp_f0oxaxt\backups\pass_control_20260514_003815_unittest.zip
+2026-05-14 00:41:23,280 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpce0x5x9s\users.json
+2026-05-14 00:41:23,464 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpsarf2f60\users.json
+2026-05-14 00:41:23,657 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpzg120c66\users.json
+2026-05-14 00:41:23,785 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp3h3vrcq5\users.json
+2026-05-14 00:41:23,980 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpcsromm03\users.json
+2026-05-14 00:42:16,945 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpketotssx\users.json
+2026-05-14 00:42:17,118 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp22r1qa_3\users.json
+2026-05-14 00:42:17,348 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpmcbxipne\users.json
+2026-05-14 00:42:17,436 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpjacyywow\users.json
+2026-05-14 00:42:17,632 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmptg7vflxl\users.json
+2026-05-14 00:42:26,334 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpg9ucuq8m\users.json
+2026-05-14 00:42:26,490 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpvh9nj3j3\users.json
+2026-05-14 00:42:26,674 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpp40_vc5i\users.json
+2026-05-14 00:42:26,766 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmps0apguht\users.json
+2026-05-14 00:42:26,947 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpptft8cg7\users.json
+2026-05-14 00:42:27,236 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpi7vg1kxt\backups\pass_control_20260514_004227_unittest.zip
+2026-05-14 00:42:27,280 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpqtqcmmp7\backups\pass_control_20260514_004227_unittest.zip
+2026-05-14 00:42:27,295 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpqtqcmmp7\backups\pass_control_20260514_004227_unittest.zip
+2026-05-14 00:49:09,485 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmps34s43lm\users.json
+2026-05-14 00:49:09,677 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpdoao0bkq\users.json
+2026-05-14 00:49:09,885 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpy2254_1_\users.json
+2026-05-14 00:49:09,983 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp4sa84j6j\users.json
+2026-05-14 00:49:10,171 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp1tfhr_9c\users.json
+2026-05-14 00:49:10,516 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpj3u3awon\backups\pass_control_20260514_004910_unittest.zip
+2026-05-14 00:49:10,551 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp_1o7x9mc\backups\pass_control_20260514_004910_unittest.zip
+2026-05-14 00:49:10,561 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmp_1o7x9mc\backups\pass_control_20260514_004910_unittest.zip
+2026-05-14 00:55:19,753 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpfvr9ilq7\users.json
+2026-05-14 00:55:19,924 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp79ucd0wf\users.json
+2026-05-14 00:55:20,100 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpznnqklp5\users.json
+2026-05-14 00:55:20,194 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmppntx3gca\users.json
+2026-05-14 00:55:20,369 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpcxgcu0ty\users.json
+2026-05-14 00:55:20,657 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpbrz6_gpq\backups\pass_control_20260514_005520_unittest.zip
+2026-05-14 00:55:20,703 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpz0bw9xyl\backups\pass_control_20260514_005520_unittest.zip
+2026-05-14 00:55:20,716 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpz0bw9xyl\backups\pass_control_20260514_005520_unittest.zip
+2026-05-14 00:57:18,432 [ERROR] __main__: Clock tick failed
+Traceback (most recent call last):
+  File "C:\Users\user\Desktop\project\pass_control.py", line 132, in _tick
+    self._clklbl.configure(text=datetime.now().strftime("%d.%m.%Y  %H:%M:%S"))
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Python\pythoncore-3.14-64\Lib\tkinter\__init__.py", line 1842, in configure
+    return self._configure('configure', cnf, kw)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Python\pythoncore-3.14-64\Lib\tkinter\__init__.py", line 1826, in _configure
+    self.tk.call(_flatten((self._w, cmd)) + self._options(cnf))
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_tkinter.TclError: invalid command name ".!frame4.!frame.!label2"
+2026-05-14 10:12:02,571 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmptrp8ac6f\users.json
+2026-05-14 10:12:02,749 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp7yidc77t\users.json
+2026-05-14 10:12:02,920 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmprr8yeg0i\users.json
+2026-05-14 10:12:03,003 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp8j1h86iw\users.json
+2026-05-14 10:12:03,181 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpztid805v\users.json
+2026-05-14 10:12:03,530 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp010706l6\backups\pass_control_20260514_101203_unittest.zip
+2026-05-14 10:12:03,607 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpor0h01z9\backups\pass_control_20260514_101203_unittest.zip
+2026-05-14 10:12:03,737 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpor0h01z9\backups\pass_control_20260514_101203_unittest.zip
+2026-05-14 11:28:53,650 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp9o636rir\users.json
+2026-05-14 11:28:53,817 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp37zn2tc4\users.json
+2026-05-14 11:28:54,002 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpbjb4t08x\users.json
+2026-05-14 11:28:54,092 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp9bq_mozj\users.json
+2026-05-14 11:28:54,287 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpjscnuv4i\users.json
+2026-05-14 11:28:54,565 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpvic9o2vn\backups\pass_control_20260514_112854_unittest.zip
+2026-05-14 11:28:54,598 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpu47a7enc\backups\pass_control_20260514_112854_unittest.zip
+2026-05-14 11:28:54,608 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpu47a7enc\backups\pass_control_20260514_112854_unittest.zip
+2026-05-14 11:51:58,837 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmppl7asnc9\users.json
+2026-05-14 11:51:58,991 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp3pry1r6t\users.json
+2026-05-14 11:51:59,166 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpuyl6v7x0\users.json
+2026-05-14 11:51:59,249 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpgrlu3yu_\users.json
+2026-05-14 11:51:59,415 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp_k9ncu83\users.json
+2026-05-14 11:51:59,675 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpdur3em0v\backups\pass_control_20260514_115159_unittest.zip
+2026-05-14 11:51:59,702 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpjtje3ag_\backups\pass_control_20260514_115159_unittest.zip
+2026-05-14 11:51:59,711 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpjtje3ag_\backups\pass_control_20260514_115159_unittest.zip
+2026-05-14 11:58:35,041 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpm4fg759o\users.json
+2026-05-14 11:58:35,205 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp2whbhwf0\users.json
+2026-05-14 11:58:35,368 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpz2g0nq6d\users.json
+2026-05-14 11:58:35,452 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmptjw6a_it\users.json
+2026-05-14 11:58:35,610 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp99jyj27b\users.json
+2026-05-14 11:58:35,859 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp47642gqa\backups\pass_control_20260514_115835_unittest.zip
+2026-05-14 11:58:35,887 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp4nrnwg5s\backups\pass_control_20260514_115835_unittest.zip
+2026-05-14 11:58:35,896 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmp4nrnwg5s\backups\pass_control_20260514_115835_unittest.zip
+2026-05-14 12:16:48,385 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmppda1wzb2\users.json
+2026-05-14 12:16:48,555 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpbdb7ztz_\users.json
+2026-05-14 12:16:48,723 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp55_hlir_\users.json
+2026-05-14 12:16:48,807 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpiodwux6y\users.json
+2026-05-14 12:16:48,984 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmppkn15r4t\users.json
+2026-05-14 12:16:49,246 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp0g89utdi\backups\pass_control_20260514_121649_unittest.zip
+2026-05-14 12:16:49,276 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpfiafslmy\backups\pass_control_20260514_121649_unittest.zip
+2026-05-14 12:16:49,286 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpfiafslmy\backups\pass_control_20260514_121649_unittest.zip
+2026-05-14 16:43:41,467 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpfej6san4\users.json
+2026-05-14 16:43:41,625 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmptdvq8le2\users.json
+2026-05-14 16:43:41,800 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmppp__bvou\users.json
+2026-05-14 16:43:41,888 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpl9b8i413\users.json
+2026-05-14 16:43:42,060 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpl8h585cw\users.json
+2026-05-14 16:43:42,346 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp9t28sktj\backups\pass_control_20260514_164342_unittest.zip
+2026-05-14 16:43:42,380 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpj25kafix\backups\pass_control_20260514_164342_unittest.zip
+2026-05-14 16:43:42,393 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpj25kafix\backups\pass_control_20260514_164342_unittest.zip
+2026-05-14 16:44:16,423 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpja3wnway\users.json
+2026-05-14 16:44:16,580 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpl2j7g52z\users.json
+2026-05-14 16:44:16,752 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpw24r3n1s\users.json
+2026-05-14 16:44:16,838 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpp5por035\users.json
+2026-05-14 16:44:17,010 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpaha5r1yc\users.json
+2026-05-14 16:44:17,284 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpx64u9ft6\backups\pass_control_20260514_164417_unittest.zip
+2026-05-14 16:44:17,312 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpyzigo8kx\backups\pass_control_20260514_164417_unittest.zip
+2026-05-14 16:44:17,322 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpyzigo8kx\backups\pass_control_20260514_164417_unittest.zip
+2026-05-14 16:44:36,363 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpqlwud0co\users.json
+2026-05-14 16:44:36,531 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmphz28gk7q\users.json
+2026-05-14 16:44:36,693 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpv5ndtw4s\users.json
+2026-05-14 16:44:36,774 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp4ko43hsp\users.json
+2026-05-14 16:44:36,956 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp8gnf6dau\users.json
+2026-05-14 16:44:37,238 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpha4yvweq\backups\pass_control_20260514_164437_unittest.zip
+2026-05-14 16:44:37,267 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp2fv4hib7\backups\pass_control_20260514_164437_unittest.zip
+2026-05-14 16:44:37,278 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmp2fv4hib7\backups\pass_control_20260514_164437_unittest.zip
+2026-05-14 16:45:01,914 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpfzx6vzqb\users.json
+2026-05-14 16:45:02,080 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp573_t45_\users.json
+2026-05-14 16:45:02,253 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpvslwbn_l\users.json
+2026-05-14 16:45:02,337 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp68q01k2g\users.json
+2026-05-14 16:45:02,509 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpg1wlop2h\users.json
+2026-05-14 16:45:02,773 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpbwoe9uqk\backups\pass_control_20260514_164502_unittest.zip
+2026-05-14 16:45:02,801 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp99e3tr9f\backups\pass_control_20260514_164502_unittest.zip
+2026-05-14 16:45:02,811 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmp99e3tr9f\backups\pass_control_20260514_164502_unittest.zip
+2026-05-14 17:03:33,125 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpxiqrtqf2\users.json
+2026-05-14 17:03:33,292 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpcrfutgoe\users.json
+2026-05-14 17:03:33,453 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpp7vdd4tu\users.json
+2026-05-14 17:03:33,544 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp1cey3ikq\users.json
+2026-05-14 17:03:33,729 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpaqbxy1vn\users.json
+2026-05-14 17:03:33,989 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpisl15lf2\backups\pass_control_20260514_170333_unittest.zip
+2026-05-14 17:03:34,021 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpovdgm8rz\backups\pass_control_20260514_170334_unittest.zip
+2026-05-14 17:03:34,039 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpovdgm8rz\backups\pass_control_20260514_170334_unittest.zip
+2026-05-14 17:09:49,438 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp5op3xia3\users.json
+2026-05-14 17:09:49,610 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmplti7nlzq\users.json
+2026-05-14 17:09:49,783 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmps3k14uu0\users.json
+2026-05-14 17:09:49,870 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmprfl8rqhc\users.json
+2026-05-14 17:09:50,033 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmps4tmmxov\users.json
+2026-05-14 17:09:50,306 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmppe2i11_k\backups\pass_control_20260514_170950_unittest.zip
+2026-05-14 17:09:50,338 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp2ifiz1q7\backups\pass_control_20260514_170950_unittest.zip
+2026-05-14 17:09:50,350 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmp2ifiz1q7\backups\pass_control_20260514_170950_unittest.zip
+2026-05-14 17:19:38,834 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpxu6kl_56\users.json
+2026-05-14 17:19:39,011 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpdwaw37fv\users.json
+2026-05-14 17:19:39,182 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpa5hqa0xb\users.json
+2026-05-14 17:19:39,270 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpej6gk8yp\users.json
+2026-05-14 17:19:39,444 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpgyv5y063\users.json
+2026-05-14 17:19:39,715 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpvwemyyzc\backups\pass_control_20260514_171939_unittest.zip
+2026-05-14 17:19:39,751 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpqoe2xwgu\backups\pass_control_20260514_171939_unittest.zip
+2026-05-14 17:19:39,762 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpqoe2xwgu\backups\pass_control_20260514_171939_unittest.zip
+2026-05-14 17:27:35,833 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpwi557uxy\users.json
+2026-05-14 17:27:35,996 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp7xj6l9_7\users.json
+2026-05-14 17:27:36,186 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp5n9n3prp\users.json
+2026-05-14 17:27:36,277 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpmz2ol8uc\users.json
+2026-05-14 17:27:36,455 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp89w3mwr5\users.json
+2026-05-14 17:27:36,723 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp5g53i7mx\backups\pass_control_20260514_172736_unittest.zip
+2026-05-14 17:27:36,755 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpb3tpqm49\backups\pass_control_20260514_172736_unittest.zip
+2026-05-14 17:27:36,766 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpb3tpqm49\backups\pass_control_20260514_172736_unittest.zip
+2026-05-15 10:10:26,164 [INFO] app.services.backups: Backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260515_101024_auto.zip
+2026-05-15 10:10:26,174 [INFO] __main__: Daily backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260515_101024_auto.zip
+2026-05-15 10:29:44,395 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpvmmtnfhp\users.json
+2026-05-15 10:29:44,556 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpd6qcvivf\users.json
+2026-05-15 10:29:44,736 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmptvbx9jor\users.json
+2026-05-15 10:29:44,824 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmptmcy67zz\users.json
+2026-05-15 10:29:44,997 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpm_11dpx9\users.json
+2026-05-15 10:29:45,278 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpqdumuw2p\backups\pass_control_20260515_102945_unittest.zip
+2026-05-15 10:29:45,310 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp_obd0x0v\backups\pass_control_20260515_102945_unittest.zip
+2026-05-15 10:29:45,326 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmp_obd0x0v\backups\pass_control_20260515_102945_unittest.zip
+2026-05-15 10:30:51,681 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp471g8rs8\users.json
+2026-05-15 10:30:51,846 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp4bbnva8z\users.json
+2026-05-15 10:30:52,021 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpnfnbp9m8\users.json
+2026-05-15 10:30:52,105 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpbr23ndmv\users.json
+2026-05-15 10:30:52,278 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpmdqmwfgl\users.json
+2026-05-15 10:30:52,549 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpi4xgn87e\backups\pass_control_20260515_103052_unittest.zip
+2026-05-15 10:30:52,577 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpvp5o75cv\backups\pass_control_20260515_103052_unittest.zip
+2026-05-15 10:30:52,587 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpvp5o75cv\backups\pass_control_20260515_103052_unittest.zip
+2026-05-15 10:37:14,691 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp806lhh5d\users.json
+2026-05-15 10:37:14,850 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpv0wb9jkv\users.json
+2026-05-15 10:37:15,021 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmphm78l8fv\users.json
+2026-05-15 10:37:15,103 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpih34ovo0\users.json
+2026-05-15 10:37:15,269 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp43uq54ui\users.json
+2026-05-15 10:37:15,535 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp5_9azeft\backups\pass_control_20260515_103715_unittest.zip
+2026-05-15 10:37:15,562 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpqz4r10yb\backups\pass_control_20260515_103715_unittest.zip
+2026-05-15 10:37:15,572 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpqz4r10yb\backups\pass_control_20260515_103715_unittest.zip
+2026-05-15 11:09:41,598 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp1h5zxkkt\users.json
+2026-05-15 11:09:41,774 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpydyqu7xi\users.json
+2026-05-15 11:09:41,945 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpkbxrs4dl\users.json
+2026-05-15 11:09:42,029 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpkh_6p41l\users.json
+2026-05-15 11:09:42,199 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmphahimdap\users.json
+2026-05-15 11:09:42,478 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpkbvjhtam\backups\pass_control_20260515_110942_unittest.zip
+2026-05-15 11:09:42,510 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpsd0ymnwu\backups\pass_control_20260515_110942_unittest.zip
+2026-05-15 11:09:42,523 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpsd0ymnwu\backups\pass_control_20260515_110942_unittest.zip
+2026-05-15 18:24:03,721 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpr2w8ueki\users.json
+2026-05-15 18:24:03,903 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpxdoaom0c\users.json
+2026-05-15 18:24:04,061 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpm4q364pc\users.json
+2026-05-15 18:24:04,152 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpyt2ar_c_\users.json
+2026-05-15 18:24:04,326 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp7kso92bx\users.json
+2026-05-15 18:24:04,617 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpmkqehhpy\backups\pass_control_20260515_182404_unittest.zip
+2026-05-15 18:24:04,649 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp0ujkq29n\backups\pass_control_20260515_182404_unittest.zip
+2026-05-15 18:24:04,663 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmp0ujkq29n\backups\pass_control_20260515_182404_unittest.zip
+2026-05-17 15:06:14,453 [INFO] app.services.backups: Backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260517_150614_auto.zip
+2026-05-17 15:06:14,460 [INFO] __main__: Daily backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260517_150614_auto.zip
+2026-05-17 15:19:02,968 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpup824pf5\users.json
+2026-05-17 15:19:03,160 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp9qyubwi2\users.json
+2026-05-17 15:19:03,341 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpwna3oq4n\users.json
+2026-05-17 15:19:03,424 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpoo00opfn\users.json
+2026-05-17 15:19:03,620 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpp1wgfwxx\users.json
+2026-05-17 15:19:03,906 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp0bl4mist\backups\pass_control_20260517_151903_unittest.zip
+2026-05-17 15:19:03,945 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpbfuwd43a\backups\pass_control_20260517_151903_unittest.zip
+2026-05-17 15:19:03,959 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpbfuwd43a\backups\pass_control_20260517_151903_unittest.zip
+2026-05-17 15:27:55,561 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmph1h2hv2s\users.json
+2026-05-17 15:27:55,720 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpph3iah31\users.json
+2026-05-17 15:27:55,894 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp93foyp9j\users.json
+2026-05-17 15:27:55,977 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp14rcdhln\users.json
+2026-05-17 15:27:56,145 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpsdkbrp7g\users.json
+2026-05-17 15:27:56,433 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp0hd7fl4w\backups\pass_control_20260517_152756_unittest.zip
+2026-05-17 15:27:56,470 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpvriz2b0g\backups\pass_control_20260517_152756_unittest.zip
+2026-05-17 15:27:56,482 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpvriz2b0g\backups\pass_control_20260517_152756_unittest.zip
+2026-05-17 15:29:29,050 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpjqf3oggr\users.json
+2026-05-17 15:29:29,228 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp3vtrfdwn\users.json
+2026-05-17 15:29:29,406 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpk_ggdmr7\users.json
+2026-05-17 15:29:29,504 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp0u1a1hdn\users.json
+2026-05-17 15:29:29,679 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpvty1gsmm\users.json
+2026-05-17 15:29:29,968 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp09bw6hbv\backups\pass_control_20260517_152929_unittest.zip
+2026-05-17 15:29:30,002 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpdl6bn3ni\backups\pass_control_20260517_152929_unittest.zip
+2026-05-17 15:29:30,022 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpdl6bn3ni\backups\pass_control_20260517_152929_unittest.zip
+2026-05-17 15:35:54,289 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmptqhxlrcv\users.json
+2026-05-17 15:35:54,455 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpnmudjpsi\users.json
+2026-05-17 15:35:54,620 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp6hmtncuz\users.json
+2026-05-17 15:35:54,707 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmppgtu8o1v\users.json
+2026-05-17 15:35:54,870 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpslj0_0bi\users.json
+2026-05-17 15:35:55,148 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp6t04035c\backups\pass_control_20260517_153555_unittest.zip
+2026-05-17 15:35:55,178 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpw7fu0v3o\backups\pass_control_20260517_153555_unittest.zip
+2026-05-17 15:35:55,189 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpw7fu0v3o\backups\pass_control_20260517_153555_unittest.zip
+2026-05-17 15:45:22,489 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpbdu9ipi2\users.json
+2026-05-17 15:45:22,656 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpytziieas\users.json
+2026-05-17 15:45:22,837 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp_cdosnw5\users.json
+2026-05-17 15:45:22,931 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp757w46gs\users.json
+2026-05-17 15:45:23,114 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpjgby3iag\users.json
+2026-05-17 15:45:23,417 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpbb7gwmxc\backups\pass_control_20260517_154523_unittest.zip
+2026-05-17 15:45:23,464 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpo8yv7b2y\backups\pass_control_20260517_154523_unittest.zip
+2026-05-17 15:45:23,475 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpo8yv7b2y\backups\pass_control_20260517_154523_unittest.zip
+2026-05-17 17:11:48,402 [ERROR] __main__: Clock tick failed
+Traceback (most recent call last):
+  File "C:\Users\user\Desktop\project\pass_control.py", line 211, in _tick
+    self._clklbl.configure(text=datetime.now().strftime("%d.%m.%Y  %H:%M:%S"))
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Python\pythoncore-3.14-64\Lib\tkinter\__init__.py", line 1842, in configure
+    return self._configure('configure', cnf, kw)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Python\pythoncore-3.14-64\Lib\tkinter\__init__.py", line 1826, in _configure
+    self.tk.call(_flatten((self._w, cmd)) + self._options(cnf))
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_tkinter.TclError: invalid command name ".!frame4.!frame.!label2"
+2026-05-18 08:51:34,294 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp0zi76nq6\users.json
+2026-05-18 08:51:34,445 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpa4gx3asf\users.json
+2026-05-18 08:51:34,611 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpxgedgzcn\users.json
+2026-05-18 08:51:34,697 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpnmc44jbj\users.json
+2026-05-18 08:51:34,870 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpjwal6p5v\users.json
+2026-05-18 08:51:35,143 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpnwy8gqyc\backups\pass_control_20260518_085135_unittest.zip
+2026-05-18 08:51:35,183 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpotx5m3of\backups\pass_control_20260518_085135_unittest.zip
+2026-05-18 08:51:35,197 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpotx5m3of\backups\pass_control_20260518_085135_unittest.zip
+2026-05-18 08:52:35,474 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp4wwxtiwo\users.json
+2026-05-18 08:52:35,634 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp9d0k5j0p\users.json
+2026-05-18 08:52:35,802 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpd5nrhdto\users.json
+2026-05-18 08:52:35,887 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpu3nl5ghg\users.json
+2026-05-18 08:52:36,055 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpxho0ji6f\users.json
+2026-05-18 08:52:36,313 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmprz9nfyx6\backups\pass_control_20260518_085236_unittest.zip
+2026-05-18 08:52:36,346 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpbz_9_73w\backups\pass_control_20260518_085236_unittest.zip
+2026-05-18 08:52:36,355 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpbz_9_73w\backups\pass_control_20260518_085236_unittest.zip
+2026-05-18 08:54:47,505 [INFO] app.services.backups: Backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260518_085447_auto.zip
+2026-05-18 08:54:47,510 [INFO] __main__: Daily backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260518_085447_auto.zip
+2026-05-18 09:15:16,700 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp1z4til32\users.json
+2026-05-18 09:15:16,859 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpoyotjcfr\users.json
+2026-05-18 09:15:17,023 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp_5jarrmu\users.json
+2026-05-18 09:15:17,114 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpd8heotvd\users.json
+2026-05-18 09:15:17,271 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpe0tr5iwo\users.json
+2026-05-18 09:15:17,538 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp2ouscusx\backups\pass_control_20260518_091517_unittest.zip
+2026-05-18 09:15:17,571 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpamqtb_59\backups\pass_control_20260518_091517_unittest.zip
+2026-05-18 09:15:17,582 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpamqtb_59\backups\pass_control_20260518_091517_unittest.zip
+2026-05-18 09:16:07,012 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpcrowrjo3\users.json
+2026-05-18 09:16:07,165 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp1cdywu_3\users.json
+2026-05-18 09:16:07,340 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmprocs8bjj\users.json
+2026-05-18 09:16:07,427 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpvftdwtya\users.json
+2026-05-18 09:16:07,596 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpga0c33og\users.json
+2026-05-18 09:16:07,859 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp3nk39v43\backups\pass_control_20260518_091607_unittest.zip
+2026-05-18 09:16:07,892 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp7p8t4wo9\backups\pass_control_20260518_091607_unittest.zip
+2026-05-18 09:16:07,901 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmp7p8t4wo9\backups\pass_control_20260518_091607_unittest.zip
+2026-05-18 09:17:13,099 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp5py86ta5\users.json
+2026-05-18 09:17:13,259 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp7v32tv3y\users.json
+2026-05-18 09:17:13,444 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp7c5fz9y2\users.json
+2026-05-18 09:17:13,531 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpk8t6fesk\users.json
+2026-05-18 09:17:13,693 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpjsawy2bl\users.json
+2026-05-18 09:17:13,961 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp6ci58a4k\backups\pass_control_20260518_091713_unittest.zip
+2026-05-18 09:17:14,001 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp9538x1nw\backups\pass_control_20260518_091713_unittest.zip
+2026-05-18 09:17:14,025 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmp9538x1nw\backups\pass_control_20260518_091713_unittest.zip
+2026-05-18 09:28:57,983 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpedelddcb\users.json
+2026-05-18 09:28:58,143 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpm_iz9_gt\users.json
+2026-05-18 09:28:58,318 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpaph54d63\users.json
+2026-05-18 09:28:58,405 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpmeq5bykf\users.json
+2026-05-18 09:28:58,575 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpgmya5o6u\users.json
+2026-05-18 09:28:58,825 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp1yo4uvfn\backups\pass_control_20260518_092858_unittest.zip
+2026-05-18 09:28:58,856 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpzmnrxoeo\backups\pass_control_20260518_092858_unittest.zip
+2026-05-18 09:28:58,867 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpzmnrxoeo\backups\pass_control_20260518_092858_unittest.zip
+2026-05-18 09:29:42,550 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp46lhe6v3\users.json
+2026-05-18 09:29:42,712 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmplnqxy_9j\users.json
+2026-05-18 09:29:42,874 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp9nfa_5wj\users.json
+2026-05-18 09:29:42,964 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpmim9_40l\users.json
+2026-05-18 09:29:43,133 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpj_ha19j_\users.json
+2026-05-18 09:29:43,395 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpk09b3nmv\backups\pass_control_20260518_092943_unittest.zip
+2026-05-18 09:29:43,429 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp8unz_q_j\backups\pass_control_20260518_092943_unittest.zip
+2026-05-18 09:29:43,438 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmp8unz_q_j\backups\pass_control_20260518_092943_unittest.zip
+2026-05-18 17:11:27,579 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp1rcvxdgv\users.json
+2026-05-18 17:11:27,865 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpr3tofq6w\users.json
+2026-05-18 17:11:28,214 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpv2h6xcd1\users.json
+2026-05-18 17:11:28,351 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp19xbh4rs\users.json
+2026-05-18 17:11:28,637 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpblc0i8av\users.json
+2026-05-18 17:11:29,081 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpfhcuqhge\backups\pass_control_20260518_171129_unittest.zip
+2026-05-18 17:11:29,130 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpdf9ll7l3\backups\pass_control_20260518_171129_unittest.zip
+2026-05-18 17:11:29,149 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpdf9ll7l3\backups\pass_control_20260518_171129_unittest.zip
+2026-05-18 17:14:49,413 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp__8974ib\users.json
+2026-05-18 17:14:49,676 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmph7dpodtp\users.json
+2026-05-18 17:14:49,964 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpd6rzwq2_\users.json
+2026-05-18 17:14:50,132 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpzl88hirv\users.json
+2026-05-18 17:14:50,427 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpglrfv8f9\users.json
+2026-05-18 17:14:50,920 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpvfkntgi5\backups\pass_control_20260518_171450_unittest.zip
+2026-05-18 17:14:50,979 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpzopcoh7q\backups\pass_control_20260518_171450_unittest.zip
+2026-05-18 17:14:51,003 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpzopcoh7q\backups\pass_control_20260518_171450_unittest.zip
+2026-05-18 17:36:52,419 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpvldmh77_\users.json
+2026-05-18 17:36:52,749 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp43p0i7dw\users.json
+2026-05-18 17:36:53,060 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp86_lfg5_\users.json
+2026-05-18 17:36:53,198 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp70rh9yit\users.json
+2026-05-18 17:36:53,489 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmplkcw22ip\users.json
+2026-05-18 17:36:53,927 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpcberbk87\backups\pass_control_20260518_173653_unittest.zip
+2026-05-18 17:36:53,975 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp86p5r2_2\backups\pass_control_20260518_173653_unittest.zip
+2026-05-18 17:36:53,994 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmp86p5r2_2\backups\pass_control_20260518_173653_unittest.zip
+2026-05-18 18:47:52,487 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpx46_l6uz\users.json
+2026-05-18 18:47:52,684 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpqdwv76ga\users.json
+2026-05-18 18:47:52,874 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmphki57knq\users.json
+2026-05-18 18:47:52,974 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpv1l9kk5g\users.json
+2026-05-18 18:47:53,154 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpve0hs_d6\users.json
+2026-05-18 18:47:53,447 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp581m6ic3\backups\pass_control_20260518_184753_unittest.zip
+2026-05-18 18:47:53,478 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpgxisd7v5\backups\pass_control_20260518_184753_unittest.zip
+2026-05-18 18:47:53,491 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpgxisd7v5\backups\pass_control_20260518_184753_unittest.zip
+2026-05-18 18:49:53,205 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpgx_z97_8\users.json
+2026-05-18 18:49:53,397 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp7b1akbo9\users.json
+2026-05-18 18:49:53,579 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpl5e92_ed\users.json
+2026-05-18 18:49:53,697 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp_p6sw7jp\users.json
+2026-05-18 18:49:53,869 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp4a22x7m4\users.json
+2026-05-18 18:49:54,167 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpgvkx1i_q\backups\pass_control_20260518_184954_unittest.zip
+2026-05-18 18:49:54,204 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpthgah92p\backups\pass_control_20260518_184954_unittest.zip
+2026-05-18 18:49:54,216 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpthgah92p\backups\pass_control_20260518_184954_unittest.zip
+2026-05-19 07:14:10,347 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpmcfbtzbj\users.json
+2026-05-19 07:14:10,511 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpjc6hqvfn\users.json
+2026-05-19 07:14:10,689 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpuzutoy2d\users.json
+2026-05-19 07:14:10,779 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp0kuu7ysg\users.json
+2026-05-19 07:14:10,958 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpce5_hvvq\users.json
+2026-05-19 07:14:11,249 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp9cn39r5g\backups\pass_control_20260519_071411_unittest.zip
+2026-05-19 07:14:11,281 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp36rfda8w\backups\pass_control_20260519_071411_unittest.zip
+2026-05-19 07:14:11,291 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmp36rfda8w\backups\pass_control_20260519_071411_unittest.zip
+2026-05-19 07:16:38,488 [INFO] app.services.backups: Backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260519_071638_auto.zip
+2026-05-19 07:16:38,494 [INFO] __main__: Daily backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260519_071638_auto.zip
+2026-05-19 07:19:26,107 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpz1cv60vt\users.json
+2026-05-19 07:19:26,268 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpws0fstvd\users.json
+2026-05-19 07:19:26,441 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmptf8uyde1\users.json
+2026-05-19 07:19:26,530 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp9qpar42p\users.json
+2026-05-19 07:19:26,703 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp684mw02t\users.json
+2026-05-19 07:19:26,978 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp08bhjsd1\backups\pass_control_20260519_071926_unittest.zip
+2026-05-19 07:19:27,010 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpzq5faw01\backups\pass_control_20260519_071927_unittest.zip
+2026-05-19 07:19:27,030 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpzq5faw01\backups\pass_control_20260519_071927_unittest.zip
+2026-05-19 07:44:50,486 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp_ffobyhf\users.json
+2026-05-19 07:44:50,650 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp1di1obkx\users.json
+2026-05-19 07:44:50,832 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp9l3wpoxh\users.json
+2026-05-19 07:44:50,925 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpebgkqfpb\users.json
+2026-05-19 07:44:51,107 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpniu5v7et\users.json
+2026-05-19 07:44:51,394 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp8v4e88cq\backups\pass_control_20260519_074451_unittest.zip
+2026-05-19 07:44:51,426 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpgzmne7a6\backups\pass_control_20260519_074451_unittest.zip
+2026-05-19 07:44:51,435 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpgzmne7a6\backups\pass_control_20260519_074451_unittest.zip
+2026-05-19 07:45:39,235 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpjmp_dtcc\users.json
+2026-05-19 07:45:39,402 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpevfe9qb1\users.json
+2026-05-19 07:45:39,580 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpl0hq2mz3\users.json
+2026-05-19 07:45:39,670 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpkoirv1oo\users.json
+2026-05-19 07:45:39,836 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpjtnarwiw\users.json
+2026-05-19 07:45:40,118 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpvzutq10f\backups\pass_control_20260519_074540_unittest.zip
+2026-05-19 07:45:40,150 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp1zvj8vns\backups\pass_control_20260519_074540_unittest.zip
+2026-05-19 07:45:40,159 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmp1zvj8vns\backups\pass_control_20260519_074540_unittest.zip
+2026-05-19 07:46:50,081 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpuwqerkzw\users.json
+2026-05-19 07:46:50,252 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpq2lh49r3\users.json
+2026-05-19 07:46:50,438 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp9snvk621\users.json
+2026-05-19 07:46:50,534 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpbtmjbwrr\users.json
+2026-05-19 07:46:50,716 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpgayblkzq\users.json
+2026-05-19 07:46:50,999 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpps1ui41x\backups\pass_control_20260519_074650_unittest.zip
+2026-05-19 07:46:51,032 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpw0wm_rrz\backups\pass_control_20260519_074651_unittest.zip
+2026-05-19 07:46:51,052 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpw0wm_rrz\backups\pass_control_20260519_074651_unittest.zip
+2026-05-19 07:55:02,311 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp6m7hk4bh\users.json
+2026-05-19 07:55:02,474 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpokr9rwe6\users.json
+2026-05-19 07:55:02,653 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpxcqhobx8\users.json
+2026-05-19 07:55:02,740 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp57bqliod\users.json
+2026-05-19 07:55:02,922 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpc5z644er\users.json
+2026-05-19 07:55:03,204 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp64f70fgq\backups\pass_control_20260519_075503_unittest.zip
+2026-05-19 07:55:03,237 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp45hoznnw\backups\pass_control_20260519_075503_unittest.zip
+2026-05-19 07:55:03,246 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmp45hoznnw\backups\pass_control_20260519_075503_unittest.zip
+2026-05-19 08:00:04,322 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpscr5cbf6\users.json
+2026-05-19 08:00:04,490 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmptgl3he3y\users.json
+2026-05-19 08:00:04,679 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp9ojkhy7e\users.json
+2026-05-19 08:00:04,772 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp6vz5a7sv\users.json
+2026-05-19 08:00:04,962 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmppbqbu9p3\users.json
+2026-05-19 08:00:05,264 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpte1xvpj7\backups\pass_control_20260519_080005_unittest.zip
+2026-05-19 08:00:05,306 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpw6djzeho\backups\pass_control_20260519_080005_unittest.zip
+2026-05-19 08:00:05,321 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpw6djzeho\backups\pass_control_20260519_080005_unittest.zip
+2026-05-19 09:39:20,082 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp709ezvas\users.json
+2026-05-19 09:39:20,252 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpxquo56a1\users.json
+2026-05-19 09:39:20,431 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpnv_d2h3k\users.json
+2026-05-19 09:39:20,514 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpcf258_zu\users.json
+2026-05-19 09:39:20,684 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpmzqr4zpu\users.json
+2026-05-19 09:39:20,975 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp315gugu5\backups\pass_control_20260519_093920_unittest.zip
+2026-05-19 09:39:21,013 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpw5_sybaj\backups\pass_control_20260519_093921_unittest.zip
+2026-05-19 09:39:21,034 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpw5_sybaj\backups\pass_control_20260519_093921_unittest.zip
+2026-05-19 09:43:02,895 [INFO] app.services.backups: Backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260519_094302_before_kpp_import.zip
+2026-05-19 09:43:46,731 [INFO] app.services.backups: Backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260519_094346_before_kpp_import.zip
+2026-05-19 09:56:02,529 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpzjmwkriu\users.json
+2026-05-19 09:56:02,687 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp2oxveznc\users.json
+2026-05-19 09:56:02,891 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmphgp88tpk\users.json
+2026-05-19 09:56:02,987 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp9ne6dm9a\users.json
+2026-05-19 09:56:03,192 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmprckhfti1\users.json
+2026-05-19 09:56:03,456 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpfis2ga0k\backups\pass_control_20260519_095603_unittest.zip
+2026-05-19 09:56:03,498 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpv0ec9ej7\backups\pass_control_20260519_095603_unittest.zip
+2026-05-19 09:56:03,509 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpv0ec9ej7\backups\pass_control_20260519_095603_unittest.zip
+2026-05-19 10:17:50,669 [INFO] app.services.backups: Backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260519_101750_before_kpp_import.zip
+2026-05-19 10:18:13,816 [ERROR] __main__: Clock tick failed
+Traceback (most recent call last):
+  File "C:\Users\user\Desktop\project\pass_control.py", line 228, in _tick
+    self._clklbl.configure(text=datetime.now().strftime("%d.%m.%Y  %H:%M:%S"))
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Python\pythoncore-3.14-64\Lib\tkinter\__init__.py", line 1842, in configure
+    return self._configure('configure', cnf, kw)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Python\pythoncore-3.14-64\Lib\tkinter\__init__.py", line 1826, in _configure
+    self.tk.call(_flatten((self._w, cmd)) + self._options(cnf))
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_tkinter.TclError: invalid command name ".!frame4.!frame.!label2"
+2026-05-19 10:59:32,769 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpypzxrlpb\users.json
+2026-05-19 10:59:32,930 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpc5tzot_l\users.json
+2026-05-19 10:59:33,117 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpdr1k45tw\users.json
+2026-05-19 10:59:33,210 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmplb0ao_58\users.json
+2026-05-19 10:59:33,399 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpjlq0ha2v\users.json
+2026-05-19 10:59:33,676 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmplq8eaisa\backups\pass_control_20260519_105933_unittest.zip
+2026-05-19 10:59:33,717 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpxwe8lrr8\backups\pass_control_20260519_105933_unittest.zip
+2026-05-19 10:59:33,728 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpxwe8lrr8\backups\pass_control_20260519_105933_unittest.zip
+2026-05-19 11:10:03,851 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpc_6_c3aq\users.json
+2026-05-19 11:10:04,039 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpz30m8joz\users.json
+2026-05-19 11:10:04,233 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpqva3qduz\users.json
+2026-05-19 11:10:04,327 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpxmov750o\users.json
+2026-05-19 11:10:04,506 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpuygad1q6\users.json
+2026-05-19 11:10:04,829 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpfgi8hz25\backups\pass_control_20260519_111004_unittest.zip
+2026-05-19 11:10:04,871 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpn0l1r74h\backups\pass_control_20260519_111004_unittest.zip
+2026-05-19 11:10:04,884 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpn0l1r74h\backups\pass_control_20260519_111004_unittest.zip
+2026-05-19 11:14:41,717 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpyw0ux1j4\users.json
+2026-05-19 11:14:41,884 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpuhylzr0r\users.json
+2026-05-19 11:14:42,058 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpge08zyg9\users.json
+2026-05-19 11:14:42,154 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp7yy3ejgl\users.json
+2026-05-19 11:14:42,334 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmptznrisr2\users.json
+2026-05-19 11:14:42,604 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpoixxar6_\backups\pass_control_20260519_111442_unittest.zip
+2026-05-19 11:14:42,661 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpzi9nzyxc\backups\pass_control_20260519_111442_unittest.zip
+2026-05-19 11:14:42,673 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpzi9nzyxc\backups\pass_control_20260519_111442_unittest.zip
+2026-05-19 11:29:58,466 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpo2gqvkrk\users.json
+2026-05-19 11:29:58,630 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpz1x5diu2\users.json
+2026-05-19 11:29:58,801 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpg0jcpn1e\users.json
+2026-05-19 11:29:58,888 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpovln9d8q\users.json
+2026-05-19 11:29:59,065 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmppvec_imk\users.json
+2026-05-19 11:29:59,363 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp3aekyer9\backups\pass_control_20260519_112959_unittest.zip
+2026-05-19 11:29:59,398 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpw4qcq4wq\backups\pass_control_20260519_112959_unittest.zip
+2026-05-19 11:29:59,410 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpw4qcq4wq\backups\pass_control_20260519_112959_unittest.zip
+2026-05-19 11:32:00,688 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp5xl7y1vq\users.json
+2026-05-19 11:32:00,838 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpckmut_gy\users.json
+2026-05-19 11:32:01,008 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpe1_ccv48\users.json
+2026-05-19 11:32:01,088 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpcayazfl3\users.json
+2026-05-19 11:32:01,254 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp7ejqc_wo\users.json
+2026-05-19 11:32:01,506 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp7hwnmj34\backups\pass_control_20260519_113201_unittest.zip
+2026-05-19 11:32:01,549 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpt8e6nq9_\backups\pass_control_20260519_113201_unittest.zip
+2026-05-19 11:32:01,561 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpt8e6nq9_\backups\pass_control_20260519_113201_unittest.zip
+2026-05-19 11:34:05,802 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp7_qfwkg7\users.json
+2026-05-19 11:34:05,972 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp2x8rgfdv\users.json
+2026-05-19 11:34:06,136 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp8m3_vx6u\users.json
+2026-05-19 11:34:06,220 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpfichm0hb\users.json
+2026-05-19 11:34:06,388 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpdwul7x92\users.json
+2026-05-19 11:34:06,668 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp4_gqwrc1\backups\pass_control_20260519_113406_unittest.zip
+2026-05-19 11:34:06,708 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp1nx_s4f9\backups\pass_control_20260519_113406_unittest.zip
+2026-05-19 11:34:06,719 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmp1nx_s4f9\backups\pass_control_20260519_113406_unittest.zip
+2026-05-19 11:43:11,296 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmparrt4e8a\users.json
+2026-05-19 11:43:11,454 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpdkf5zacw\users.json
+2026-05-19 11:43:11,624 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpzd1up98x\users.json
+2026-05-19 11:43:11,715 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpjqxrla5w\users.json
+2026-05-19 11:43:11,878 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpguw6fh34\users.json
+2026-05-19 11:43:12,158 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpild9dwah\backups\pass_control_20260519_114312_unittest.zip
+2026-05-19 11:43:12,204 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpf2zn5s60\backups\pass_control_20260519_114312_unittest.zip
+2026-05-19 11:43:12,216 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpf2zn5s60\backups\pass_control_20260519_114312_unittest.zip
+2026-05-19 12:53:02,032 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpcq8u1o4d\users.json
+2026-05-19 12:53:02,205 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp7v9l5ntp\users.json
+2026-05-19 12:53:02,410 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpwdk8icft\users.json
+2026-05-19 12:53:02,508 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp0kwm_4ai\users.json
+2026-05-19 12:53:02,688 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpquh6efsf\users.json
+2026-05-19 12:53:02,970 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmptcmjq95q\backups\pass_control_20260519_125302_unittest.zip
+2026-05-19 12:53:03,010 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpqmsm6p7p\backups\pass_control_20260519_125303_unittest.zip
+2026-05-19 12:53:03,033 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpqmsm6p7p\backups\pass_control_20260519_125303_unittest.zip
+2026-05-19 12:57:29,840 [ERROR] __main__: Clock tick failed
+Traceback (most recent call last):
+  File "C:\Users\user\Desktop\project\pass_control.py", line 287, in _tick
+    self._clklbl.configure(text=datetime.now().strftime("%d.%m.%Y  %H:%M:%S"))
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Python\pythoncore-3.14-64\Lib\tkinter\__init__.py", line 1842, in configure
+    return self._configure('configure', cnf, kw)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Python\pythoncore-3.14-64\Lib\tkinter\__init__.py", line 1826, in _configure
+    self.tk.call(_flatten((self._w, cmd)) + self._options(cnf))
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_tkinter.TclError: invalid command name ".!frame4.!frame.!label2"
+2026-05-20 08:26:37,540 [WARNING] app.services.sounds: Scanner sound is not a playable PCM WAV file: C:\Users\user\AppData\Local\Temp\tmp_4ax25t1\scan_allowed.wav
+2026-05-20 08:26:37,849 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpv88963ts\users.json
+2026-05-20 08:26:38,009 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpicl2_tzu\users.json
+2026-05-20 08:26:38,184 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpvci6evql\users.json
+2026-05-20 08:26:38,274 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp_tbdliyj\users.json
+2026-05-20 08:26:38,448 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp222xogye\users.json
+2026-05-20 08:26:38,727 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp_wowbhy1\backups\pass_control_20260520_082638_unittest.zip
+2026-05-20 08:26:38,760 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpv75kc0tn\backups\pass_control_20260520_082638_unittest.zip
+2026-05-20 08:26:38,774 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpv75kc0tn\backups\pass_control_20260520_082638_unittest.zip
+2026-05-20 08:26:40,596 [WARNING] app.services.sounds: Scanner sound is not a playable PCM WAV file: C:\Users\user\AppData\Local\Temp\tmpshm8rrjp\scan_allowed.wav
+2026-05-20 08:56:00,312 [INFO] app.services.backups: Backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260520_085600_auto.zip
+2026-05-20 08:56:00,317 [INFO] __main__: Daily backup created: C:\Users\user\Desktop\project\data\backups\pass_control_20260520_085600_auto.zip
+2026-05-20 08:56:09,506 [WARNING] app.services.sounds: Scanner sound is not a playable PCM WAV file: C:\Users\user\Desktop\project\data\sounds\_default_scan_allowed.wav
+2026-05-20 08:58:43,652 [WARNING] app.services.sounds: Scanner sound is not a playable PCM WAV file: C:\Users\user\Desktop\project\data\sounds\_default_scan_allowed.wav
+2026-05-20 09:03:22,845 [WARNING] app.services.sounds: Scanner sound is not a playable PCM WAV file: C:\Users\user\AppData\Local\Temp\tmpt_ug0_5b\scan_allowed.wav
+2026-05-20 09:03:37,742 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmprzb522j6\users.json
+2026-05-20 09:03:37,908 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpbd_c3r65\users.json
+2026-05-20 09:03:38,088 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp41fnu8xw\users.json
+2026-05-20 09:03:38,168 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpto8bqlfv\users.json
+2026-05-20 09:03:38,337 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp6255_u8j\users.json
+2026-05-20 09:03:38,604 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp7ttk8im5\backups\pass_control_20260520_090338_unittest.zip
+2026-05-20 09:03:38,636 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpcjrjd2qm\backups\pass_control_20260520_090338_unittest.zip
+2026-05-20 09:03:38,645 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpcjrjd2qm\backups\pass_control_20260520_090338_unittest.zip
+2026-05-20 09:03:40,322 [WARNING] app.services.sounds: Scanner sound is not a playable PCM WAV file: C:\Users\user\AppData\Local\Temp\tmppi04tk6v\scan_allowed.wav
+2026-05-20 09:05:00,708 [WARNING] app.services.sounds: Scanner sound has unsupported audio header: C:\Users\user\AppData\Local\Temp\tmpz4r9w5rq\scan_allowed.wav
+2026-05-20 09:05:00,804 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpmfp8bi90\users.json
+2026-05-20 09:05:00,970 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpu09jfhye\users.json
+2026-05-20 09:05:01,139 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpyik6af22\users.json
+2026-05-20 09:05:01,232 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpgwlxzl4a\users.json
+2026-05-20 09:05:01,412 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmp2rdedf0j\users.json
+2026-05-20 09:05:01,696 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmp1igvj1a_\backups\pass_control_20260520_090501_unittest.zip
+2026-05-20 09:05:01,734 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpfia0wo5v\backups\pass_control_20260520_090501_unittest.zip
+2026-05-20 09:05:01,745 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpfia0wo5v\backups\pass_control_20260520_090501_unittest.zip
+2026-05-20 09:05:03,424 [WARNING] app.services.sounds: Scanner sound has unsupported audio header: C:\Users\user\AppData\Local\Temp\tmp25ia82nq\scan_allowed.wav
+2026-05-20 09:11:50,787 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpm1yj1572\users.json
+2026-05-20 09:11:50,858 [WARNING] app.services.sounds: Scanner sound has unsupported audio header: C:\Users\user\AppData\Local\Temp\tmpqa3a1lih\bad.wav
+2026-05-20 09:11:50,885 [WARNING] app.services.sounds: Scanner sound has unsupported audio header: C:\Users\user\AppData\Local\Temp\tmpthjsgds6\scan_allowed.wav
+2026-05-20 09:11:50,954 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpu6_f6eya\users.json
+2026-05-20 09:11:51,127 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpxisdec45\users.json
+2026-05-20 09:11:51,214 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpiphd3kpy\users.json
+2026-05-20 09:11:51,396 [ERROR] app.services.auth: Users file is missing: C:\Users\user\AppData\Local\Temp\tmpilxwd9us\users.json
+2026-05-20 09:11:51,671 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmprhpfxor9\backups\pass_control_20260520_091151_unittest.zip
+2026-05-20 09:11:51,707 [INFO] app.services.backups: Backup created: C:\Users\user\AppData\Local\Temp\tmpfh2pi9kj\backups\pass_control_20260520_091151_unittest.zip
+2026-05-20 09:11:51,718 [INFO] app.services.backups: Backup restored: C:\Users\user\AppData\Local\Temp\tmpfh2pi9kj\backups\pass_control_20260520_091151_unittest.zip
+2026-05-20 09:11:53,360 [WARNING] app.services.sounds: Scanner sound has unsupported audio header: C:\Users\user\AppData\Local\Temp\tmp4l4nkme5\bad.wav
+2026-05-20 09:11:53,390 [WARNING] app.services.sounds: Scanner sound has unsupported audio header: C:\Users\user\AppData\Local\Temp\tmphjvn6m0q\scan_allowed.wav
+2026-05-20 17:02:52,620 [ERROR] __main__: Clock tick failed
+Traceback (most recent call last):
+  File "C:\Users\user\Desktop\project\pass_control.py", line 289, in _tick
+    self._clklbl.configure(text=datetime.now().strftime("%d.%m.%Y  %H:%M:%S"))
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Python\pythoncore-3.14-64\Lib\tkinter\__init__.py", line 1842, in configure
+    return self._configure('configure', cnf, kw)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Python\pythoncore-3.14-64\Lib\tkinter\__init__.py", line 1826, in _configure
+    self.tk.call(_flatten((self._w, cmd)) + self._options(cnf))
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_tkinter.TclError: invalid command name ".!frame4.!frame.!label2"

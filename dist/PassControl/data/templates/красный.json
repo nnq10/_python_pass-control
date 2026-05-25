@@ -1,0 +1,43 @@
+{
+  "base_size": [
+    1152,
+    704
+  ],
+  "qr": {
+    "x": 962,
+    "y": 63,
+    "size": 118,
+    "margin": 32
+  },
+  "fields": {
+    "last_name": {
+      "x": 512,
+      "y": 324,
+      "size": 60,
+      "color": "#000000",
+      "font": "Times New Roman"
+    },
+    "first_name": {
+      "x": 442,
+      "y": 424,
+      "size": 60,
+      "color": "#000000",
+      "font": "Times New Roman"
+    },
+    "middle_name": {
+      "x": 516,
+      "y": 519,
+      "size": 60,
+      "color": "#000000",
+      "font": "Times New Roman"
+    }
+  },
+  "photo": {
+    "enabled": false,
+    "x": 70,
+    "y": 250,
+    "width": 160,
+    "height": 200,
+    "shape": "rect"
+  }
+}

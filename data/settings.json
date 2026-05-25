@@ -1,0 +1,6 @@
+{
+  "theme": "dark",
+  "scan_timeout": 8,
+  "scan_sound_allowed": "yamete-kudasai.wav",
+  "scan_sound_denied": "Звук_неправильного_ответа_сто_к_одному.wav"
+}

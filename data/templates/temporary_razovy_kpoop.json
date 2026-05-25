@@ -1,0 +1,42 @@
+{
+  "template_version": 4,
+  "base_size": [
+    2000,
+    700
+  ],
+  "print_size_cm": [
+    20.0,
+    7.0
+  ],
+  "binding_margin_left_cm": 1.5,
+  "qr": {
+    "enabled": false
+  },
+  "qr_codes": [
+    {
+      "title": "QR корешок",
+      "x": 760,
+      "y": 80,
+      "size": 185,
+      "background": true,
+      "background_padding": 8
+    },
+    {
+      "title": "QR пропуск",
+      "x": 1760,
+      "y": 80,
+      "size": 185,
+      "background": true,
+      "background_padding": 8
+    }
+  ],
+  "fields": {},
+  "photo": {
+    "enabled": false,
+    "x": 70,
+    "y": 250,
+    "width": 160,
+    "height": 200,
+    "shape": "rect"
+  }
+}

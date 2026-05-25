@@ -1,0 +1,40 @@
+{
+  "base_size": [
+    1041,
+    628
+  ],
+  "qr": {
+    "x": 886,
+    "y": 48,
+    "size": 118,
+    "margin": 32
+  },
+  "fields": {
+    "last_name": {
+      "x": 472,
+      "y": 304,
+      "size": 60,
+      "color": "#000000"
+    },
+    "first_name": {
+      "x": 442,
+      "y": 371,
+      "size": 60,
+      "color": "#000000"
+    },
+    "middle_name": {
+      "x": 486,
+      "y": 469,
+      "size": 60,
+      "color": "#000000"
+    }
+  },
+  "photo": {
+    "enabled": false,
+    "x": 70,
+    "y": 250,
+    "width": 160,
+    "height": 200,
+    "shape": "rect"
+  }
+}

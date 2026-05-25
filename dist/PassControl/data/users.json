@@ -1,0 +1,33 @@
+{
+  "users": {
+    "admin": {
+      "name": "Администратор",
+      "role": "admin",
+      "algorithm": "pbkdf2_sha256",
+      "iterations": 200000,
+      "salt": "84ad9e3f8a560802e5e5071d64817cf7",
+      "password_hash": "064163bbd5478456c2f2dcbb0399a29483ce9be695b39736502b8e05d4f55b7c"
+    },
+    "guard": {
+      "name": "Охранник",
+      "role": "guard",
+      "algorithm": "pbkdf2_sha256",
+      "iterations": 200000,
+      "salt": "b574d056c8ccf0cfd39f29f608d2c8eb",
+      "password_hash": "8b890db8e2b7395cbdaadcf58c518366c8840c56dce2ca83ecbe01856d9466b2"
+    },
+    "kpp": {
+      "name": "Дежурный по КПП Ушаков",
+      "role": "guard",
+      "permissions": [
+        "scanner",
+        "temporary",
+        "stats"
+      ],
+      "algorithm": "pbkdf2_sha256",
+      "iterations": 200000,
+      "salt": "c8e024c4c9b26f4894b37b8b1e7c62d4",
+      "password_hash": "108f1efd0cb2de7ed5ebb5cc29b6bd201a7ce631ee4b24dff1f8fd541605b2f2"
+    }
+  }
+}
